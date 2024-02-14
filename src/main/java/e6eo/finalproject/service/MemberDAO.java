@@ -1,4 +1,4 @@
-package e6eo.finalproject.member;
+package e6eo.finalproject.service;
 
 import org.springframework.stereotype.Service;
 
