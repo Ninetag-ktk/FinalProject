@@ -5,7 +5,7 @@ import org.springframework.stereotype.Service;
 @Service
 public class MemberDAO {
 
-    public boolean loginChk() {
-
-    }
+//    public boolean loginChk() {
+//
+//    }
 }
