@@ -12,10 +12,7 @@ import com.google.api.client.json.gson.GsonFactory;
 import com.google.api.client.util.store.FileDataStoreFactory;
 import com.google.api.services.people.v1.PeopleService;
 import com.google.api.services.people.v1.PeopleServiceScopes;
-import com.google.api.services.people.v1.model.GetPeopleResponse;
-import com.google.api.services.people.v1.model.ListConnectionsResponse;
-import com.google.api.services.people.v1.model.Name;
-import com.google.api.services.people.v1.model.Person;
+import com.google.api.services.people.v1.model.*;
 import com.google.gson.JsonObject;
 
 import java.io.FileNotFoundException;
@@ -35,7 +32,7 @@ public class PeopleQuickstart {
      * Global instance of the scopes required by this quickstart.
      * If modifying these scopes, delete your previously saved tokens/ folder.
      */
-    private static final List<String> SCOPES = Arrays.asList(PeopleServiceScopes.CONTACTS_READONLY);
+    private static final List<String> SCOPES = Arrays.asList(PeopleServiceScopes.USERINFO_PROFILE);
     private static final String CREDENTIALS_FILE_PATH = "/credentials.json";
 
     /**
@@ -73,15 +70,34 @@ public class PeopleQuickstart {
                         .setApplicationName(APPLICATION_NAME)
                         .build();
 
-        ListConnectionsResponse result = service.people().connections().list("people/me")
-                .setRequestSyncToken(true).execute();
+        // Request 10 connections.
+//        ListConnectionsResponse response = service.people().connections()
+//                .list("people/me")
+//                .setPageSize(4)
+//                .setPersonFields("names")
+//                .execute();
 
-        List<Person> connections = result.getConnections();
-        if (connections != null && connections.size() > 0) {
-            for (Person person : connections) {
-                System.out.println(person);
-            }
-        }
+        // Print display name of connections if available.
+//        List<Person> connections = response.getConnections();
+//        if (connections != null && connections.size() > 0) {
+//            for (Person person : connections) {
+//                List<Name> names = person.getNames();
+//                if (names != null && names.size() > 0) {
+//                    System.out.println("Name: " + person.getNames().get(0)
+//                            .getDisplayName() + person.getNames().get(0).getMetadata().getSource().getId());
+//                } else {
+//                    System.out.println("No names available for connection.");
+//                }
+//            }
+//            System.out.println("---------------");
+//        } else {
+//            System.out.println("No connections found.");
+//        }
 
+        Person itsme = service.people().get("people/me")
+                .setPersonFields("emailAddresses,names,metadata")
+                .execute();
+
+        System.out.println("결과 확인" + itsme.getMetadata());
     }
 }
