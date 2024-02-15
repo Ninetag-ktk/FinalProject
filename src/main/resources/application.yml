@@ -1,1 +1,18 @@
+spring:
+  datasource:
+    driver-class-name: org.mariadb.jdbc.Driver
+    url: jdbc:mariadb://43.203.30.193:3306
+    username: root
+    password: 76435855
+
+  data:
+    mongodb:
+      host: 43.203.30.193
+      port: 27017
+      username: admin
+      password: 76435855
+
+  elasticsearch:
+    uris: https://web-elasticsearch-17xco2nlsjrhma1.sel5.cloudtype.app/
+
 
