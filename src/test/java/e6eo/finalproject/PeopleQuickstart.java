@@ -12,9 +12,11 @@ import com.google.api.client.json.gson.GsonFactory;
 import com.google.api.client.util.store.FileDataStoreFactory;
 import com.google.api.services.people.v1.PeopleService;
 import com.google.api.services.people.v1.PeopleServiceScopes;
+import com.google.api.services.people.v1.model.GetPeopleResponse;
 import com.google.api.services.people.v1.model.ListConnectionsResponse;
 import com.google.api.services.people.v1.model.Name;
 import com.google.api.services.people.v1.model.Person;
+import com.google.gson.JsonObject;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -71,27 +73,15 @@ public class PeopleQuickstart {
                         .setApplicationName(APPLICATION_NAME)
                         .build();
 
-        // Request 10 connections.
-        ListConnectionsResponse response = service.people().connections()
-                .list("people/me")
-                .setPageSize(10)
-                .setPersonFields("names,emailAddresses")
-                .execute();
+        ListConnectionsResponse result = service.people().connections().list("people/me")
+                .setRequestSyncToken(true).execute();
 
-        // Print display name of connections if available.
-        List<Person> connections = response.getConnections();
+        List<Person> connections = result.getConnections();
         if (connections != null && connections.size() > 0) {
             for (Person person : connections) {
-                List<Name> names = person.getNames();
-                if (names != null && names.size() > 0) {
-                    System.out.println("Name: " + person.getNames().get(0)
-                            .getDisplayName());
-                } else {
-                    System.out.println("No names available for connection.");
-                }
+                System.out.println(person);
             }
-        } else {
-            System.out.println("No connections found.");
         }
+
     }
 }
