@@ -98,6 +98,6 @@ public class PeopleQuickstart {
                 .setPersonFields("emailAddresses,names,metadata")
                 .execute();
 
-        System.out.println("결과 확인" + itsme.getMetadata());
+        System.out.println("결과 확인" + itsme.getMetadata().getSources());
     }
 }
