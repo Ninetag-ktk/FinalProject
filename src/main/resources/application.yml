@@ -1,1 +1,32 @@
+spring:
+  datasource:
+    driver-class-name: org.mariadb.jdbc.Driver
+    url: jdbc:mariadb://43.203.30.193:3306
+    username: root
+    password: 76435855
 
+  data:
+    mongodb:
+      host: 43.203.30.193
+      port: 27017
+      username: root
+      password: 76435855
+
+  elasticsearch:
+    uris: https://web-elasticsearch-17xco2nlsjrhma1.sel5.cloudtype.app/
+
+#  security:
+#    oauth2:
+#      client:
+#        registration:
+#          google:
+#            client-id: 463906750748-9buq9vk60mfu2qctpqi3cbidlnpqsrb2.apps.googleusercontent.com
+#            client-secret: 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
+#            redirect-uri: http://localhost:8080/login/oauth2/code/google
+#            scope:
+#              - email
+#              - profile
+
+
+google:
+  appName: "E6EO_Diary"
