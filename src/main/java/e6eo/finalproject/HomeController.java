@@ -3,15 +3,13 @@ package e6eo.finalproject;
 import e6eo.finalproject.service.GCalendar;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RestController;
 
-@Controller
+@RestController
 public class HomeController {
 
-    @GetMapping("/")
+    @GetMapping("/home")
     public String home() {
-        String calendar = new GCalendar().getAppname();
-        System.out.println(calendar);
-        return "index";
+        return "Hello World!";
     }
 }
