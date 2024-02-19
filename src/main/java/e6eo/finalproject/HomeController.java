@@ -10,6 +10,6 @@ public class HomeController {
 
     @GetMapping("/home")
     public String home() {
-        return "Hello World!";
+        return "mainhome.html";
     }
 }
