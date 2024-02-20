@@ -1,4 +1,4 @@
-package e6eo.finalproject.service;
+package e6eo.finalproject.dao;
 
 import org.springframework.stereotype.Service;
 
