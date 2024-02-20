@@ -1,8 +1,7 @@
-package e6eo.finalproject.service;
+package e6eo.finalproject.dao;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Service;
 
 @Component
 public class GCalendar {
