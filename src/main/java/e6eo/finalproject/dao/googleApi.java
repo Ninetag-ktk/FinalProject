@@ -153,25 +153,28 @@ public class googleApi {
 //            }
 //            pageToken = calendarList.getNextPageToken();
 //        } while (pageToken != null);
-//
-//
-//
-//
-//        // Task API
-//        TaskLists tasklists = Tservice.tasklists().list().execute();
-//
-//        List<TaskList> items = tasklists.getItems();
-//
-//        String taskid = null;
-//        com.google.api.services.tasks.model.Tasks taskItem = null;
-//        for (TaskList tasklist : items) {
-//            taskid = tasklist.getId();
-//            taskItem = Tservice.tasks().list(taskid).execute();
-//            List<Task> item1 = taskItem.getItems();
-//            for (Task task : item1) { // 각 이벤트를 하나씩 살펴보기
-//                        System.out.println(task.getTitle());
-//                    }
-//        }
+
+
+
+
+        // Task API
+        TaskLists tasklists = Tservice.tasklists().list().execute();
+
+        List<TaskList> items = tasklists.getItems();
+
+        String taskid = null;
+        com.google.api.services.tasks.model.Tasks taskItem = null;
+        for (TaskList tasklist : items) {
+            taskid = tasklist.getId();
+            taskItem = Tservice.tasks().list(taskid).execute();
+            List<Task> item1 = taskItem.getItems();
+            for (Task task : item1) { // 각 이벤트를 하나씩 살펴보기
+                System.out.println(task.getTitle());
+                System.out.println(task.getEtag());
+                System.out.println(task.getNotes());
+                System.out.println(task.getDue());
+                    }
+        }
 
 
 
