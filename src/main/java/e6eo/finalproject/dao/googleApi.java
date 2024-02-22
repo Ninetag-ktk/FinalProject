@@ -121,38 +121,38 @@ public class googleApi {
         DateTime now = new DateTime(System.currentTimeMillis());
         String pageToken = null;
 
-//        do {
-//            CalendarList calendarList = Cservice.calendarList().list().setPageToken(pageToken).execute();
-//            // 캘린더 리스트를 받아오는 명령어 / pageToken은 명령어 제일 아래에 위치해서 다음 것들을 가져오도록 해놓은 것
-//            List<CalendarListEntry> items1 = calendarList.getItems();
-//            // 캘린더리스트들을 리스트형태의 CalendarListEntry로 변환시킨 것
-//
-//            for (CalendarListEntry calendarListEntry : items1) {
-//                // 각 items안에 있는 캘린더리스트의 캘린더들을 하나씩 가져오는 것
-//                // Iterate through entries in calendar list
-//                System.out.println(calendarListEntry.getId()); // 캘린더 id들 정보
-//                Events events = Cservice.events().list(calendarListEntry.getId()) // 각 캘린더들의 id를 기준으로 뽑아옴
-//                        .setMaxResults(5) // 가져올 갯수
-//                        .setTimeMin(now) // 기준시간 설정(여기선 현재시간 즉, DateTime now = new DateTime(System.currentTimeMillis());)
-//                        .setOrderBy("startTime") // 시간순서대로 나열해달라는 의미
-//                        .setSingleEvents(true) // 반복으로 설정되어있지 않은 이벤트만 가져오기
-//                        .execute(); // 맺음
-//                List<Event> items = events.getItems(); // Events를 쪼개서 Event타입의 리스트에 넣음
-//                if (items.isEmpty()) {
-//                    System.out.println("No upcoming events found."); // 해당 캘린더에 이벤트가 없으면 뜨는 명령어
-//                } else {
-//                    System.out.println("Upcoming events"); // 이벤트가 있으면 뜨는 명령어
-//                    for (Event event : items) { // 각 이벤트를 하나씩 살펴보기
-//                        System.out.println(event.getSummary());             // 제목
-//                        System.out.println(event.getStart().getDateTime()); // 시작시간
-//                        System.out.println(event.getEnd().getDateTime());   // 종료시간
-//                        System.out.println(event.getEtag());                // etag
-//                        System.out.println(event.getDescription());         // 내용
-//                    }
-//                }
-//            }
-//            pageToken = calendarList.getNextPageToken();
-//        } while (pageToken != null);
+        do {
+            CalendarList calendarList = Cservice.calendarList().list().setPageToken(pageToken).execute();
+            // 캘린더 리스트를 받아오는 명령어 / pageToken은 명령어 제일 아래에 위치해서 다음 것들을 가져오도록 해놓은 것
+            List<CalendarListEntry> items1 = calendarList.getItems();
+            // 캘린더리스트들을 리스트형태의 CalendarListEntry로 변환시킨 것
+
+            for (CalendarListEntry calendarListEntry : items1) {
+                // 각 items안에 있는 캘린더리스트의 캘린더들을 하나씩 가져오는 것
+                // Iterate through entries in calendar list
+                System.out.println(calendarListEntry.getId()); // 캘린더 id들 정보
+                Events events = Cservice.events().list(calendarListEntry.getId()) // 각 캘린더들의 id를 기준으로 뽑아옴
+                        .setMaxResults(5) // 가져올 갯수
+                        .setTimeMin(now) // 기준시간 설정(여기선 현재시간 즉, DateTime now = new DateTime(System.currentTimeMillis());)
+                        .setOrderBy("startTime") // 시간순서대로 나열해달라는 의미
+                        .setSingleEvents(true) // 반복으로 설정되어있지 않은 이벤트만 가져오기
+                        .execute(); // 맺음
+                List<Event> items = events.getItems(); // Events를 쪼개서 Event타입의 리스트에 넣음
+                if (items.isEmpty()) {
+                    System.out.println("No upcoming events found."); // 해당 캘린더에 이벤트가 없으면 뜨는 명령어
+                } else {
+                    System.out.println("Upcoming events"); // 이벤트가 있으면 뜨는 명령어
+                    for (Event event : items) { // 각 이벤트를 하나씩 살펴보기
+                        System.out.println(event.getSummary());             // 제목
+                        System.out.println(event.getStart().getDateTime()); // 시작시간
+                        System.out.println(event.getEnd().getDateTime());   // 종료시간
+                        System.out.println(event.getEtag());                // etag
+                        System.out.println(event.getDescription());         // 내용
+                    }
+                }
+            }
+            pageToken = calendarList.getNextPageToken();
+        } while (pageToken != null);
 
 
 
