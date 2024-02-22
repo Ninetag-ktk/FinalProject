@@ -10,35 +10,20 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
 import java.util.Scanner;
+import org.springframework.web.bind.annotation.RequestBody;
 
 @Service
 @Transactional
 @RequiredArgsConstructor
 public class UsersDAO {
-
+    @Autowired
     private final UsersMapper usersMapper;
 
-    public void signup() {
+    public void userJoin(@RequestBody Users users) {
+        Optional<Users> user = usersMapper.findById(users.getUserID());
 
-        Scanner s = new Scanner(System.in);
-        System.out.print("아이디 입력 : ");
-        String id = s.next();
-        System.out.print("비밀번호 입력 : ");
-        String pw = s.next();
-        System.out.print("닉네임 입력 : ");
-        String name = s.next();
-
-        Users user = Users.builder()
-                .UserID(id)
-                .PW(pw)
-                .NickName(name)
-                .InnerID(null)
-                .build();
-
-        Optional<Users> users = usersMapper.findById(id);
-
-        if (users.isEmpty()) {
-            usersMapper.save(user);
+        if (user.isEmpty()) {
+            usersMapper.save(users);
             System.out.println("성공");
         } else {
             System.out.println("실패!");
