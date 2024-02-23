@@ -1,4 +1,10 @@
-.login-page {
+
+#root {
+  text-align: center;
   display: flex;
-  width: 90%;
+  justify-content: center;
+  height: 3000px;
+
 }
+
+
