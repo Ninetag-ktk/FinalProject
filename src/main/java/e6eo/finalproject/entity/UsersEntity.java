@@ -7,6 +7,8 @@ import lombok.*;
 @Table(name="Users")
 @Data
 @Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class UsersEntity {
     @Id
     @Column(name = "UserID")
@@ -17,4 +19,7 @@ public class UsersEntity {
     private String NickName;
     @Column(name = "InnerID")
     private String InnerID;
+
+
+
 }

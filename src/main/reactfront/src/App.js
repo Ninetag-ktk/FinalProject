@@ -12,7 +12,7 @@ function App() {
 
     // message 초기값 설정 (""로 설정)
     const [message, setMessage] = useState("");
-    const [reResponse, setResResponse] = useState();
+    const [reResponse, setResResponse] = useState("");
 
     // useEffect(함수, 배열) : 컴포넌트가 화면에 나타났을 때 자동 실행
     useEffect(() => {
