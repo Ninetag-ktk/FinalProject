@@ -19,7 +19,7 @@ public class UsersDAO {
     @Autowired
     private final UsersMapper usersMapper;
 
-    public void userJoin(@RequestBody Users users) {
+    public void userJoin(@RequestBody Users users){
         Optional<Users> user = usersMapper.findById(users.getUserID());
 
         if (user.isEmpty()) {
