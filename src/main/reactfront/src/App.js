@@ -1,36 +1,30 @@
 import React, {useState, useEffect} from 'react';
 import axios from 'axios'
-import './App.css';
 import logo from './temp_logo.png'
 import {
     createBrowserRouter,
     createRoutesFromElements,
+    BrowserRouter as Router,
     Route,
     RouterProvider,
-    Routes,
-    Link
+    Routes
 } from "react-router-dom";
-
+import './App.css';
+import Empty from "./routes/Empty";
+import Frame from "./routes/Frame";
 
 function App() {
 
     return (
-        <div className={"login-main"}>
-            <div className={"Logoclass"}>
-                <img src={logo}/>
-            </div>
-
-            <div className={"logininput"}>
-                <form className={"loginForm1"} action={"naver.com"}>
-                    <input type={"text"} className={"inputtext"} placeholder={"ex)XXXXXX@xxxxxx.com"}/>
-                    <input type={"text"} className={"inputtext"} placeholder={"password"}/>
-                    <button>로그인</button>
-                </form>
-                <hr/>
-                <button>google계정으로 로그인</button>
-            </div>
+        <div className={"App"}>
+            <Router>
+                <Routes>
+                <Route path="/" element={<Empty />} />
+                <Route path="/frame" element={<Frame />} />
+                </Routes>
+            </Router>
         </div>
-    )
+    );
 }
 
 export default App;
