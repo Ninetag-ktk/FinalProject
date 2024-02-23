@@ -12,10 +12,7 @@ public class HomeController {
     private UsersDAO uDAO;
 
 
-    public String mainPage() {
 
-        return null;
-    }
 
     @GetMapping("/login")
     public String login() {
