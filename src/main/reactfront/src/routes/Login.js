@@ -1,18 +1,8 @@
-import React, {useState, useEffect} from 'react';
-import axios from 'axios'
-import './App.css';
-import logo from './temp_logo.png'
-import {
-    createBrowserRouter,
-    createRoutesFromElements,
-    Route,
-    RouterProvider,
-    Routes,
-    Link
-} from "react-router-dom";
+import React,{useState} from "react";
+import logo from "../temp_logo.png";
+import App from "../App";
 
-
-function App() {
+const Login = () => {
 
     return (
         <div className={"login-main"}>
@@ -30,7 +20,10 @@ function App() {
                 <button>google계정으로 로그인</button>
             </div>
         </div>
-    )
-}
+    );
 
-export default App;
+
+
+
+};
+export default Login;
