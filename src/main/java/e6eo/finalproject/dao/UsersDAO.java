@@ -1,7 +1,7 @@
 package e6eo.finalproject.dao;
 
 import e6eo.finalproject.dto.UsersMapper;
-import e6eo.finalproject.entity.Users;
+import e6eo.finalproject.entity.UsersEntity;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -19,8 +19,8 @@ public class UsersDAO {
     @Autowired
     private final UsersMapper usersMapper;
 
-    public void userJoin(@RequestBody Users users){
-        Optional<Users> user = usersMapper.findById(users.getUserID());
+    public void userJoin(@RequestBody UsersEntity users){
+        Optional<UsersEntity> user = usersMapper.findById(users.getUserID());
 
         if (user.isEmpty()) {
             usersMapper.save(users);
