@@ -22,7 +22,7 @@ function Frame() {
                 <Link to="/center">Center</Link>
             </nav>
             <Routes>
-                <Route path="/leftBar" element={<LeftBar/>}/>
+                <Route path="/frame/leftBar" element={<LeftBar/>}/>
                 <Route path="/header" component={<Header/>}/>
                 <Route path="/center" component={<Center/>}/>
             </Routes>
