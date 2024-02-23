@@ -31,7 +31,7 @@ dependencies {
     implementation 'com.google.oauth-client:google-oauth-client-assembly:1.35.0'
     implementation 'org.apache.camel:camel-google-calendar:4.3.0'
     implementation 'com.google.apis:google-api-services-people:v1-rev20230103-2.0.0'
-    implementation 'com.google.apis:google-api-services-tasks:v1-rev20210709-2.0.0'
+    implementation 'com.google.apis:google-api-services-tasks:v1-rev20230401-2.0.0'
 }
 
 tasks.named('test') {
