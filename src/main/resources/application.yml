@@ -27,6 +27,11 @@ spring:
 #              - email
 #              - profile
 
-
 google:
-  appName: "E6EO_Diary"
+  auth: https://accounts.google.com/o/oauth2/auth
+  login: https://accounts.google.com
+  redirect: [http://localhost:8080/google/login/oauth_google_check, http://localhost:3000/google/login/oauth_google_check]
+  scope: [https://www.googleapis.com/auth/calendar, https://www.googleapis.com/auth/userinfo.email, https://www.googleapis.com/auth/userinfo.profile, https://www.googleapis.com/auth/tasks]
+  client:
+    - id: 463906750748-9buq9vk60mfu2qctpqi3cbidlnpqsrb2.apps.googleusercontent.com
+    - secret: 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

@@ -1,13 +1,12 @@
-import React, { useState, useEffect } from 'react';
-import axios from 'axios'
+import * as React from "react";
+import * as ReactDOM from "react-dom";
 import './App.css';
 import logo from './temp_logo.png'
 import {
     createBrowserRouter,
-    createRoutesFromElements,
-    Route,
     RouterProvider,
 } from "react-router-dom";
+import axios from 'axios'
 
 function App() {
 
