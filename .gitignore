@@ -35,12 +35,9 @@ out/
 
 ### VS Code ###
 .vscode/
+
+### InteliJ ###
 /tokens/StoredCredential
+/src/main/resources/static/static/css/
 /src/main/resources/static/static/js/
-/src/main/resources/static/static/js/main.148f3db0.js
-/src/main/resources/static/static/js/main.148f3db0.js.LICENSE.txt
-/src/main/resources/static/static/js/main.37288b65.js
-/src/main/resources/static/static/js/main.148f3db0.js.map
-/src/main/resources/static/static/js/main.37288b65.js.LICENSE.txt
-/src/main/resources/static/static/js/main.37288b65.js.map
-/src/main/resources/static/static/js/main.f9b5db4d.css.map
+/src/main/reactfront/build/static/
