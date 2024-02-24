@@ -36,8 +36,7 @@ out/
 ### VS Code ###
 .vscode/
 /tokens/StoredCredential
-/src/main/resources/static/asset-manifest.json
-/src/main/resources/static/static/js/*
+/src/main/resources/static/static/js/
 /src/main/resources/static/static/js/main.148f3db0.js
 /src/main/resources/static/static/js/main.148f3db0.js.LICENSE.txt
 /src/main/resources/static/static/js/main.37288b65.js
