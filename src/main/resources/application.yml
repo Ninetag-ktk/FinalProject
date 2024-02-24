@@ -27,42 +27,18 @@ spring:
 #              - email
 #              - profile
 #
-#"auth": "https://accounts.google.com/o/oauth2/auth"
-#"login": 'https://accounts.google.com'
-#"redirect": ["http://localhost:8080/googlelogin/oauth_google_check","http://localhost:3000/googlelogin/oauth_google_check"]
-#"scope": ["https://www.googleapis.com/auth/calendar", "https://www.googleapis.com/auth/userinfo.email", "https://www.googleapis.com/auth/userinfo.profile", "https://www.googleapis.com/auth/tasks"]
-#"client_id": "463906750748-9buq9vk60mfu2qctpqi3cbidlnpqsrb2.apps.googleusercontent.com"
-#"client_secret": "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"
 
 ---
 
-#google:
-#  auth:
-#    url: https://accounts.google.com/o/oauth2/auth
-#  login:
-#    url: https://accounts.google.com
-#  redirect:
-#    url:
-#      - http://localhost:8080/googlelogin/oauth_google_check
-#      - http://localhost:3000/googlelogin/oauth_google_check
-#  client:
-#    id: 463906750748-9buq9vk60mfu2qctpqi3cbidlnpqsrb2.apps.googleusercontent.com
-#    secret: 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
-#  scope:
-#    - https://www.googleapis.com/auth/calendar
-#    - https://www.googleapis.com/auth/userinfo.email
-#    - https://www.googleapis.com/auth/userinfo.profile
-#    - https://www.googleapis.com/auth/tasks
-
-google.auth.url: https://accounts.google.com/o/oauth2/auth
-google.login.url: https://accounts.google.com
-google.redirect.url:
-      - http://localhost:8080/googlelogin/oauth_google_check
-      - http://localhost:3000/googlelogin/oauth_google_check
-google.client.id: 463906750748-9buq9vk60mfu2qctpqi3cbidlnpqsrb2.apps.googleusercontent.com
-google.client.secret: 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
-google.scope:
-    - https://www.googleapis.com/auth/calendar
-    - https://www.googleapis.com/auth/userinfo.email
-    - https://www.googleapis.com/auth/userinfo.profile
-    - https://www.googleapis.com/auth/tasks
+google:
+  auth: https://accounts.google.com/o/oauth2/auth
+  login: https://accounts.google.com
+  redirect: http://localhost:8080/google/login/check
+  client:
+    id: 463906750748-9buq9vk60mfu2qctpqi3cbidlnpqsrb2.apps.googleusercontent.com
+    secret: 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
+  scope:
+    https://www.googleapis.com/auth/calendar,
+    https://www.googleapis.com/auth/userinfo.email,
+    https://www.googleapis.com/auth/userinfo.profile,
+    https://www.googleapis.com/auth/tasks
