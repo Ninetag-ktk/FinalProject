@@ -1,50 +1,43 @@
 package e6eo.finalproject.dao;
 
-import com.google.api.client.auth.oauth2.Credential;
 import com.google.api.client.extensions.java6.auth.oauth2.AuthorizationCodeInstalledApp;
 import com.google.api.client.extensions.jetty.auth.oauth2.LocalServerReceiver;
-import com.google.api.client.googleapis.auth.oauth2.*;
+import com.google.api.client.googleapis.auth.oauth2.GoogleAuthorizationCodeFlow;
+import com.google.api.client.googleapis.auth.oauth2.GoogleClientSecrets;
 import com.google.api.client.googleapis.javanet.GoogleNetHttpTransport;
 import com.google.api.client.http.javanet.NetHttpTransport;
-import com.google.api.client.json.*;
+import com.google.api.client.json.JsonFactory;
 import com.google.api.client.json.gson.GsonFactory;
 import com.google.api.client.util.Value;
 import com.google.api.client.util.store.FileDataStoreFactory;
-import com.google.api.services.people.v1.PeopleService;
+import com.google.api.services.calendar.CalendarScopes;
 import com.google.api.services.people.v1.PeopleServiceScopes;
-import com.google.api.services.people.v1.model.Person;
-import com.google.api.services.tasks.*;
-import com.google.api.services.calendar.*;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.security.GeneralSecurityException;
-import java.util.Arrays;
-import java.util.List;
+import com.google.api.services.tasks.TasksScopes;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.io.FileNotFoundException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.util.Arrays;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
 public class GoogleDAO {
 
-    @Value("${google.appName")
-    private String APPLICATION_NAME;
-
     @Autowired
     private static final JsonFactory JSON_FACTORY = GsonFactory.getDefaultInstance();
-
     @Autowired
     private static final String TOKENS_DIRECTORY_PATH = "tokens";
-
     @Autowired
     private static final List<String> SCOPES =
             Arrays.asList(CalendarScopes.CALENDAR, PeopleServiceScopes.USERINFO_EMAIL, PeopleServiceScopes.USERINFO_PROFILE, TasksScopes.TASKS); // 푸시할 계획이므로 CALENDER만 사용
-
     @Autowired
     private static final String CREDENTIALS_FILE_PATH = "/credentials.json";
+    @Value("${google.appName")
+    private String APPLICATION_NAME;
 
     public static String getAuthorization()
             throws Exception {
@@ -87,10 +80,6 @@ public class GoogleDAO {
 //        System.out.println("결과 확인" + itsme.getEmailAddresses().get(0).getValue());
 //
 //    }
-
-
-
-
 
 
 }
