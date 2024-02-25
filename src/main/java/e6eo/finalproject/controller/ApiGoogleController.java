@@ -70,7 +70,7 @@ public class ApiGoogleController {
 
         String reqUrl = googleAuthUrl + "?client_id=" + googleClientId + "&redirect_uri=" + googleRedirectUrl
                 + "&response_type=code" + "&scope=" + googleScope() +
-                "&access_type=offline";
+                "&access_type=offline&prompt=consent";
 
 //        log.info("myLog-LoginUrl : {}",googleLoginUrl);
 //        log.info("myLog-ClientId : {}",googleClientId);
@@ -78,7 +78,7 @@ public class ApiGoogleController {
 
         HttpHeaders headers = new HttpHeaders();
         headers.setLocation(URI.create(reqUrl));
-//        System.out.println(reqUrl);
+        log.info("reqUrl : {}", reqUrl);
 
         //1.reqUrl 구글로그인 창을 띄우고, 로그인 후 /login/oauth_google_check 으로 리다이렉션하게 한다.
         return new ResponseEntity<>(headers, HttpStatus.MOVED_PERMANENTLY);
