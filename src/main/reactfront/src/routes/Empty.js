@@ -8,6 +8,7 @@ import {
     BrowserRouter as Router,
     RouterProvider,
     Routes,
+    Outlet
 } from "react-router-dom";
 import Login from "./Login";
 import Create from "./Create";
