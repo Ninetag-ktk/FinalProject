@@ -10,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.Scanner;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -23,7 +24,7 @@ public class UsersDAO {
 
 
     public void userJoin(@RequestBody UsersEntity users){
-        Optional<UsersEntity> user = usersMapper.findById(users.getUserID());
+        Optional<UsersEntity> user = usersMapper.findById(users.getUserId());
 
 
         if (user.isEmpty()) {
@@ -31,6 +32,13 @@ public class UsersDAO {
             System.out.println("성공");
         } else {
             System.out.println("실패!");
+        }
+    }
+
+    public void findAll() {
+        List<UsersEntity> users = usersMapper.findAll();
+        for (UsersEntity user : users) {
+            System.out.println(user);
         }
     }
 
