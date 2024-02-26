@@ -1,9 +1,10 @@
 spring:
   datasource:
     driver-class-name: org.mariadb.jdbc.Driver
-    url: jdbc:mariadb://43.203.30.193:3306
+    url: jdbc:mariadb://43.203.30.193:3306/e6eo
     username: root
     password: 76435855
+    name: users
 
   data:
     mongodb:
@@ -11,6 +12,8 @@ spring:
       port: 27017
       username: root
       password: 76435855
+      authentication-database: e6eo
+
 
   elasticsearch:
     uris: https://web-elasticsearch-17xco2nlsjrhma1.sel5.cloudtype.app/

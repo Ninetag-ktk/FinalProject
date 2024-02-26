@@ -78,7 +78,7 @@ public class ApiGoogleController {
 
         HttpHeaders headers = new HttpHeaders();
         headers.setLocation(URI.create(reqUrl));
-        log.info("reqUrl : {}", reqUrl);
+        log.info("reqUrl : \r\n{}", reqUrl);
 
         //1.reqUrl 구글로그인 창을 띄우고, 로그인 후 /login/oauth_google_check 으로 리다이렉션하게 한다.
         return new ResponseEntity<>(headers, HttpStatus.MOVED_PERMANENTLY);
