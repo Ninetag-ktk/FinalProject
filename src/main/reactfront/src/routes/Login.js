@@ -32,11 +32,7 @@ const Login =() => {
                 <hr/>
                 <button>google계정으로 로그인</button>
             </div>
-            <div>
-                <Routes>
-                    <Route path="/create" element={<Create />} />
-                </Routes>
-            </div>
+
         </div>
     );
 };

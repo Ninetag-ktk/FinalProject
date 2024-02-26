@@ -14,19 +14,15 @@ import Login from "./Login";
 import Create from "./Create";
 
 
-function Empty() {
 
+export default function Empty(){
     return (
-        <div className="Empty">
-
-            <Routes>
-                <Route path="/" element={<Login />} />
-                <Route path="/create" element={<Create />} />
-            </Routes>
-
+        <div>
+            <Outlet />
         </div>
-
-    );
+    )
 }
 
-export default Empty;
+
+
+

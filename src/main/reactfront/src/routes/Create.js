@@ -17,15 +17,17 @@ export default function Create(){
     const navigate = useNavigate();
 
     const [text,setText] = useState('');
-    const handleSubmit = (e) => {
-        e.preventDefault();
-        setText('');
-        navigate(`/create/${text}`);
-    }
-    return(
-        <div>
-            create
 
+    return(
+        <div className={"join"}>
+            <form className={"joinForm1"} action={""}>
+                <input type={"text"} className={"inputtext"} placeholder={"ID"}/>
+                <button>ID 중복 확인</button>
+                <input type={"text"} className={"inputtext"} placeholder={"PW"}/>
+                <input type={"text"} className={"inputtext"} placeholder={"PW확인"}/>
+                <input type={"text"} className={"inputtext"} placeholder={"닉네임"}/>
+                
+            </form>
         </div>
     )
 }
