@@ -11,6 +11,7 @@ import {
     Link
 } from "react-router-dom";
 import Create from "./Create";
+import {Axios} from "axios";
 
 
 const Login =() => {
@@ -22,10 +23,10 @@ const Login =() => {
             </div>
 
             <div className={"logininput"}>
-                <form className={"loginForm1"} action={"naver.com"}>
+                <form className={"loginForm1"} action={"/user/test"} method={"post"}>
                     <input type={"text"} className={"inputtext"} placeholder={"ex)XXXXXX@xxxxxx.com"}/>
                     <input type={"text"} className={"inputtext"} placeholder={"password"}/>
-                    <button>로그인</button>
+                    <button type={"button"}>로그인</button>
 
                 </form>
                 <Link to="/create">회원가입</Link>
@@ -34,9 +35,10 @@ const Login =() => {
             </div>
             <div>
                 <Routes>
-                    <Route path="/create" element={<Create />} />
+                    <Route path="/create" element={<Create/>}/>
                 </Routes>
             </div>
+
         </div>
     );
 };
