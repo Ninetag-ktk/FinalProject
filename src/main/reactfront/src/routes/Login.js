@@ -1,13 +1,8 @@
-import React, {useState, useEffect} from 'react';
-import axios from 'axios'
+import React from 'react';
+
 import './App.css';
 import logo from './temp_logo.png'
 import {
-    createBrowserRouter,
-    createRoutesFromElements,
-    Route,
-    RouterProvider,
-    Routes,
     Link
 } from "react-router-dom";
 import Create from "./Create";
@@ -22,7 +17,7 @@ const Login =() => {
             </div>
 
             <div className={"logininput"}>
-                <form className={"loginForm1"} action={"naver.com"}>
+                <form className={"loginForm1"} action={"/main"}>
                     <input type={"text"} className={"inputtext"} placeholder={"ex)XXXXXX@xxxxxx.com"}/>
                     <input type={"text"} className={"inputtext"} placeholder={"password"}/>
                     <button>로그인</button>
