@@ -11,10 +11,9 @@ import {
     Link
 } from "react-router-dom";
 
-const Center = () =>{
+export default function center () {
     return (
         <h1>Center  입니다.</h1>
-    );
-};
+    )
+}
 
-export default Center;

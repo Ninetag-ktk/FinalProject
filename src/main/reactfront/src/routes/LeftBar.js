@@ -11,10 +11,14 @@ import {
     Link
 } from "react-router-dom";
 
-const LeftBar = () =>{
+export default function  LeftBar  () {
     return(
-        <h1>LeftBar 입니다.</h1>
-    );
-};
+        <div>
+            캘린더 카테고리 생성
+            
+            오늘 할일
+            일정
+        </div>
+    )
+}
 
-export default LeftBar;
