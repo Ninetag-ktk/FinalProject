@@ -122,6 +122,18 @@ const SignupForm = () => {
                     data-parsley-special="1"
                 />
             </div>
+            <div className="form-group">
+                <label htmlFor="password-confirm">비밀번호 확인:</label>
+                <input
+                    type="password"
+                    name="password-confirm"
+                    id="password-confirm"
+                    placeholder="비밀번호를 다시 입력하세요"
+                    data-parsley-required
+                    data-parsley-equalto="#password"
+                    data-parsley-error-message="비밀번호가 일치하지 않습니다."
+                />
+            </div>
             <button type="submit">회원가입</button>
         </form>
     );
