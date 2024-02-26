@@ -19,7 +19,7 @@ export default function Login ()  {
             <div className={"logininput"}>
                 <form className={"loginForm1"} action={"/main"}>
                     <input type={"text"} className={"inputtext"} placeholder={"ex)XXXXXX@xxxxxx.com"}/>
-                    <input type={"text"} className={"inputtext"} placeholder={"password"}/>
+                    <input type={"password"} className={"inputtext"} placeholder={"password"} />
                     <button id={"btn"}>로그인</button>
 
                 </form>
