@@ -12,7 +12,8 @@ spring:
       port: 27017
       username: root
       password: 76435855
-      authentication-database: e6eo
+      authentication-database: admin
+      database: e6eo
 
 
   elasticsearch:

@@ -9,19 +9,20 @@ import org.springframework.data.mongodb.core.mapping.Field;
 
 import java.util.List;
 
-@Document(collection = "CollectionList")
+@Document(collection = "collectionList")
 @Data
 @NoArgsConstructor
-public class ListsEntity {
+public class CollectionsEntity {
     @Id
-    @Field("UserId")
-    private String UserId;
-    @Field("CollectionIds")
-    private List<String> CollectionIds;
+    @Field("userId")
+    private String userId;
+    @Field("collectionIds")
+    private List<String> collectionIds;
 
     @Builder
-    public ListsEntity(String userId, List<String> collectionIds) {
-        this.UserId = userId;
-        this.CollectionIds = collectionIds;
+    public CollectionsEntity(String userId, List<String> collectionIds) {
+        this.userId = userId;
+        this.collectionIds = collectionIds;
     }
+
 }
