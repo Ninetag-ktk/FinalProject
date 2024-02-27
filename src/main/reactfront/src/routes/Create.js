@@ -1,7 +1,6 @@
 import React, {useState, useEffect} from 'react';
 import Parsley from 'parsleyjs';
 import $ from 'jquery';
-import './css/Create.css';
 import logo from './temp_logo.png';
 
 
@@ -30,10 +29,10 @@ export default function SignupForm() {
 
     return (
         <div className={"create"}>
-            <div className={"create logo"}>
-                <a href={"/"}> <img src={logo}/> </a>
 
-            </div>
+                <a href={"/"}> <img className={"createlogo"} src={logo}/> </a>
+
+
 
             <form id="signup-form" onSubmit={handleSubmit}>
                 <div className="form-group">
