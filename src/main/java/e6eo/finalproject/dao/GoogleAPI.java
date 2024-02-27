@@ -1,8 +1,5 @@
 package e6eo.finalproject.dao;
 
-import co.elastic.clients.elasticsearch.nodes.Http;
-import e6eo.finalproject.dto.ListMapper;
-import e6eo.finalproject.dto.PostsMapper;
 import e6eo.finalproject.dto.UsersMapper;
 import e6eo.finalproject.entity.UsersEntity;
 import e6eo.finalproject.entityGoogle.GoogleToken;
@@ -136,7 +133,6 @@ public class GoogleAPI {
                 .bodyToMono(googleUserInfo.class)
                 .block();
         log.info(userInfo.toString());
-
         return userInfo;
     }
 

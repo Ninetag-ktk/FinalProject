@@ -12,8 +12,6 @@ import org.springframework.data.mongodb.core.mapping.Field;
 
 @Document(collection = "Posts")
 @Data
-@Builder
-@AllArgsConstructor
 @NoArgsConstructor
 public class PostsEntity {
     @Id
@@ -30,4 +28,15 @@ public class PostsEntity {
     private String Contents;
     @Field("Etag")
     private String Etag;
+
+    @Builder
+    public PostsEntity(String id, String collectionId, String haveRepost, String startTime, String endTime, String contents, String etag) {
+        this.id = id;
+        this.CollectionId = collectionId;
+        this.HaveRepost = haveRepost;
+        this.StartTime = startTime;
+        this.EndTime = endTime;
+        this.Contents = contents;
+        this.Etag = etag;
+    }
 }

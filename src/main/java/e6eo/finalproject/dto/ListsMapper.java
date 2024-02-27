@@ -1,9 +1,8 @@
 package e6eo.finalproject.dto;
 
-import e6eo.finalproject.entity.ListEntity;
+import e6eo.finalproject.entity.ListsEntity;
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.stereotype.Repository;
 
-@Repository
-public interface ListMapper extends MongoRepository<ListEntity, String> {
+public interface ListsMapper extends MongoRepository<ListsEntity, String> {
 }
