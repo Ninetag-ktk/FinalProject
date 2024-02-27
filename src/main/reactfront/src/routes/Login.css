@@ -1,0 +1,176 @@
+/*.btn{*/
+/*  border-radius: 4px;*/
+/*  height: 44px;*/
+/*  font-size: 13px;*/
+/*  font-weight: 600;*/
+/*  text-transform: uppercase;*/
+/*  -webkit-transition : all 200ms linear;*/
+/*  transition: all 200ms linear;*/
+/*  padding: 0 30px;*/
+/*  letter-spacing: 1px;*/
+/*  display: -webkit-inline-flex;*/
+/*  display: -ms-inline-flexbox;*/
+/*  display: inline-flex;*/
+/*  -webkit-align-items: center;*/
+/*  -moz-align-items: center;*/
+/*  -ms-align-items: center;*/
+/*  align-items: center;*/
+/*  -webkit-justify-content: center;*/
+/*  -moz-justify-content: center;*/
+/*  -ms-justify-content: center;*/
+/*  justify-content: center;*/
+/*  -ms-flex-pack: center;*/
+/*  text-align: center;*/
+/*  border: none;*/
+/*  background-color: #ffeba7;*/
+/*  color: #102770;*/
+/*  box-shadow: 0 8px 24px 0 rgba(255,235,167,.2);*/
+/*}*/
+
+
+/*.loginForm1 {*/
+/*  display: flex;*/
+/*  flex-direction: column;*/
+/*}*/
+
+
+/*body {*/
+/*  font-family: Arial, sans-serif;*/
+/*  margin: 0;*/
+/*  padding: 0;*/
+/*  background-color: #f7f7f7;*/
+/*}*/
+
+/*.login-main {*/
+/*  display: flex;*/
+/*  flex-direction: column;*/
+/*  align-items: center;*/
+/*  justify-content: center;*/
+/*  height: 100vh;*/
+/*}*/
+
+/*.Logoclass {*/
+/*  margin-top: 50px;*/
+/*  margin-bottom: 50px;*/
+/*}*/
+
+/*.Logoclass img {*/
+/*  width: 200px;*/
+/*}*/
+
+/*.logininput {*/
+/*  display: flex;*/
+/*  flex-direction: column;*/
+/*  align-items: center;*/
+/*  justify-content: center;*/
+/*  width: 400px;*/
+/*  border: 1px solid #ddd;*/
+/*  border-radius: 10px;*/
+/*  padding: 20px;*/
+/*}*/
+
+/*.loginForm1 {*/
+/*  display: flex;*/
+/*  flex-direction: column;*/
+/*  align-items: center;*/
+/*  justify-content: center;*/
+/*  width: 100%;*/
+/*}*/
+
+/*.inputtext {*/
+/*  width: 300px;*/
+/*  height: 40px;*/
+/*  padding: 10px;*/
+/*  border: 1px solid #ddd;*/
+/*  border-radius: 5px;*/
+/*  margin-bottom: 10px;*/
+/*}*/
+
+/*#btn {*/
+/*  width: 300px;*/
+/*  height: 40px;*/
+/*  background-color: #000000;*/
+/*  color: #ffffff;*/
+/*  border: none;*/
+/*  border-radius: 5px;*/
+/*  cursor: pointer;*/
+/*}*/
+
+/*#btn:hover {*/
+/*  background-color: #333333;*/
+/*}*/
+
+/*.logininput a {*/
+/*  text-decoration: none;*/
+/*  color: #000000;*/
+/*  margin-top: 10px;*/
+/*}*/
+
+/*.logininput hr {*/
+/*  width: 100%;*/
+/*  margin-top: 10px;*/
+/*  margin-bottom: 10px;*/
+/*}*/
+
+
+
+.login-main {
+  display: flex;
+  align-items: center;
+  height: 100vh;
+  justify-content: center;
+}
+
+/* 600px보다 넓은 화면에 대한 스타일 */
+@media screen and (max-width: 750px) {
+  .login-main {
+    flex-direction: column;
+    align-items: center;
+  }
+}
+
+
+
+.Logoclass {
+  margin-right: 0px; /* 로고를 오른쪽에 정렬 */
+  margin-bottom: 20px;
+}
+
+.logininput {
+
+  max-width: 400px; /* 로그인 입력창의 최대 너비 설정 */
+}
+
+.loginForm1 {
+  margin-bottom: 20px;
+}
+
+.inputtext {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+
+#btn {
+  width: 100%;
+  padding: 10px;
+  background-color: #2B2F33;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+#btn:hover {
+  background-color: #0056b3;
+}
+
+hr {
+  margin: 20px 0;
+  border: 0;
+  border-top: 1px solid #ccc;
+}
+

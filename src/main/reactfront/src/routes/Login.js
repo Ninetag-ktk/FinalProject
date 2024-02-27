@@ -1,6 +1,6 @@
 import React from 'react';
 
-import './App.css';
+import './Login.css';
 import logo from './temp_logo.png'
 import {
     Link
@@ -18,12 +18,14 @@ export default function Login ()  {
 
             <div className={"logininput"}>
                 <form className={"loginForm1"} action={"/main"}>
-                    <input type={"text"} className={"inputtext"} placeholder={"ex)XXXXXX@xxxxxx.com"}/>
+                    <input type={"text"} className={"inputtext"} placeholder={"email"}/>
                     <input type={"password"} className={"inputtext"} placeholder={"password"} />
                     <button id={"btn"}>로그인</button>
 
+                </form >
+                <form className={"loginForm1"} action={"/create"}>
+                <button id={"btn"} onClick={'?/create'}>회원가입</button>
                 </form>
-                <Link to="/create">회원가입</Link>
                 <hr/>
                 <button id={"btn"}>google계정으로 로그인</button>
             </div>

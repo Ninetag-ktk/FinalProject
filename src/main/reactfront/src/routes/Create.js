@@ -51,6 +51,7 @@
 import React, { useState , useEffect } from 'react';
 import Parsley from 'parsleyjs';
 import $ from 'jquery';
+import './Create.css';
 
 
 const SignupForm = () => {
@@ -66,8 +67,7 @@ const SignupForm = () => {
             return;
         }
 
-        // 회원가입 처리를 위해 백엔드 API에 양식 데이터 제출
-        // ...
+
     };
 
     useEffect(() => {
