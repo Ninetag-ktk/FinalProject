@@ -68,7 +68,9 @@ export default function Login() {
                         </div>
                         <button className={"btn"} type={"submit"} onClick={handleLogin}>로그인</button>
                     </div>
+                    <a href={"/create"}>
                     <button className={"btn"}>회원가입</button>
+                        </a>
                     <hr/>
                     <button className={"btn"} onClick={handleGoogleLogin}>google계정으로 로그인</button>
                 </div>
