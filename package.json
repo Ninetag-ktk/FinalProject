@@ -1,5 +1,6 @@
 {
   "dependencies": {
+    "http-proxy-middleware": "^2.0.6",
     "parsleyjs": "^2.9.2"
   }
 }
