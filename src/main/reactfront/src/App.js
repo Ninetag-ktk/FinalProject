@@ -7,7 +7,7 @@ import './App.css';
 import Empty from './routes/Empty'
 import Login from "./routes/Login";
 import Create from "./routes/Create";
-import Main from "./routes/./main";
+import Main from "./routes/Main";
 import Center from "./routes/Center";
 const router = createBrowserRouter([
     {

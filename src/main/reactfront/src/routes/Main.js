@@ -2,10 +2,10 @@ import React from "react";
 import  { Outlet } from "react-router-dom";
 import Header from "./Header";
 import LeftBar from "./LeftBar";
-export default function Frame() {
+export default function Main() {
 
     return (
-        <div className={"Frame"}>
+        <div className={"Main"}>
             <Header />
             <LeftBar />
             <Outlet />
