@@ -1,47 +1,44 @@
 package e6eo.finalproject.dao;
 
 import e6eo.finalproject.dto.UsersMapper;
-import e6eo.finalproject.entity.Users;
+
+import e6eo.finalproject.entity.UsersEntity;
+
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.Scanner;
+import org.springframework.web.bind.annotation.RequestBody;
 
 @Service
 @Transactional
 @RequiredArgsConstructor
 public class UsersDAO {
-
+    @Autowired
     private final UsersMapper usersMapper;
 
-    public void signup() {
 
-        Scanner s = new Scanner(System.in);
-        System.out.print("아이디 입력 : ");
-        String id = s.next();
-        System.out.print("비밀번호 입력 : ");
-        String pw = s.next();
-        System.out.print("닉네임 입력 : ");
-        String name = s.next();
+    public void userJoin(@RequestBody UsersEntity users){
+        Optional<UsersEntity> user = usersMapper.findById(users.getUserId());
 
-        Users user = Users.builder()
-                .UserID(id)
-                .PW(pw)
-                .NickName(name)
-                .InnerID(null)
-                .build();
 
-        Optional<Users> users = usersMapper.findById(id);
-
-        if (users.isEmpty()) {
-            usersMapper.save(user);
+        if (user.isEmpty()) {
+            usersMapper.save(users);
             System.out.println("성공");
         } else {
             System.out.println("실패!");
+        }
+    }
+
+    public void findAll() {
+        List<UsersEntity> users = usersMapper.findAll();
+        for (UsersEntity user : users) {
+            System.out.println(user);
         }
     }
 
