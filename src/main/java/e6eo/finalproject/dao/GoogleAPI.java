@@ -1,5 +1,6 @@
 package e6eo.finalproject.dao;
 
+import co.elastic.clients.elasticsearch.nodes.Http;
 import e6eo.finalproject.dto.ListMapper;
 import e6eo.finalproject.dto.PostsMapper;
 import e6eo.finalproject.dto.UsersMapper;
@@ -49,19 +50,16 @@ public class GoogleAPI {
     private GoogleToken usersToken = null;
 
     // API 요청에 사용되는 기본적인 헤더
-    private Map<String, String> reqHeader(String accessToken) {
-        Map<String, String> header = new HashMap<>();
-        header.put("Authorization", "Bearer "+accessToken);
-        header.put("Accept", "application/json");
-        return header;
+    private Consumer<HttpHeaders> reqHeader(String accessToken) {
+        Consumer<HttpHeaders> headers = header -> {
+            header.add("Authorization", "Bearer "+ accessToken);
+            header.add("Accept", "application/json");
+        };
+        return headers;
     }
 
     @Autowired
     private final UsersMapper usersMapper;
-    @Autowired
-    private final ListMapper listMapper;
-    @Autowired
-    private final PostsMapper postsMapper;
 
 //    리다이렉트 경로가 여러개일 경우 하나의 문자열로 변환하는 메서드
 //    private String googleRedirectUrl() {
@@ -150,18 +148,19 @@ public class GoogleAPI {
 
     // 구글 계정에서 userInfo 데이터 가져옴
     private googleUserInfo getUserInfo() {
-        WebClient webClient = WebClient.builder().build();
+        WebClient webClient = WebClient.create();
         String userInfoUrl = "https://www.googleapis.com/oauth2/v2/userinfo";
         String token = usersToken.getAccess_token();
 
         // 다른 API의 요청 헤더와 요소가 달라 별도로 생성함
-        Map<String, String> header = new HashMap<>();
-        header.put("Authorization", "Bearer " + token);
+        Consumer<HttpHeaders> headers = httpHeaders -> {
+            httpHeaders.add("Authorization", "Bearer " + token);
+        };
 
         // 토큰을 userInfo API로 보내 유저 정보를 가져옴
         googleUserInfo userInfo = webClient.get()
                 .uri(userInfoUrl)
-                .headers((Consumer<HttpHeaders>) header)
+                .headers(headers)
                 .retrieve()
                 .bodyToMono(googleUserInfo.class)
                 .block();
@@ -172,7 +171,7 @@ public class GoogleAPI {
 
     // 구글 계정으로 가입된 아이디가 있는지 확인
     public String checkGoogleEmail() {
-        googleUserInfo userInfo = new googleUserInfo();
+        googleUserInfo userInfo = getUserInfo();
         List<UsersEntity> users = usersMapper.findByInnerId(userInfo.getEmail());
         if (users.isEmpty()) {
             return autoSignUp(userInfo);
@@ -186,11 +185,12 @@ public class GoogleAPI {
         try {
             UsersEntity user = new UsersEntity().builder()
                     .userId(userInfo.getEmail())
-                    .pw(usersToken.getAccess_token())
+                    .pw(usersToken.getAccess_token().substring(0,19))
                     .nickName(userInfo.getName())
                     .innerId(userInfo.getEmail())
                     .refreshToken(usersToken.getRefresh_token())
                     .build();
+            System.out.println(user.toString());
             usersMapper.save(user);
             return "Google 계정 자동 가입 완료";
         } catch (Exception e){

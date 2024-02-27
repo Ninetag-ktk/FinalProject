@@ -26,6 +26,5 @@ public class UsersEntity {
         this.nickName = nickName;
         this.innerId = innerId;
         this.refreshToken = refreshToken;
-
     }
 }
