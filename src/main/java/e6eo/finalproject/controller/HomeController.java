@@ -16,8 +16,9 @@ public class HomeController {
 
 
 
+
     @GetMapping("/main")
-    public String login(@RequestParam(value = "id", defaultValue = "") String id, @RequestParam(value = "pw", defaultValue = "") String pw) {
+    public String login(@RequestParam(value = "id", defaultValue = "") String id, @RequestParam(name = "pw", defaultValue = "") String pw) {
         System.out.println("a");
         System.out.println(id);
         System.out.println(pw);
