@@ -17,5 +17,6 @@ public class ListEntity {
     @Id
     @Field("UserId")
     private String UserId;
+    @Field("CollectionIds")
     private String CollectionIds;
 }

@@ -1,26 +1,33 @@
 package e6eo.finalproject.dao;
 
-import e6eo.finalproject.entity.GoogleLoginResponse;
-import e6eo.finalproject.entity.GoogleOAuthToken;
+import e6eo.finalproject.dto.ListMapper;
+import e6eo.finalproject.dto.PostsMapper;
+import e6eo.finalproject.dto.UsersMapper;
+import e6eo.finalproject.entity.UsersEntity;
+import e6eo.finalproject.entityGoogle.GoogleToken;
+import e6eo.finalproject.entityGoogle.googleUserInfo;
 import jakarta.annotation.PostConstruct;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.client.RestTemplate;
-import org.springframework.web.util.UriComponentsBuilder;
+import org.springframework.web.reactive.function.client.WebClient;
 
 import java.net.URI;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 @Slf4j
 @Service
+@RequiredArgsConstructor
 public class GoogleAPI {
 //  출처: https://ecolumbus.tistory.com/169 [슬기로운 개발자 생활:티스토리]
     @Value("${google.auth}")
@@ -38,6 +45,23 @@ public class GoogleAPI {
     private String googleClientSecret;
     @Value("${google.scope}")
     private List<String> googleScopeLs;
+
+    private GoogleToken usersToken = null;
+
+    // API 요청에 사용되는 기본적인 헤더
+    private Map<String, String> reqHeader(String accessToken) {
+        Map<String, String> header = new HashMap<>();
+        header.put("Authorization", "Bearer "+accessToken);
+        header.put("Accept", "application/json");
+        return header;
+    }
+
+    @Autowired
+    private final UsersMapper usersMapper;
+    @Autowired
+    private final ListMapper listMapper;
+    @Autowired
+    private final PostsMapper postsMapper;
 
 //    리다이렉트 경로가 여러개일 경우 하나의 문자열로 변환하는 메서드
 //    private String googleRedirectUrl() {
@@ -96,7 +120,7 @@ public class GoogleAPI {
 
     // 해당 메서드는 {http://localhost:8080/google/check} 경로에 대해서만 작동하도록 되어있음
     // 경로를 수정해야할 경우 요청할 것
-    public GoogleOAuthToken getGoogleAuthCheck(@RequestParam(value = "code") String authCode) throws Exception {
+    public GoogleToken getGoogleToken(@RequestParam(value = "code") String authCode) throws Exception {
 // 출처 : https://dingdingmin-back-end-developer.tistory.com/entry/SpringBoot-%EC%8A%A4%ED%94%84%EB%A7%81%EB%B6%80%ED%8A%B8-Spring-Security-Oauth2-6-Google-Token-%ED%99%9C%EC%9A%A9
         // 토큰 생성 승인 코드가 받아와졌는지 확인
         // System.out.println(authCode);
@@ -114,23 +138,64 @@ public class GoogleAPI {
         RestTemplate restTemplate = new RestTemplate();
 
         //3.토큰요청을 한다.
-        ResponseEntity<GoogleOAuthToken> apiResponse = restTemplate.postForEntity(TOKEN_REQ, token_params, GoogleOAuthToken.class);
+        ResponseEntity<GoogleToken> apiResponse = restTemplate.postForEntity(TOKEN_REQ, token_params, GoogleToken.class);
         //4.받은 토큰을 토큰객체에 저장
-        GoogleOAuthToken googleOAuthToken = apiResponse.getBody();
+        GoogleToken googleToken = apiResponse.getBody();
 
         // 토큰이 잘 받아와졌는지 확인
-        log.info("accessTokenBody\r\n{}", googleOAuthToken);
-
-        String googleToken = googleOAuthToken.getRefresh_token();
-
-        //5.받은 토큰을 구글에 보내 유저정보를 얻는다.
-        String requestUrl = UriComponentsBuilder.fromHttpUrl(googleAuthUrl + "/tokeninfo").queryParam("id_token", googleToken).toUriString();
-//
-//        //6.허가된 토큰의 유저정보를 결과로 받는다.
-//        String resultJson = restTemplate.getForObject(requestUrl, String.class);
-//        System.out.println(resultJson);
-        return googleOAuthToken;
+        log.info("accessTokenBody\r\n{}", googleToken);
+        usersToken = googleToken;
+        return googleToken;
     }
 
+    // 구글 계정에서 userInfo 데이터 가져옴
+    private googleUserInfo getUserInfo() {
+        WebClient webClient = WebClient.builder().build();
+        String userInfoUrl = "https://www.googleapis.com/oauth2/v2/userinfo";
+        String token = usersToken.getAccess_token();
 
+        // 다른 API의 요청 헤더와 요소가 달라 별도로 생성함
+        Map<String, String> header = new HashMap<>();
+        header.put("Authorization", "Bearer " + token);
+
+        // 토큰을 userInfo API로 보내 유저 정보를 가져옴
+        googleUserInfo userInfo = webClient.get()
+                .uri(userInfoUrl)
+                .headers((Consumer<HttpHeaders>) header)
+                .retrieve()
+                .bodyToMono(googleUserInfo.class)
+                .block();
+        log.info(userInfo.toString());
+
+        return userInfo;
+    }
+
+    // 구글 계정으로 가입된 아이디가 있는지 확인
+    public String checkGoogleEmail() {
+        googleUserInfo userInfo = new googleUserInfo();
+        List<UsersEntity> users = usersMapper.findByInnerId(userInfo.getEmail());
+        if (users.isEmpty()) {
+            return autoSignUp(userInfo);
+        } else {
+            return "이미 가입된 계정";
+        }
+    }
+    
+    // 자동 가입 처리
+    private String autoSignUp(googleUserInfo userInfo) {
+        try {
+            UsersEntity user = new UsersEntity().builder()
+                    .userId(userInfo.getEmail())
+                    .pw(usersToken.getAccess_token())
+                    .nickName(userInfo.getName())
+                    .innerId(userInfo.getEmail())
+                    .refreshToken(usersToken.getRefresh_token())
+                    .build();
+            usersMapper.save(user);
+            return "Google 계정 자동 가입 완료";
+        } catch (Exception e){
+            e.printStackTrace();
+            return "가입 실패";
+        }
+    }
 }

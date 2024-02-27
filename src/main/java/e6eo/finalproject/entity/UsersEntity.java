@@ -5,8 +5,6 @@ import lombok.*;
 
 @Entity(name = "users")
 @Data
-@Builder
-@AllArgsConstructor
 @NoArgsConstructor
 public class UsersEntity {
     @Id
@@ -20,4 +18,14 @@ public class UsersEntity {
     private String innerId;
     @Column(name = "refresh_token", nullable = true)
     private String refreshToken;
+
+    @Builder
+    public UsersEntity(String userId, String pw, String nickName, String innerId, String refreshToken){
+        this.userId = userId;
+        this.pw = pw;
+        this.nickName = nickName;
+        this.innerId = innerId;
+        this.refreshToken = refreshToken;
+
+    }
 }

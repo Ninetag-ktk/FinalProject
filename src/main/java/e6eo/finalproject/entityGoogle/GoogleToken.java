@@ -1,4 +1,4 @@
-package e6eo.finalproject.entity;
+package e6eo.finalproject.entityGoogle;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -7,7 +7,7 @@ import lombok.Data;
 @Data
 @Builder
 @AllArgsConstructor
-public class GoogleOAuthToken {
+public class GoogleToken {
     private String access_token;
     private int expires_in;
     private String refresh_token;
