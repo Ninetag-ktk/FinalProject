@@ -1,10 +1,9 @@
 
 #root {
-  text-align: center;
+  height: 100%;
+  background-color: #E8F9FF;
   display: flex;
   justify-content: center;
-  height: 3000px;
-
 }
 
 
