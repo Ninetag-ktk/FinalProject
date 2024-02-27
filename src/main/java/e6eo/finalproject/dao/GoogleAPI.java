@@ -84,6 +84,62 @@ public class GoogleAPI {
         return scope.toString();
     }
 
+    /////////////////////////////////////////
+    // 작동 메서드
+
+    // 구글 계정으로 가입된 아이디가 있는지 확인
+    public String checkGoogleEmail() {
+        googleUserInfo userInfo = getUserInfo();
+        List<UsersEntity> users = usersMapper.findByInnerId(userInfo.getEmail());
+        if (users.isEmpty()) {
+            return doAutoSignUp(userInfo);
+        } else {
+            return "이미 가입된 계정";
+        }
+    }
+
+    // 자동 가입 처리
+    private String doAutoSignUp(googleUserInfo userInfo) {
+        try {
+            UsersEntity user = new UsersEntity().builder()
+                    .userId(userInfo.getEmail())
+                    .pw(usersToken.getAccess_token().substring(0,19))
+                    .nickName(userInfo.getName())
+                    .innerId(userInfo.getEmail())
+                    .refreshToken(usersToken.getRefresh_token())
+                    .build();
+            System.out.println(user.toString());
+            usersMapper.save(user);
+            return "Google 계정 자동 가입 완료";
+        } catch (Exception e){
+            e.printStackTrace();
+            return "가입 실패";
+        }
+    }
+
+    // 구글 계정에서 userInfo 데이터 가져옴
+    private googleUserInfo getUserInfo() {
+        WebClient webClient = WebClient.create();
+        String userInfoUrl = "https://www.googleapis.com/oauth2/v2/userinfo";
+        String token = usersToken.getAccess_token();
+
+        // 다른 API의 요청 헤더와 요소가 달라 별도로 생성함
+        Consumer<HttpHeaders> headers = httpHeaders -> {
+            httpHeaders.add("Authorization", "Bearer " + token);
+        };
+
+        // 토큰을 userInfo API로 보내 유저 정보를 가져옴
+        googleUserInfo userInfo = webClient.get()
+                .uri(userInfoUrl)
+                .headers(headers)
+                .retrieve()
+                .bodyToMono(googleUserInfo.class)
+                .block();
+        log.info(userInfo.toString());
+
+        return userInfo;
+    }
+
     // google 로그인 페이지로 이동 및 동의화면 출력하는 메서드
     // 해당 부분이 완료되면 {http://localhost:8080/google/check?code=**&scope=**} 형식으로 Response를 받음
     @PostConstruct
@@ -146,56 +202,18 @@ public class GoogleAPI {
         return googleToken;
     }
 
-    // 구글 계정에서 userInfo 데이터 가져옴
-    private googleUserInfo getUserInfo() {
-        WebClient webClient = WebClient.create();
-        String userInfoUrl = "https://www.googleapis.com/oauth2/v2/userinfo";
-        String token = usersToken.getAccess_token();
-
-        // 다른 API의 요청 헤더와 요소가 달라 별도로 생성함
-        Consumer<HttpHeaders> headers = httpHeaders -> {
-            httpHeaders.add("Authorization", "Bearer " + token);
-        };
-
-        // 토큰을 userInfo API로 보내 유저 정보를 가져옴
-        googleUserInfo userInfo = webClient.get()
-                .uri(userInfoUrl)
-                .headers(headers)
-                .retrieve()
-                .bodyToMono(googleUserInfo.class)
-                .block();
-        log.info(userInfo.toString());
-
-        return userInfo;
-    }
-
-    // 구글 계정으로 가입된 아이디가 있는지 확인
-    public String checkGoogleEmail() {
-        googleUserInfo userInfo = getUserInfo();
-        List<UsersEntity> users = usersMapper.findByInnerId(userInfo.getEmail());
-        if (users.isEmpty()) {
-            return autoSignUp(userInfo);
-        } else {
-            return "이미 가입된 계정";
-        }
-    }
-    
-    // 자동 가입 처리
-    private String autoSignUp(googleUserInfo userInfo) {
-        try {
-            UsersEntity user = new UsersEntity().builder()
-                    .userId(userInfo.getEmail())
-                    .pw(usersToken.getAccess_token().substring(0,19))
-                    .nickName(userInfo.getName())
-                    .innerId(userInfo.getEmail())
-                    .refreshToken(usersToken.getRefresh_token())
-                    .build();
-            System.out.println(user.toString());
-            usersMapper.save(user);
-            return "Google 계정 자동 가입 완료";
-        } catch (Exception e){
-            e.printStackTrace();
-            return "가입 실패";
-        }
-    }
+//    public GoogleToken getNewAccessToken() {
+//        세션에 있는 User의 데이터의 ID를 사용해서 refresh_token 데이터를 받아오고
+//        String TOKEN_REQ = "https://oauth2.googleapis.com/token"
+//        Map<String, Object> token_params = new HashMap<>();
+//        token_params.put("client_id", googleClientId);
+//        token_params.put("client_secret", googleClientSecret);
+//        token_params.put("refresh_token", users.getRefreshToken());
+//        token_params.put("grant_type", "refresh_token");
+//        RestTemplate restTemplate = new RestTemplate();
+//        ResponseEntity<GoogleToken> apiResponse = restTemplate.postForEntity(TOKEN_REQ, token_params, GoogleToken.class);
+//        GoogleToken googleToken = apiResponse.getBody();
+//        log.info("accessToken\r\n{}", googleToken.getAccessToken());
+//        return googleToken;
+//    }
 }
