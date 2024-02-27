@@ -1,7 +1,9 @@
 
 #root {
-  height: 950px;
+  height: 100%;
   background-color: #E8F9FF;
+  display: flex;
+  justify-content: center;
 }
 
 

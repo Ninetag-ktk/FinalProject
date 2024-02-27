@@ -1,11 +1,8 @@
 import React from 'react';
 
-import './Login.css';
+import './css/Login.css';
 import logo from './temp_logo.png'
-import {
-    Link
-} from "react-router-dom";
-import Create from "./Create";
+
 
 
 export default function Login ()  {
@@ -24,7 +21,7 @@ export default function Login ()  {
 
                 </form >
                 <form className={"loginForm1"} action={"/create"}>
-                <button id={"btn"} onClick={'?/create'}>회원가입</button>
+                <button id={"btn"}>회원가입</button>
                 </form>
                 <hr/>
                 <button id={"btn"}>google계정으로 로그인</button>
