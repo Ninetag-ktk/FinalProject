@@ -1,9 +1,9 @@
 package e6eo.finalproject.controller;
 
 import e6eo.finalproject.dao.UsersDAO;
+import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 public class HomeController {
@@ -14,9 +14,13 @@ public class HomeController {
 
 
 
-    @GetMapping("/login")
-    public String login() {
 
-        return null;
+    @PostMapping("/login")
+    public String login(@RequestBody Map<String, String> body) {
+        uDAO.idCheck(body.get("id"));
+        System.out.println("a");
+        System.out.println(body.get("id"));
+        System.out.println(body.get("pw"));
+        return "a";
     }
 }
