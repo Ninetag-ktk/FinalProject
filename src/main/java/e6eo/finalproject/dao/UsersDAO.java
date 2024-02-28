@@ -6,6 +6,7 @@ import e6eo.finalproject.entity.UsersEntity;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Example;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -21,6 +22,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 public class UsersDAO {
     @Autowired
     private final UsersMapper usersMapper;
+    private UsersEntity usersEntity;
 
 
     public void userJoin(@RequestBody UsersEntity users){
@@ -35,11 +37,38 @@ public class UsersDAO {
         }
     }
 
+    public void idCheck(String id){
+//        List<UsersEntity> user = usersMapper.findByInnerId(id);
+        Optional<UsersEntity> user = usersMapper.findById(id);
+        System.out.println(user);
+        if (user.isEmpty()) {
+            System.out.println("로그인 실패");
+        } else {
+            System.out.println("로그인 성공");
+        }
+    }
+
+    public void  pwCheck(String id, String pw){
+        List<UsersEntity> user = usersMapper.findByInnerId(id);
+
+
+//        for (UsersEntity u : user) {
+//            u.getPw();
+//        }
+
+    }
+
+
+
     public void findAll() {
         List<UsersEntity> users = usersMapper.findAll();
         for (UsersEntity user : users) {
             System.out.println(user);
         }
+    }
+
+    public void makeSession() {
+
     }
 
 
