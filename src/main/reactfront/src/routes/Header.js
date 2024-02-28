@@ -1,8 +1,5 @@
-import React,{ useState, useContext } from "react";
+import React from "react";
 import logo from './nobglogo.png';
-import Main from "./Main";
-import { MyContext } from "./Main";
-
 
 
 const Page1 = () => {
@@ -14,8 +11,10 @@ const Page2 = () => {
 };
 
 
-export default function Header () {
-    const { isMain, handleToggle } = useContext(MyContext);
+export default function Header({isChecked, setIsChecked}) {
+    const handleToggle = () => {
+        setIsChecked(!isChecked);
+    };
     return (
         <div className={"header"}>
             <a href={"/main"}> <img className={"logo"} src={logo}/></a>
@@ -23,10 +22,10 @@ export default function Header () {
             yyyy.MM
             <button id={"btnnextmonth"}>→</button>
             <div>
-            <label className={"toggleSwitch"}>
-                    <input type="checkbox" onChange={handleToggle} />
-                <span>캘린더/검색</span>
-            </label>
+                <label className={"toggleSwitch"}>
+                    <input type="checkbox" checked={isChecked} onChange={handleToggle}/>
+                    <span>캘린더/검색</span>
+                </label>
 
             </div>
         </div>

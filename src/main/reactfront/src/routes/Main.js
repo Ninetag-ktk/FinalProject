@@ -1,24 +1,21 @@
-import React, {useState, createContext} from "react";
-import {Outlet, useLocation} from "react-router-dom";
+import React, {useEffect, useState} from "react";
+import {Outlet} from "react-router-dom";
 import Header from "./Header";
 import LeftBar from "./LeftBar";
 import Search from "./Search";
 
 
 export default function Main() {
-    const MyContext = createContext(null);
-    const [isMain, setIsMain] = useState(true);
-
-    function handleToggle() {
-        setIsMain(!isMain);
-    }
-
+    const [isChecked, setIsChecked] = useState(false);
+    useEffect(() => {
+        console.log(`isChecked: ${isChecked}`);
+    }, [isChecked]);
     return (
         <div className={"Main"}>
-            <Header/>
+            <Header isChecked={isChecked} setIsChecked={setIsChecked}/>
             <LeftBar/>
             <Outlet>
-                {isMain ? <Main/> : <Search/>}
+                {Header.isChecked ? <Main/> : <Search/>}
             </Outlet>
         </div>
     )
