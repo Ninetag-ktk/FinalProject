@@ -49,12 +49,14 @@ public class UsersDAO {
     }
 
     public void  pwCheck(String id, String pw){
-        List<UsersEntity> user = usersMapper.findByInnerId(id);
-
-
-//        for (UsersEntity u : user) {
-//            u.getPw();
-//        }
+        Optional<UsersEntity> user = usersMapper.findById(id);
+        if (user.isPresent()) {
+            if (pw.equals(user.get().getPw())) {
+                System.out.println("비번일치");
+            } else {
+                System.out.println("비번불일치");
+            }
+        }
 
     }
 

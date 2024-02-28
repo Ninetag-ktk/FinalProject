@@ -18,6 +18,7 @@ public class HomeController {
     @PostMapping("/login")
     public String login(@RequestBody Map<String, String> body) {
         uDAO.idCheck(body.get("id"));
+        uDAO.pwCheck(body.get("id"), body.get("pw"));
         System.out.println("a");
         System.out.println(body.get("id"));
         System.out.println(body.get("pw"));
