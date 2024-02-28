@@ -2,20 +2,25 @@ import React,{ useState, useContext } from "react";
 import logo from './nobglogo.png';
 import Main from "./Main";
 import { MyContext } from "./Main";
+import { useNavigate  } from "react-router-dom";
 
 
-
-const Page1 = () => {
-    return <h1>페이지 1</h1>;
-};
-
-const Page2 = () => {
-    return <h1>페이지 2</h1>;
-};
 
 
 export default function Header () {
     const { isMain, handleToggle } = useContext(MyContext);
+    const navigate = useNavigate();
+    
+    const handleCheckboxChange = (event) => {
+        handleToggle();
+        if (event.target.checked) {
+            navigate("/main/search");
+        } else {
+            
+            navigate("/main");
+        }
+      };
+
     return (
         <div className={"header"}>
             <a href={"/main"}> <img className={"logo"} src={logo}/></a>
@@ -24,7 +29,7 @@ export default function Header () {
             <button id={"btnnextmonth"}>→</button>
             <div>
             <label className={"toggleSwitch"}>
-                    <input type="checkbox" onChange={handleToggle} />
+                    <input type="checkbox" checked={isMain} onChange={handleCheckboxChange} />
                 <span>캘린더/검색</span>
             </label>
 
