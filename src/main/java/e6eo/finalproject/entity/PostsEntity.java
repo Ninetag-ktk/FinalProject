@@ -10,22 +10,22 @@ import org.springframework.data.mongodb.core.mapping.Field;
 public class PostsEntity {
     @Id
     private String id;
-    @Field("collectionId")
-    private String collectionId;
-    @Field("haveRepost")
+    @Field(name = "categoryId")
+    private String categoryId;
+    @Field(name = "haveRepost")
     private String haveRepost;
-    @Field("startTime")
+    @Field(name = "startTime")
     private String startTime;
-    @Field("endTime")
+    @Field(name = "endTime")
     private String endTime;
-    @Field("contents")
+    @Field(name = "contents")
     private String contents;
-    @Field("etag")
+    @Field(name = "etag")
     private String etag;
 
     @Builder
-    public PostsEntity(String collectionId, String haveRepost, String startTime, String endTime, String contents, String etag) {
-        this.collectionId = collectionId;
+    public PostsEntity(String categoryId, String haveRepost, String startTime, String endTime, String contents, String etag) {
+        this.categoryId = categoryId;
         this.haveRepost = haveRepost;
         this.startTime = startTime;
         this.endTime = endTime;

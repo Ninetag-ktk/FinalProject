@@ -1,7 +1,7 @@
 package e6eo.finalproject.controller;
 
+import com.google.gson.JsonObject;
 import e6eo.finalproject.dao.GoogleAPI;
-import e6eo.finalproject.dao.GoogleDAO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,9 +17,6 @@ public class GoogleController {
     @Autowired
     private GoogleAPI googleAPI;
 
-    @Autowired
-    private GoogleDAO gDao;
-
     @GetMapping("/login")
     public ResponseEntity<?> googleOAuth() throws Exception {
         return new ResponseEntity<>(googleAPI.getGoogleAuthUrl(), HttpStatus.MOVED_PERMANENTLY);
@@ -32,17 +29,9 @@ public class GoogleController {
         return result;
     }
 
-
-    @GetMapping("/request")
-    public String googleUser() {
-        String re = null;
-        try {
-            re = gDao.getAuthorization();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        return re;
+    @GetMapping("/test")
+    public JsonObject googleTest() {
+        return googleAPI.getCalendarList();
     }
 
 

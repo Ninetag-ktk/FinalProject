@@ -1,5 +1,8 @@
 package e6eo.finalproject.dao;
 
+import com.google.gson.JsonObject;
+import e6eo.finalproject.dto.CategoryMapper;
+import e6eo.finalproject.dto.PostsMapper;
 import e6eo.finalproject.dto.UsersMapper;
 import e6eo.finalproject.entity.UsersEntity;
 import e6eo.finalproject.entityGoogle.GoogleToken;
@@ -20,6 +23,7 @@ import java.net.URI;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
@@ -43,6 +47,8 @@ public class GoogleAPI {
     private String googleClientSecret;
     @Value("${google.scope}")
     private List<String> googleScopeLs;
+    @Value("${google.key}")
+    private String googleKey;
 
     private GoogleToken usersToken = null;
 
@@ -57,6 +63,10 @@ public class GoogleAPI {
 
     @Autowired
     private final UsersMapper usersMapper;
+    @Autowired
+    private final CategoryMapper categoryMapper;
+    @Autowired
+    private final PostsMapper postsMapper;
 
 //    리다이렉트 경로가 여러개일 경우 하나의 문자열로 변환하는 메서드
 //    private String googleRedirectUrl() {
@@ -134,6 +144,19 @@ public class GoogleAPI {
                 .block();
         log.info(userInfo.toString());
         return userInfo;
+    }
+
+    public JsonObject getCalendarList() {
+        WebClient webClient = WebClient.create();
+        String calendarListUrl = "https://www.googleapis.com/calendar/v3/users/me/calendarList&key="+googleKey;
+        String token = usersToken.getAccess_token();
+        JsonObject calendarListJson = webClient.get()
+                .uri(calendarListUrl)
+                .headers(reqHeader(token))
+                .retrieve()
+                .bodyToMono(JsonObject.class)
+                .block();
+        return calendarListJson;
     }
 
     // google 로그인 페이지로 이동 및 동의화면 출력하는 메서드
