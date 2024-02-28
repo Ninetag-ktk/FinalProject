@@ -4,6 +4,9 @@ import e6eo.finalproject.dto.UsersMapper;
 
 import e6eo.finalproject.entity.UsersEntity;
 
+import jakarta.persistence.metamodel.SetAttribute;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Example;
@@ -15,6 +18,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Scanner;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.SessionAttribute;
 
 @Service
 @Transactional
@@ -25,7 +29,7 @@ public class UsersDAO {
     private UsersEntity usersEntity;
 
 
-    public void userJoin(@RequestBody UsersEntity users){
+    public void userJoin(@RequestBody UsersEntity users) {
         Optional<UsersEntity> user = usersMapper.findById(users.getUserId());
 
 
@@ -37,26 +41,28 @@ public class UsersDAO {
         }
     }
 
-    public void idCheck(String id){
-//        List<UsersEntity> user = usersMapper.findByInnerId(id);
+    public String idCheck(String id, String pw, HttpServletRequest req) {
         Optional<UsersEntity> user = usersMapper.findById(id);
+
         System.out.println(user);
         if (user.isEmpty()) {
-            System.out.println("로그인 실패");
+            System.out.println("아이디 없음");
+            return "아이디없음";
         } else {
-            System.out.println("로그인 성공");
-        }
-    }
-
-    public void  pwCheck(String id, String pw){
-        Optional<UsersEntity> user = usersMapper.findById(id);
-        if (user.isPresent()) {
             if (pw.equals(user.get().getPw())) {
-                System.out.println("비번일치");
+                req.getSession().setAttribute("user", user.get());
+                req.getSession().setMaxInactiveInterval(60);
+                return "로그인";
             } else {
                 System.out.println("비번불일치");
+                return "비번불일치";
             }
         }
+
+    }
+
+    public void makeSesison() {
+        HttpSession session = HttpServletRequest
 
     }
 
@@ -69,9 +75,6 @@ public class UsersDAO {
         }
     }
 
-    public void makeSession() {
-
-    }
 
 
 

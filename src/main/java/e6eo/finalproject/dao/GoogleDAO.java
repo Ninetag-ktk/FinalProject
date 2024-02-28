@@ -44,7 +44,7 @@ public class GoogleDAO {
         final NetHttpTransport HTTP_TRANSPORT = GoogleNetHttpTransport.newTrustedTransport();
 
         // Load client secrets.
-        InputStream in = googleApi.class.getResourceAsStream(CREDENTIALS_FILE_PATH);
+        InputStream in = GoogleAPI.class.getResourceAsStream(CREDENTIALS_FILE_PATH);
         if (in == null) {
             throw new FileNotFoundException("Resource not found: " + CREDENTIALS_FILE_PATH);
         }
