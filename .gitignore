@@ -35,3 +35,9 @@ out/
 
 ### VS Code ###
 .vscode/
+
+### InteliJ ###
+/tokens/StoredCredential
+/src/main/resources/static/static/css/
+/src/main/resources/static/static/js/
+/src/main/reactfront/build/static/

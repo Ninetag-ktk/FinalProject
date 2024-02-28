@@ -1,16 +1,24 @@
 spring:
   datasource:
     driver-class-name: org.mariadb.jdbc.Driver
-    url: jdbc:mariadb://43.203.30.193:3306
+    url: jdbc:mariadb://43.203.30.193:3306/e6eo
     username: root
     password: 76435855
+    name: users
 
   data:
     mongodb:
-      host: 43.203.30.193
-      port: 27017
-      username: root
-      password: 76435855
+      uri: mongodb://root:76435855@43.203.30.193:27017/e6eo?authSource=admin
+      replica-set-name: Posts
+#      host: 43.203.30.193
+#      port: 27017
+#      username: root
+#      password: 76435855
+#      authentication-database: admin
+#      database: e6eo
+#      auto-index-creation: true
+
+
 
   elasticsearch:
     uris: https://web-elasticsearch-17xco2nlsjrhma1.sel5.cloudtype.app/
@@ -27,42 +35,19 @@ spring:
 #              - email
 #              - profile
 #
-#"auth": "https://accounts.google.com/o/oauth2/auth"
-#"login": 'https://accounts.google.com'
-#"redirect": ["http://localhost:8080/googlelogin/oauth_google_check","http://localhost:3000/googlelogin/oauth_google_check"]
-#"scope": ["https://www.googleapis.com/auth/calendar", "https://www.googleapis.com/auth/userinfo.email", "https://www.googleapis.com/auth/userinfo.profile", "https://www.googleapis.com/auth/tasks"]
-#"client_id": "463906750748-9buq9vk60mfu2qctpqi3cbidlnpqsrb2.apps.googleusercontent.com"
-#"client_secret": "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"
 
 ---
 
-#google:
-#  auth:
-#    url: https://accounts.google.com/o/oauth2/auth
-#  login:
-#    url: https://accounts.google.com
-#  redirect:
-#    url:
-#      - http://localhost:8080/googlelogin/oauth_google_check
-#      - http://localhost:3000/googlelogin/oauth_google_check
-#  client:
-#    id: 463906750748-9buq9vk60mfu2qctpqi3cbidlnpqsrb2.apps.googleusercontent.com
-#    secret: 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
-#  scope:
-#    - https://www.googleapis.com/auth/calendar
-#    - https://www.googleapis.com/auth/userinfo.email
-#    - https://www.googleapis.com/auth/userinfo.profile
-#    - https://www.googleapis.com/auth/tasks
-
-google.auth.url: https://accounts.google.com/o/oauth2/auth
-google.login.url: https://accounts.google.com
-google.redirect.url:
-      - http://localhost:8080/googlelogin/oauth_google_check
-      - http://localhost:3000/googlelogin/oauth_google_check
-google.client.id: 463906750748-9buq9vk60mfu2qctpqi3cbidlnpqsrb2.apps.googleusercontent.com
-google.client.secret: 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
-google.scope:
-    - https://www.googleapis.com/auth/calendar
-    - https://www.googleapis.com/auth/userinfo.email
-    - https://www.googleapis.com/auth/userinfo.profile
-    - https://www.googleapis.com/auth/tasks
+google:
+  auth: https://accounts.google.com/o/oauth2/v2/auth
+  login: https://accounts.google.com
+  redirect: http://localhost:8080/google/check
+  client:
+    id: 463906750748-9buq9vk60mfu2qctpqi3cbidlnpqsrb2.apps.googleusercontent.com
+    secret: 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
+  scope:
+    https://www.googleapis.com/auth/calendar,
+    https://www.googleapis.com/auth/userinfo.email,
+    https://www.googleapis.com/auth/userinfo.profile,
+    https://www.googleapis.com/auth/tasks
+  key: AIzaSyCJ5FEADdIsIcgjx7foyIqvi05XYAN_2xw
