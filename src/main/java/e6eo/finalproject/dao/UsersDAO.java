@@ -17,6 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.Optional;
 import java.util.Scanner;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.SessionAttribute;
 
@@ -24,6 +25,8 @@ import org.springframework.web.bind.annotation.SessionAttribute;
 @Transactional
 @RequiredArgsConstructor
 public class UsersDAO {
+
+
     @Autowired
     private final UsersMapper usersMapper;
     private UsersEntity usersEntity;
@@ -41,8 +44,11 @@ public class UsersDAO {
         }
     }
 
+
     public String idCheck(String id, String pw, HttpServletRequest req) {
         Optional<UsersEntity> user = usersMapper.findById(id);
+        HttpSession session = req.getSession();
+        req.setAttribute("returnTest", "check");
 
         System.out.println(user);
         if (user.isEmpty()) {
@@ -50,21 +56,24 @@ public class UsersDAO {
             return "아이디없음";
         } else {
             if (pw.equals(user.get().getPw())) {
-                req.getSession().setAttribute("user", user.get());
-                req.getSession().setMaxInactiveInterval(60);
+                session.setAttribute("user", user.get());
+                session.setMaxInactiveInterval(60);
                 return "로그인";
             } else {
                 System.out.println("비번불일치");
                 return "비번불일치";
             }
         }
-
     }
 
-    public void makeSesison() {
-        HttpSession session = HttpServletRequest
 
+
+    public void loginCheck(HttpServletRequest req) {
+        UsersEntity m = (UsersEntity) req.getSession().getAttribute("user");
+        System.out.println(m);
     }
+
+
 
 
 

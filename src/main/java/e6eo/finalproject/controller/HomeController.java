@@ -18,11 +18,10 @@ public class HomeController {
 
     @PostMapping("/login")
     public String login(@RequestBody Map<String, String> body, HttpServletRequest req) {
-        System.out.println(uDAO.idCheck(body.get("id"), body.get("pw"), req));
-        System.out.println();
-        System.out.println("a");
+        String result = uDAO.idCheck(body.get("id"), body.get("pw"), req);
+        uDAO.loginCheck(req);
         System.out.println(body.get("id"));
         System.out.println(body.get("pw"));
-        return "a";
+        return result;
     }
 }
