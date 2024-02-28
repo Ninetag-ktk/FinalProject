@@ -12,6 +12,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 
 import java.util.List;
 import java.util.Optional;
+import org.springframework.web.bind.annotation.RequestBody;
+
 
 @Service
 @Transactional
@@ -56,7 +58,6 @@ public class UsersDAO {
         }
     }
 
-
     public void loginCheck(HttpServletRequest req) {
         UsersEntity m = (UsersEntity) req.getSession().getAttribute("user");
         System.out.println(m);
@@ -69,6 +70,4 @@ public class UsersDAO {
             System.out.println(user);
         }
     }
-
-
 }
