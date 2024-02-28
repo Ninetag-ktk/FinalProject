@@ -1,9 +1,13 @@
 package e6eo.finalproject.controller;
 
-import e6eo.finalproject.dao.GoogleDAO;
+import com.google.gson.JsonObject;
+import e6eo.finalproject.dao.GoogleAPI;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -11,24 +15,23 @@ import org.springframework.web.bind.annotation.RestController;
 public class GoogleController {
 
     @Autowired
-    private GoogleDAO gDao;
+    private GoogleAPI googleAPI;
 
-    @GetMapping("")
-    public String aaa() {
-        return "집가고싶다";
+    @GetMapping("/login")
+    public ResponseEntity<?> googleOAuth() throws Exception {
+        return new ResponseEntity<>(googleAPI.getGoogleAuthUrl(), HttpStatus.MOVED_PERMANENTLY);
     }
 
+    @GetMapping("/check")
+    public String googleCheck(@RequestParam(value = "code") String authCode) throws Exception {
+        googleAPI.getGoogleToken(authCode);
+        String result = googleAPI.checkGoogleEmail();
+        return result;
+    }
 
-    @GetMapping("/request")
-    public String googleUser() {
-        String re = null;
-        try {
-            re = gDao.getAuthorization();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        return re;
+    @GetMapping("/test")
+    public JsonObject googleTest() {
+        return googleAPI.getCalendarList();
     }
 
 
