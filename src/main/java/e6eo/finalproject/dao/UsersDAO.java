@@ -1,19 +1,20 @@
 package e6eo.finalproject.dao;
 
 import e6eo.finalproject.dto.UsersMapper;
-
 import e6eo.finalproject.entity.UsersEntity;
 
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Example;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.RequestBody;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.Scanner;
 import org.springframework.web.bind.annotation.RequestBody;
 
 @Service
@@ -27,8 +28,6 @@ public class UsersDAO {
 
     public void userJoin(@RequestBody UsersEntity users){
         Optional<UsersEntity> user = usersMapper.findById(users.getUserId());
-
-
         if (user.isEmpty()) {
             usersMapper.save(users);
             System.out.println("성공");
@@ -44,19 +43,25 @@ public class UsersDAO {
         if (user.isEmpty()) {
             System.out.println("로그인 실패");
         } else {
-            System.out.println("로그인 성공");
+            if (pw.equals(user.get().getPw())) {
+                session.setAttribute("user", user.get());
+                session.setMaxInactiveInterval(60*2);
+                return user.get();
+            } else {
+                System.out.println("비번불일치");
+                return null;
+            }
         }
     }
 
-    public void  pwCheck(String id, String pw){
-        List<UsersEntity> user = usersMapper.findByInnerId(id);
 
 
-//        for (UsersEntity u : user) {
-//            u.getPw();
-//        }
-
+    public void loginCheck(HttpServletRequest req) {
+        UsersEntity m = (UsersEntity) req.getSession().getAttribute("user");
+        System.out.println(m);
     }
+
+
 
 
 
@@ -67,9 +72,6 @@ public class UsersDAO {
         }
     }
 
-    public void makeSession() {
-
-    }
 
 
 
