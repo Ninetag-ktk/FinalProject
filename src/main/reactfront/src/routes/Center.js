@@ -1,15 +1,6 @@
 import React, {useEffect, useState} from "react";
 
 export default function Center () {
-    const [user, setUser] = useState("");
-
-    useEffect(() => {
-        const user = window.sessionStorage.getItem("user");
-        setUser(user);
-        alert(user);
-
-    }, []);
-
 
     return (
         <div className={"center"}>

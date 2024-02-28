@@ -4,22 +4,16 @@ import e6eo.finalproject.dto.UsersMapper;
 
 import e6eo.finalproject.entity.UsersEntity;
 
-import jakarta.persistence.metamodel.SetAttribute;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Example;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.Scanner;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.SessionAttribute;
 
 @Service
 @Transactional
@@ -45,7 +39,7 @@ public class UsersDAO {
     }
 
 
-    public String idCheck(String id, String pw, HttpServletRequest req) {
+    public UsersEntity idCheck(String id, String pw, HttpServletRequest req) {
         Optional<UsersEntity> user = usersMapper.findById(id);
         HttpSession session = req.getSession();
         req.setAttribute("returnTest", "check");
@@ -53,15 +47,15 @@ public class UsersDAO {
         System.out.println(user);
         if (user.isEmpty()) {
             System.out.println("아이디 없음");
-            return "아이디없음";
+            return null;
         } else {
             if (pw.equals(user.get().getPw())) {
                 session.setAttribute("user", user.get());
-                session.setMaxInactiveInterval(60);
-                return "로그인";
+                session.setMaxInactiveInterval(60*2);
+                return user.get();
             } else {
                 System.out.println("비번불일치");
-                return "비번불일치";
+                return null;
             }
         }
     }
