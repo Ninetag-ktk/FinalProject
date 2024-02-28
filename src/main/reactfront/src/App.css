@@ -1,10 +1,108 @@
 
 #root {
-  text-align: center;
+  height: 100vh;
+  width: 100vw;
+  background-color: #E8F9FF;
   display: flex;
   justify-content: center;
-  height: 3000px;
+  align-items: flex-start;
+}
+
+
+.header {
+  width: 100%;
+  border-bottom: 1px solid;
+  display: flex;
+  align-items: center;
+  background-color: wheat;
+  position: relative;
+  padding: 4px;
 
 }
+
+
+
+
+.logo{
+  height: 60px;
+  width: 60px;
+
+}
+
+.Main{
+  width: 100%;
+}
+
+.leftbar {
+  /* 왼쪽에 고정 */
+  position: absolute;
+  top: 65px;
+  left: 0;
+
+
+  /* 너비 설정 */
+  width: 200px;
+
+  /* 높이 설정 */
+  height: 100%;
+
+  /* 배경색 설정 */
+  background-color: #f7f7f7;
+
+  /* 패딩 설정 */
+  padding: 20px;
+
+  /* 섀도 설정 */
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+
+}
+
+
+.center{
+  position: relative;
+  top: 0;
+  left: 240px;
+
+background-color: white;
+
+  height: 100vh;
+
+}
+
+/* 화면 크기가 작을 때 LeftBar 숨기기 */
+@media (max-width: 768px) {
+  .leftbar {
+    display: none;
+  }
+}
+.search{
+  position: relative;
+  top: 0;
+  left: 240px;
+  height: 40px;
+  width: 400px;
+  border: 1px solid #61dafb;
+background: #ffffff;
+
+  input{
+    font-size: 16px;
+    width: 325px;
+    padding: 10px;
+    border: 0px;
+    outline: none;
+    float: left;
+  }
+  button{
+    width: 50px;
+    height: 100%;
+    border: 0px;
+    background: #61dafb;
+    outline: none;
+    float: right;
+    color: #ffffff;
+
+  }
+}
+
 
 
