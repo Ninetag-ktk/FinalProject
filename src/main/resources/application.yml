@@ -8,11 +8,16 @@ spring:
 
   data:
     mongodb:
-      host: 43.203.30.193
-      port: 27017
-      username: root
-      password: 76435855
-      authentication-database: e6eo
+      uri: mongodb://root:76435855@43.203.30.193:27017/e6eo?authSource=admin
+      replica-set-name: Posts
+#      host: 43.203.30.193
+#      port: 27017
+#      username: root
+#      password: 76435855
+#      authentication-database: admin
+#      database: e6eo
+#      auto-index-creation: true
+
 
 
   elasticsearch:
@@ -34,9 +39,9 @@ spring:
 ---
 
 google:
-  auth: https://accounts.google.com/o/oauth2/auth
+  auth: https://accounts.google.com/o/oauth2/v2/auth
   login: https://accounts.google.com
-  redirect: http://localhost:8080/google/login/check
+  redirect: http://localhost:8080/google/check
   client:
     id: 463906750748-9buq9vk60mfu2qctpqi3cbidlnpqsrb2.apps.googleusercontent.com
     secret: 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
@@ -45,3 +50,4 @@ google:
     https://www.googleapis.com/auth/userinfo.email,
     https://www.googleapis.com/auth/userinfo.profile,
     https://www.googleapis.com/auth/tasks
+  key: AIzaSyCJ5FEADdIsIcgjx7foyIqvi05XYAN_2xw
