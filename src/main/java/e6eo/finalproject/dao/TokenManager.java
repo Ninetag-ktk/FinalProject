@@ -44,7 +44,11 @@ public class TokenManager {
     public void emptyObserve(String observe) {
         // 옵저브 토큰의 값을 삭제
         // 자동로그인을 설정했던 브라우저에서 설정을 해제할 경우
-        // 비밀번호 변경 등 모든 로그인된 세션에서 로그아웃 해야할 경우 등등
+        // 비밀번호 변경 등 모든 로그인된 세션에서 모두 로그아웃 해야할 경우 등등
         usersMapper.emptyObserve(observe);
+    }
+
+    public UsersEntity getUser(String observe) {
+        return usersMapper.findByObserveToken(observe).get();
     }
 }
