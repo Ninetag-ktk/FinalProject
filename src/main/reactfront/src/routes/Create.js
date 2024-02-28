@@ -1,8 +1,8 @@
 import React, {useState, useEffect} from 'react';
 import Parsley from 'parsleyjs';
 import $ from 'jquery';
-import './css/Create.css';
 import logo from './temp_logo.png';
+import './css/Create.css';
 
 
 export default function SignupForm() {
@@ -30,14 +30,14 @@ export default function SignupForm() {
 
     return (
         <div className={"create"}>
-            <div className={"create logo"}>
-                <a href={"/"}> <img src={logo}/> </a>
 
-            </div>
+                <a href={"/"}> <img className={"createlogo"} src={logo}/> </a>
+
+
 
             <form id="signup-form" onSubmit={handleSubmit}>
                 <div className="form-group">
-                    <label htmlFor="username">닉네임:</label>
+                    <label htmlFor="username">닉네임</label>
                     <input
                         type="text"
                         name="username"
@@ -51,7 +51,7 @@ export default function SignupForm() {
                     />
                 </div>
                 <div className="form-group">
-                    <label htmlFor="email">이메일:</label>
+                    <label htmlFor="email">이메일</label>
                     <input
                         type="email"
                         name="email"
@@ -66,7 +66,7 @@ export default function SignupForm() {
                     />
                 </div>
                 <div className="form-group">
-                    <label htmlFor="password">비밀번호:</label>
+                    <label htmlFor="password">비밀번호(대문자,소문자,숫자,특수문자를 포함해야합니다.)</label>
                     <input
                         type="password"
                         name="password"
@@ -83,7 +83,7 @@ export default function SignupForm() {
                     />
                 </div>
                 <div className="form-group">
-                    <label htmlFor="password-confirm">비밀번호 확인:</label>
+                    <label htmlFor="password-confirm">비밀번호 확인</label>
                     <input
                         type="password"
                         name="password-confirm"

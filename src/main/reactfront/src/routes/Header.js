@@ -1,11 +1,24 @@
 import React from "react";
+import logo from './nobglogo.png';
+
+
+
+
+
 
 export default function Header () {
     return (
-        <nav>
-            <button>검색</button>
-            <hr/>
-        </nav>
+        <div className={"header"}>
+            <a href={"/main"}> <img className={"logo"} src={logo}/></a>
+            <button id={"btnlastmonth"}>←</button>
+            yyyy.MM
+            <button id={"btnnextmonth"}>→</button>
+
+            <label className={"toggleSwitch"}>
+                    <input role={"switch"} type={"checkbox"} />
+                <span  className="toggleButton"></span>
+            </label>
+        </div>
 
     )
 }
