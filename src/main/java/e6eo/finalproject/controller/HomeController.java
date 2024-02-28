@@ -1,6 +1,8 @@
 package e6eo.finalproject.controller;
 
 import e6eo.finalproject.dao.UsersDAO;
+import e6eo.finalproject.entity.UsersEntity;
+import jakarta.servlet.http.HttpServletRequest;
 import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -16,11 +18,11 @@ public class HomeController {
 
 
     @PostMapping("/login")
-    public String login(@RequestBody Map<String, String> body) {
-        uDAO.idCheck(body.get("id"));
-        System.out.println("a");
+    public UsersEntity login(@RequestBody Map<String, String> body, HttpServletRequest req) {
+        UsersEntity result = uDAO.idCheck(body.get("id"), body.get("pw"), req);
+        uDAO.loginCheck(req);
         System.out.println(body.get("id"));
         System.out.println(body.get("pw"));
-        return "a";
+        return result;
     }
 }
