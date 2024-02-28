@@ -10,13 +10,13 @@ import org.springframework.data.mongodb.core.mapping.Field;
 public class PostsEntity {
     @Id
     private String id;
-    @Field(name = "categoryId")
+    @Field(name = "category_id")
     private String categoryId;
-    @Field(name = "haveRepost")
+    @Field(name = "have_repost")
     private String haveRepost;
-    @Field(name = "startTime")
+    @Field(name = "start_time")
     private String startTime;
-    @Field(name = "endTime")
+    @Field(name = "end_time")
     private String endTime;
     @Field(name = "contents")
     private String contents;
