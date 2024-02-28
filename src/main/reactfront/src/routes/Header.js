@@ -8,6 +8,7 @@ export default function Header () {
                 yyyy.MM
                 <button id={"btnnextmonth"}>→</button>
                 <button id={"menubtn"}>menu</button>
+            <a href={"/main/search"}>검색</a>
         </div>
 
 )

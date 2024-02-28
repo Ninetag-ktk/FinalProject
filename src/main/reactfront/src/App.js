@@ -9,6 +9,7 @@ import Login from "./routes/Login";
 import Create from "./routes/Create";
 import Main from "./routes/Main";
 import Center from "./routes/Center";
+import Search from "./routes/Search";
 const router = createBrowserRouter([
     {
         path: "/",
@@ -26,7 +27,7 @@ const router = createBrowserRouter([
         errorElement : <p>Not Found</p>,
         children : [
             {index : true, element: <Center />},
-
+            {path : '/main/search',element:<Search />},
         ]
     }
 ]);
