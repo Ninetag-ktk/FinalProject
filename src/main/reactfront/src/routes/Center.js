@@ -1,7 +1,7 @@
 import React from "react";
-
 export default function center () {
     return (
+        <div className={"center"}>
         <table border={1}>
             <th>여기에 캘린더 나옴</th>
             <th>여기에 캘린더 나옴2</th>
@@ -57,6 +57,7 @@ export default function center () {
             </tr>
 
         </table>
+        </div>
     )
 }
 

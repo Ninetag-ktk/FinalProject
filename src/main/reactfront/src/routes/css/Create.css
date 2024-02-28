@@ -1,7 +1,9 @@
-#root{
-    height:966px;
-    align-items: flex-start;
+#createlogocreatelogo{
+    height: 100%;
+    width: 100%;
+
 }
+
 .create{
     display: flex;
     width: 100%;
@@ -17,7 +19,7 @@
     border: 1px solid #ccc;
     border-radius: 5px;
     background-color: #f9f9f9;
-
+    margin-bottom: 20px;
 
 }
 

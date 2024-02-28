@@ -6,7 +6,7 @@
   justify-content: center;
 }
 
-/* 600px보다 넓은 화면에 대한 스타일 */
+/* 750px보다 좁은 화면에 대한 스타일 */
 @media screen and (max-width: 750px) {
   .login-main {
     flex-direction: column;
