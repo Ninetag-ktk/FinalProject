@@ -61,11 +61,6 @@ public class UsersDAO {
         }
     }
 
-//    public void loginCheck(HttpServletRequest req) {
-//        UsersEntity m = (UsersEntity) req.getSession().getAttribute("user");
-//        System.out.println(m);
-//    }
-
 
     public void findAll() {
         List<UsersEntity> users = usersMapper.findAll();
@@ -73,4 +68,5 @@ public class UsersDAO {
             System.out.println(user);
         }
     }
+
 }

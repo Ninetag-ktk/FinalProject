@@ -35,8 +35,8 @@ export default function Login() {
                 "Accept": "application/json; charset=utf-8",
             },
             body: JSON.stringify(login),
-        }).then(res => {
-            setMessage(res.text());
+        }).then(res => res.text()
+
             // if (document.cookie != null) {
             //     document.cookie(cookie => {
             //         const [key, value] = cookie.split('=');
@@ -45,8 +45,9 @@ export default function Login() {
             // } else {
             //     alert("쿠키없음")
             // }
-        })
-            .then( () => {
+        )
+            .then( message => {
+                setMessage(message);
                     if (message === "로그인") {
                         // alert(cookies[login.id])
                         alert(message)
@@ -65,7 +66,7 @@ export default function Login() {
             </div>
 
             <div className={"logininput"}>
-                <form className={"loginForm1"} onSubmit={handleSubmit}>
+                <form className={"loginForm1"} action={} onSubmit={handleSubmit}>
                     <input type={"text"} className={"inputtext"} name={"id"} onChange={handleValueChange}
                            placeholder={"email"}/>
                     <input type={"password"} className={"inputtext"} name={"pw"} onChange={handleValueChange}

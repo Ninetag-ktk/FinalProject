@@ -15,15 +15,17 @@ public class HomeController {
     private UsersDAO uDAO;
 
 
-
-
-
     @PostMapping("/login")
     public String login(@RequestBody Map<String, String> body, HttpServletRequest req, HttpServletResponse res) {
         String result = uDAO.idCheck(body.get("id"), body.get("pw"), req, res);
-//        uDAO.loginCheck(res);
         System.out.println(body.get("id"));
         System.out.println(body.get("pw"));
         return result;
+    }
+
+    @PostMapping("/join")
+    public void join(@RequestBody Map<String, String> body) {
+
+
     }
 }
