@@ -4,61 +4,62 @@ export default function Center() {
 
     return (
         <div className={"center"}>
-            <table border={1}>
-                <th>여기에 캘린더 나옴</th>
-                <th>여기에 캘린더 나옴2</th>
-                <tr>
-                    <td>dd</td>
-                    <td>dd</td>
-                    <td>dd</td>
-                    <td>dd</td>
-                    <td>dd</td>
-                    <td>dd</td>
-                    <td>dd</td>
-                    <td>dd</td>
-                </tr>
-                <tr>
-                    <td>dd</td>
-                    <td>dd</td>
-                    <td>dd</td>
-                    <td>dd</td>
-                    <td>dd</td>
-                    <td>dd</td>
-                    <td>dd</td>
-                    <td>dd</td>
-                </tr>
-                <tr>
-                    <td>dd</td>
-                    <td>dd</td>
-                    <td>dd</td>
-                    <td>dd</td>
-                    <td>dd</td>
-                    <td>dd</td>
-                    <td>dd</td>
-                    <td>dd</td>
-                </tr>
-                <tr>
-                    <td>dd</td>
-                    <td>dd</td>
-                    <td>dd</td>
-                    <td>dd</td>
-                    <td>dd</td>
-                    <td>dd</td>
-                    <td>dd</td>
-                    <td>dd</td>
-                </tr>
-                <tr>
-                    <td>dd</td>
-                    <td>dd</td>
-                    <td>dd</td>
-                    <td>dd</td>
-                    <td>dd</td>
-                    <td>dd</td>
-                    <td>dd</td>
-                    <td>dd</td>
-                </tr>
+        <div className={"divTable"} >
+            <div className="divTableBody">
+                <div className="divTableRow">
+                    <div className="divTableCell">&nbsp;</div>
+                    <div className="divTableCell">&nbsp;</div>
+                    <div className="divTableCell">&nbsp;</div>
+                    <div className="divTableCell">&nbsp;</div>
+                    <div className="divTableCell">&nbsp;</div>
+                    <div className="divTableCell">&nbsp;</div>
+                    <div className="divTableCell">&nbsp;</div>
+                </div>
 
-            </table>
+                <div className="divTableRow">
+                    <div className="divTableCell">&nbsp;</div>
+                    <div className="divTableCell">&nbsp;</div>
+                    <div className="divTableCell">&nbsp;</div>
+                    <div className="divTableCell">&nbsp;</div>
+                    <div className="divTableCell">&nbsp;</div>
+                    <div className="divTableCell">&nbsp;</div>
+                    <div className="divTableCell">&nbsp;</div>
+                </div>
+
+                <div className="divTableRow">
+                    <div className="divTableCell">&nbsp;</div>
+                    <div className="divTableCell">&nbsp;</div>
+                    <div className="divTableCell">&nbsp;</div>
+                    <div className="divTableCell">&nbsp;</div>
+                    <div className="divTableCell">&nbsp;</div>
+                    <div className="divTableCell">&nbsp;</div>
+                    <div className="divTableCell">&nbsp;</div>
+                </div>
+
+                <div className="divTableRow">
+                    <div className="divTableCell">&nbsp;</div>
+                    <div className="divTableCell">&nbsp;</div>
+                    <div className="divTableCell">&nbsp;</div>
+                    <div className="divTableCell">&nbsp;</div>
+                    <div className="divTableCell">&nbsp;</div>
+                    <div className="divTableCell">&nbsp;</div>
+                    <div className="divTableCell">&nbsp;</div>
+                </div>
+
+                <div className="divTableRow">
+                    <div className="divTableCell">&nbsp;</div>
+                    <div className="divTableCell">&nbsp;</div>
+                    <div className="divTableCell">&nbsp;</div>
+                    <div className="divTableCell">&nbsp;</div>
+                    <div className="divTableCell">&nbsp;</div>
+                    <div className="divTableCell">&nbsp;</div>
+                    <div className="divTableCell">&nbsp;</div>
+                </div>
+
+            </div>
+
+
+        </div>
         </div>
     )
 }
