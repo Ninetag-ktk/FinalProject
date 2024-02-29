@@ -2,7 +2,7 @@ import React, {useState, useEffect} from 'react';
 import Parsley from 'parsleyjs';
 import $ from 'jquery';
 import logo from './temp_logo.png';
-import './css/Create.css';
+
 
 
 export default function SignupForm() {

@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import './css/Login.css';
+
 import logo from './temp_logo.png'
 import {get, post} from "axios";
 import {redirect} from "react-router-dom";
@@ -56,6 +56,7 @@ export default function Login() {
     };
 
     return (
+        <div className={"loginall"}>
         <div className={"login-main"}>
             <div className={"Logoclass"}>
                 <img src={logo}/>
@@ -79,6 +80,7 @@ export default function Login() {
             </div>
 
         </div>
+            </div>
     )
 }
 
