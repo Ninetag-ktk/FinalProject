@@ -30,13 +30,10 @@ export default function Login() {
         }
     };
 
-    const handleGoogleLogin = () => {
-        fetch("/google/login")
-            .then((response) => response.json())
-            .then((data) => {
-                // 구글 로그인 주소를 사용하거나 처리하는 로직을 추가하세요
-                console.log(data);
-            });
+    const handleGoogleLogin = async () => {
+        const response = await fetch("/google/login"); // fetch 호출이 아예 안됨
+        alert(response);
+        window.location.href = response;
     };
 
     return (

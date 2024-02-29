@@ -11,17 +11,17 @@ import org.springframework.web.bind.annotation.RestController;
 public class CategoryController {
 
     @Autowired
-    private CategoryDAO lDAO;
+    private CategoryDAO cDAO;
 
     @GetMapping("/test")
     public String test() {
-        lDAO.saveCollection();
+        cDAO.saveCollection();
         return "테스트";
     }
 
     @GetMapping("/findtest")
     public String test1() {
-        lDAO.findCollection();
+        cDAO.findCollection();
         return "test";
     }
 }
