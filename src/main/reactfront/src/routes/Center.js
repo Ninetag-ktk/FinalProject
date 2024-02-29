@@ -2,6 +2,7 @@ import React from "react";
 
 export default function Center() {
 
+
     return (
         <div className={"center"}>
             <table border={1}>

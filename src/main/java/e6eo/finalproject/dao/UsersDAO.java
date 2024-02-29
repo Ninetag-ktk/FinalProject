@@ -2,9 +2,9 @@ package e6eo.finalproject.dao;
 
 import e6eo.finalproject.dto.UsersMapper;
 import e6eo.finalproject.entity.UsersEntity;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -24,6 +24,7 @@ public class UsersDAO {
 
     @Autowired
     private final UsersMapper usersMapper;
+    private final TokenManager tokenManager;
     private UsersEntity usersEntity;
 
 
@@ -38,10 +39,11 @@ public class UsersDAO {
     }
 
 
-    public String idCheck(String id, String pw, HttpServletResponse) {
+    public String idCheck(String id, String pw, HttpServletRequest req, HttpServletResponse res) {
         Optional<UsersEntity> user = usersMapper.findById(id);
-        HttpSession session = req.getSession();
-        req.setAttribute("returnTest", "check");
+        String cookieToken = tokenManager.setObserve(id);
+        Cookie cookie = new Cookie(id, cookieToken);
+
 
         System.out.println(user);
         if (user.isEmpty()) {
@@ -49,7 +51,8 @@ public class UsersDAO {
             return "아이디 없음";
         } else {
             if (pw.equals(user.get().getPw())) {
-
+                System.out.println(cookie);
+                res.addCookie(cookie);
                 return "로그인";
             } else {
                 System.out.println("비번불일치");
@@ -58,10 +61,10 @@ public class UsersDAO {
         }
     }
 
-    public void loginCheck(HttpServletRequest req) {
-        UsersEntity m = (UsersEntity) req.getSession().getAttribute("user");
-        System.out.println(m);
-    }
+//    public void loginCheck(HttpServletRequest req) {
+//        UsersEntity m = (UsersEntity) req.getSession().getAttribute("user");
+//        System.out.println(m);
+//    }
 
 
     public void findAll() {

@@ -6,6 +6,14 @@ import {redirect} from "react-router-dom";
 
 
 export default function Login() {
+
+    const [message, setMessage] = useState("");
+
+    const [login, setLogin] = useState({
+        id: "",
+        pw: "",
+    });
+
     const handleValueChange = (e) => {
         setLogin({
             ...login,
@@ -13,27 +21,34 @@ export default function Login() {
         });
     }
 
-    const [login, setLogin] = useState({
-        id: "",
-        pw: "",
+    const cookies = {};
 
-    });
-    const [message, setMessage] = useState("");
+
 
     const handleSubmit = (event) => {
         event.preventDefault(); // 이벤트가 첫 입력에 중복되지 않게 하는 명령어
 
-        fetch(`/login`, {
+        fetch("/login", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json; charset=utf-8",
                 "Accept": "application/json; charset=utf-8",
             },
             body: JSON.stringify(login),
-        }).then(res => res.text())
-            .then(message => {
-                    setMessage(message);
+        }).then(res => {
+            setMessage(res.text());
+            // if (document.cookie != null) {
+            //     document.cookie(cookie => {
+            //         const [key, value] = cookie.split('=');
+            //         cookies[key] = value;
+            //     });
+            // } else {
+            //     alert("쿠키없음")
+            // }
+        })
+            .then( () => {
                     if (message === "로그인") {
+                        // alert(cookies[login.id])
                         alert(message)
                         window.location.href = "/main";
                     } else {
@@ -41,13 +56,6 @@ export default function Login() {
                     }
                 }
             )
-        // .then(res => res.text())
-        // .then(message => {
-        //         setMessage(message);
-        //         alert(message);
-        //         window.location.href = "/main";
-        //     }
-        // )
     };
 
     return (
@@ -57,16 +65,16 @@ export default function Login() {
             </div>
 
             <div className={"logininput"}>
-                <form className={"loginForm1"} action={"/main"} onSubmit={handleSubmit}>
+                <form className={"loginForm1"} onSubmit={handleSubmit}>
                     <input type={"text"} className={"inputtext"} name={"id"} onChange={handleValueChange}
                            placeholder={"email"}/>
                     <input type={"password"} className={"inputtext"} name={"pw"} onChange={handleValueChange}
                            placeholder={"password"}/>
-                    <button id={"btn"}>로그인</button>
+                    <button className={"btn"}>로그인</button>
 
                 </form>
                 <form className={"loginForm1"} action={"/create"}>
-                    <button id={"btn"}>회원가입</button>
+                    <button className={"btn"}>회원가입</button>
                 </form>
                 <hr/>
                 <button id={"btn"}>google계정으로 로그인</button>
