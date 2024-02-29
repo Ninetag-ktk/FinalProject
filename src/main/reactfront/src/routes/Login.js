@@ -31,9 +31,12 @@ export default function Login() {
     };
 
     const handleGoogleLogin = async () => {
-        const response = await fetch("/google/login"); // fetch 호출이 아예 안됨
-        alert(response);
-        window.location.href = response;
+        const response = await fetch("/google/login", {
+            mode: "no-cors",
+        }); // fetch 호출이 아예 안됨
+        console.log(response.json());
+        alert(response.json());
+        window.location.href = response.json();
     };
 
     return (
