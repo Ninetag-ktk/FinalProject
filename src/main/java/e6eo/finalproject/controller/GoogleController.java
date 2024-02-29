@@ -18,8 +18,10 @@ public class GoogleController {
     private GoogleAPI googleAPI;
 
     @GetMapping("/login")
-    public ResponseEntity<?> googleOAuth() throws Exception {
-        return new ResponseEntity<>(googleAPI.getGoogleAuthUrl(), HttpStatus.MOVED_PERMANENTLY);
+    // 리액트에서 리다이렉트 될 수 있게끔, return을 ResponseEntity<?> 를 String 으로 교체함
+    public String googleOAuth() throws Exception {
+        System.out.println("googleLogin");
+        return googleAPI.getGoogleAuthUrl().toString();
     }
 
     @GetMapping("/check")
