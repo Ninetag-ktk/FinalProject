@@ -45,7 +45,7 @@ public class UsersDAO {
         }
     }
 
-    public ResponseEntity<?> idCheck(String id, String pw) {
+    public ResponseEntity<?> login(String id, String pw) {
         System.out.println("check");
         Map<String, String> result = new HashMap<>();
         Optional<UsersEntity> user = usersMapper.findById(id);
