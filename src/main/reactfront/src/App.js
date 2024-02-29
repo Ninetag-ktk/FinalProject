@@ -10,6 +10,7 @@ import Create from "./routes/Create";
 import Main from "./routes/Main";
 import Center from "./routes/Center";
 import Search from "./routes/Search";
+
 const router = createBrowserRouter([
     {
         path: "/",

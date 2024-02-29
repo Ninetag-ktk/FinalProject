@@ -21,6 +21,6 @@ public class HomeController {
     public ResponseEntity<?> login(@RequestBody Map<String, String> req) {
         System.out.println(req.get("id"));
         System.out.println(req.get("pw"));
-        return uDAO.idCheck(req.get("id"), req.get("pw"));
+        return uDAO.login(req.get("id"), req.get("pw"));
     }
 }
