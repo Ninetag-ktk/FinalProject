@@ -286,6 +286,7 @@ fieldset {
 
     }
 }
+.loginall{
 
 .login-main {
     display: flex;
@@ -303,10 +304,6 @@ fieldset {
     flex-direction: column;
 }
 
-button{
-    background-color: blue;
-    color: white;
-}
 
 button:hover{
     background-color: black;
@@ -336,7 +333,7 @@ input::placeholder{
 }
 
 
-.loginall {
+
 
     .Logoclass {
         margin-right: 0px; /* 로고를 오른쪽에 정렬 */
