@@ -1,12 +1,8 @@
-import React from "react";
+import React, { useContext } from "react";
 import logo from './nobglogo.png';
 import Main from "./Main";
 import { MyContext } from "./Main";
 import { useNavigate  } from "react-router-dom";
-
-
-
-
 
 export default function Header () {
     const { isMain, handleToggle } = useContext(MyContext);
@@ -17,7 +13,6 @@ export default function Header () {
         if (event.target.checked) {
             navigate("/main/search");
         } else {
-            
             navigate("/main");
         }
       };

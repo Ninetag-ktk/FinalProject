@@ -11,17 +11,17 @@ export default function Main() {
     const [isSearchVisible, setIsSearchVisible] = useState(false);
 
     function handleToggle() {
-      setIsSearchVisible(!isSearchVisible);
+        setIsSearchVisible(!isSearchVisible);
     }
 
     return (
         <div className={"Main"}>
-             <MyContext.Provider value={{ isSearchVisible, handleToggle }}>
-            <Header/>
-            <LeftBar/>
-            <Outlet>
-            {isSearchVisible ? <Search /> : <MainContent />}
-            </Outlet>
+            <MyContext.Provider value={{isSearchVisible, handleToggle}}>
+                <Header/>
+                <LeftBar/>
+                <Outlet>
+                    {isSearchVisible ? <Search/> : <MainContent/>}
+                </Outlet>
             </MyContext.Provider>
         </div>
     );
