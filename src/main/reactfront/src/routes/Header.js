@@ -1,7 +1,7 @@
-import React from "react";
+import React, { useContext } from "react";
 import logo from './nobglogo.png';
-import Main from "./Main";
-import { MyContext } from "./Main";
+
+import Main,{ MyContext } from "./Main";
 import { useNavigate  } from "react-router-dom";
 
 
