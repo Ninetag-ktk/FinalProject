@@ -162,7 +162,7 @@ public class GoogleAPI {
     // google 로그인 페이지로 이동 및 동의화면 출력하는 메서드
     // 해당 부분이 완료되면 {http://localhost:8080/google/check?code=**&scope=**} 형식으로 Response를 받음
     @PostConstruct
-    public HttpHeaders getGoogleAuthUrl() throws Exception {
+    public String getGoogleAuthUrl() throws Exception {
         // 요청 url 생성
         String AUTH_URL = googleAuthUrl;
         // 요청 url에 대한 파라미터 생성
@@ -184,10 +184,10 @@ public class GoogleAPI {
         log.info("reqUrl : \r\n{}", redirectURL);
 
         // HttpHeaders 를 사용해 바로 리다이렉션 할 수 있는 경로로 컨트롤러에 전달
-        HttpHeaders redirectReq = new HttpHeaders();
-        redirectReq.setLocation(URI.create(redirectURL));
+//        HttpHeaders redirectReq = new HttpHeaders();
+//        redirectReq.setLocation(URI.create(redirectURL));
         //1.redirectReq 구글로그인 창을 띄우고, 로그인 후 /login/check 으로 리다이렉션하게 한다.
-        return redirectReq;
+        return redirectURL;
     }
 
 
