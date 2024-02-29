@@ -33,8 +33,12 @@ export default function Login() {
         }).then(res => res.text())
             .then(message => {
                     setMessage(message);
-                    alert(message);
-                    window.location.href = "/main";
+                    if (message === "로그인") {
+                        alert(message)
+                        window.location.href = "/main";
+                    } else {
+                        alert(message);
+                    }
                 }
             )
         // .then(res => res.text())

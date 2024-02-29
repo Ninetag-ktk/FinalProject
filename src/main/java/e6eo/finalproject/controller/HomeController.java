@@ -18,8 +18,8 @@ public class HomeController {
 
 
     @PostMapping("/login")
-    public UsersEntity login(@RequestBody Map<String, String> body, HttpServletRequest req) {
-        UsersEntity result = uDAO.idCheck(body.get("id"), body.get("pw"), req);
+    public String login(@RequestBody Map<String, String> body, HttpServletRequest req) {
+        String result = uDAO.idCheck(body.get("id"), body.get("pw"), req);
         uDAO.loginCheck(req);
         System.out.println(body.get("id"));
         System.out.println(body.get("pw"));

@@ -3,6 +3,7 @@ package e6eo.finalproject.dao;
 import e6eo.finalproject.dto.UsersMapper;
 import e6eo.finalproject.entity.UsersEntity;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,7 +38,7 @@ public class UsersDAO {
     }
 
 
-    public UsersEntity idCheck(String id, String pw, HttpServletRequest req) {
+    public String idCheck(String id, String pw, HttpServletResponse) {
         Optional<UsersEntity> user = usersMapper.findById(id);
         HttpSession session = req.getSession();
         req.setAttribute("returnTest", "check");
@@ -45,15 +46,14 @@ public class UsersDAO {
         System.out.println(user);
         if (user.isEmpty()) {
             System.out.println("아이디 없음");
-            return null;
+            return "아이디 없음";
         } else {
             if (pw.equals(user.get().getPw())) {
-                session.setAttribute("user", user.get());
-                session.setMaxInactiveInterval(60 * 2);
-                return user.get();
+
+                return "로그인";
             } else {
                 System.out.println("비번불일치");
-                return null;
+                return "비번불일치";
             }
         }
     }
