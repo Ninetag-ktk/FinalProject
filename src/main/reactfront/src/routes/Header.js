@@ -16,7 +16,7 @@ export default function Header () {
         // Update the displayed month and year on initial render and after changes
         const monthName = ["1월", "2월", "3월", "4월", "5월", "6월",
             "7월", "8월", "9월", "10월", "11월", "12월"][currentMonth];
-        document.getElementById("currentMonth").innerHTML = `${currentYear} ${monthName} `;
+        document.getElementById("currentMonth").innerHTML = `${currentYear}.${monthName} `;
     }, [currentMonth, currentYear]);
 
     const handlePrevBtnClick = () => {
