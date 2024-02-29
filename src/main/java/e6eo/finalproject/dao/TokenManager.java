@@ -26,7 +26,7 @@ public class TokenManager {
         Optional<UsersEntity> user = usersMapper.findById(userId);
         // user에 옵저브 토큰이 없다면 새로 값을 입력
         // user에 옵저브 토큰이 이미 있다면 해당 값을 반환
-        if (user.get().getObserveToken().isEmpty()) {
+        if (user.get().getObserveToken()==null) {
             do {
                 // 랜덤값 생성
                 observe = observeGenerator();
