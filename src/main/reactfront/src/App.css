@@ -64,7 +64,6 @@ body {
 }
 
 #root {
-
     background-color: #E8F9FF;
     display: flex;
     justify-content: center;
@@ -83,6 +82,7 @@ body {
 
 }
 
+.header{
 .toggleSwitch{ 
  display: inline-flex;
  align-items: center;
@@ -145,8 +145,8 @@ body {
 [type="checkbox"]:enabled:hover {
  box-shadow: 0 0 0 max(4px, 0.2em) lightgray;
 }
+}
 
-/* Global CSS */
 body {
 
 
@@ -165,7 +165,7 @@ fieldset {
     box-sizing: border-box;
 }
 
-
+/* Header에 들어있는 로고*/
 .logo {
     height: 60px;
     width: 60px;
@@ -177,6 +177,8 @@ fieldset {
     display: flex;
     flex-direction: column;
 }
+
+/* <leftbar/> + <outlet/> */
 .leftOUT{
     display: flex;
     height: 100vh;
@@ -212,10 +214,12 @@ fieldset {
     width: 100%;
 
 }
+/* 검색 페이지*/
 .searchp{
     position: relative;
     width: 100%;
 }
+
 .divTable{
     display: table;
     width: 100%;

@@ -1,24 +1,34 @@
 import React, {useState} from 'react';
-
 import logo from './temp_logo.png'
-import {get, post} from "axios";
-import {redirect} from "react-router-dom";
+import {json} from "react-router-dom";
 
 
 export default function Login() {
-    const handleValueChange = (e) => {
-        setLogin({
-            ...login,
-            [e.target.name]: e.target.value
-        });
-    }
-
-    const [login, setLogin] = useState({
+    const [loginInfo, setLoginInfo] = useState({
         id: "",
         pw: "",
-
     });
-    const [message, setMessage] = useState("");
+
+    const handleLogin = async () => {
+        const response = await fetch("/login", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json; charset=utf-8",
+                "Accept": "application/json; charset=utf-8",
+            },
+            body: JSON.stringify(loginInfo),
+        });
+        const result = await response.json();
+        if (result.code === "200") {
+            // 로그인 성공 처리
+            window.sessionStorage.setItem("observe", result.body);
+            window.location.href = "/main";
+        } else {
+            // 로그인 실패 처리
+            alert(result.body);
+            // window.location.href = "/";
+        }
+    };
 
     const handleGoogleLogin = () => {
         fetch("/google/login")
@@ -28,59 +38,41 @@ export default function Login() {
                 console.log(data);
             });
     };
-    const handleSubmit = (event) => {
-        event.preventDefault(); // 이벤트가 첫 입력에 중복되지 않게 하는 명령어
-
-
-        fetch(`/login`, {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json; charset=utf-8",
-                "Accept": "application/json; charset=utf-8",
-            },
-            body: JSON.stringify(login),
-        }).then(res => res.text())
-            .then(message => {
-                    setMessage(message);
-                    alert(message);
-                    window.location.href = "/main";
-                }
-            )
-        // .then(res => res.text())
-        // .then(message => {
-        //         setMessage(message);
-        //         alert(message);
-        //         window.location.href = "/main";
-        //     }
-        // )
-    };
 
     return (
         <div className={"loginall"}>
-        <div className={"login-main"}>
-            <div className={"Logoclass"}>
-                <img src={logo}/>
-            </div>
-
-            <div className={"logininput"}>
-                <form className={"loginForm1"} action={"/main"} onSubmit={handleSubmit}>
-                    <input type={"text"} className={"inputtext"} name={"id"} onChange={handleValueChange}
-                           placeholder={"email"}/>
-                    <input type={"password"} className={"inputtext"} name={"pw"} onChange={handleValueChange}
-                           placeholder={"password"}/>
-                    <button className={"btn"}>로그인</button>
-
-                </form>
-                <form className={"loginForm1"} action={"/create"}>
+            <div className={"login-main"}>
+                <div className={"Logoclass"}>
+                    <img src={logo}/>
+                </div>
+                <div className={"logininput"}>
+                    <div className={"loginForm1"}>
+                        <input
+                            type="text"
+                            className="inputtext"
+                            name="id"
+                            placeholder="email"
+                            value={loginInfo.id}
+                            onChange={(e) => setLoginInfo({...loginInfo, id: e.target.value})}
+                        />
+                        <input
+                            type="password"
+                            className="inputtext"
+                            name="pw"
+                            placeholder="password"
+                            value={loginInfo.pw}
+                            onChange={(e) => setLoginInfo({...loginInfo, pw: e.target.value})}
+                        />
+                        <div className={"autologin"}>
+                        <input type={"checkbox"}/>로그인유지
+                        </div>
+                        <button className={"btn"} type={"submit"} onClick={handleLogin}>로그인</button>
+                    </div>
                     <button className={"btn"}>회원가입</button>
-                </form>
-                <hr/>
-                <a href={"/google/login"}>
-                <button className={"btn"}  >google계정으로 로그인</button></a>
+                    <hr/>
+                    <button className={"btn"} onClick={handleGoogleLogin}>google계정으로 로그인</button>
+                </div>
             </div>
-
         </div>
-            </div>
     )
 }
-
