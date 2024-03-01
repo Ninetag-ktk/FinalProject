@@ -19,7 +19,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.reactive.function.client.WebClient;
 
-import java.net.URI;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -31,11 +30,17 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 public class GoogleAPI {
-//  출처: https://ecolumbus.tistory.com/169 [슬기로운 개발자 생활:티스토리]
+    @Autowired
+    private final UsersMapper usersMapper;
+    @Autowired
+    private final CategoryMapper categoryMapper;
+    @Autowired
+    private final PostsMapper postsMapper;
+    @Autowired
+    private final TokenManager tokenManager;
+    //  출처: https://ecolumbus.tistory.com/169 [슬기로운 개발자 생활:티스토리]
     @Value("${google.auth}")
     private String googleAuthUrl;
-    @Value("${google.login}")
-    private String googleLoginUrl;
     // redirect 경로를 여러개를 지정했을 때
     // @Value("${google.redirect}")
     // private List<String> googleRedirectUrlLs;
@@ -49,24 +54,16 @@ public class GoogleAPI {
     private List<String> googleScopeLs;
     @Value("${google.key}")
     private String googleKey;
-
     private GoogleToken usersToken = null;
 
     // API 요청에 사용되는 기본적인 헤더
     private Consumer<HttpHeaders> reqHeader(String accessToken) {
         Consumer<HttpHeaders> headers = header -> {
-            header.add("Authorization", "Bearer "+ accessToken);
+            header.add("Authorization", "Bearer " + accessToken);
             header.add("Accept", "application/json");
         };
         return headers;
     }
-
-    @Autowired
-    private final UsersMapper usersMapper;
-    @Autowired
-    private final CategoryMapper categoryMapper;
-    @Autowired
-    private final PostsMapper postsMapper;
 
 //    리다이렉트 경로가 여러개일 경우 하나의 문자열로 변환하는 메서드
 //    private String googleRedirectUrl() {
@@ -79,7 +76,7 @@ public class GoogleAPI {
 //        }
 //        return redirect.toString();
 //    }
-    
+
     private String googleScope() {
         StringBuilder scope = new StringBuilder();
         for (int i = 0; i < googleScopeLs.size(); i++) {
@@ -97,30 +94,45 @@ public class GoogleAPI {
     // 구글 계정으로 가입된 아이디가 있는지 확인
     public String checkGoogleEmail() {
         googleUserInfo userInfo = getUserInfo();
-        List<UsersEntity> users = usersMapper.findByInnerId(userInfo.getEmail());
+        Optional<UsersEntity> users = usersMapper.findByInnerId(userInfo.getEmail());
         if (users.isEmpty()) {
-            return doAutoSignUp(userInfo);
+            // 가입되지 않은 아이디라면
+            // 자동 가입 처리
+            doAutoSignUp(userInfo);
         } else {
-            return "이미 가입된 계정";
+            // 이미 가입되어있는 회원이라면
+            // 리프레시토큰의 유효성 검사 및 업데이트 진행
+            checkRefreshToken(users.get());
+        }
+        // 이후 데이터를 다시 조회
+        users = usersMapper.findByInnerId(userInfo.getEmail());
+        // 옵저브 토큰 설정 및 리턴
+        return tokenManager.setObserve(users.get().getUserId());
+    }
+
+    // 리프레시 토큰의 유효성 검사 및 업데이트 메서드
+    private void checkRefreshToken(UsersEntity users) {
+        if (!usersToken.getRefresh_token().isEmpty() && !users.getRefreshToken().equals(usersToken.getRefresh_token())) {
+            usersMapper.updateRefreshToken(users.getUserId(), usersToken.getRefresh_token());
         }
     }
 
     // 자동 가입 처리
-    private String doAutoSignUp(googleUserInfo userInfo) {
+    private void doAutoSignUp(googleUserInfo userInfo) {
         try {
             UsersEntity user = new UsersEntity().builder()
                     .userId(userInfo.getEmail())
-                    .pw(usersToken.getAccess_token().substring(0,19))
+                    .pw(usersToken.getAccess_token().substring(0, 19))
                     .nickName(userInfo.getName())
                     .innerId(userInfo.getEmail())
                     .refreshToken(usersToken.getRefresh_token())
                     .build();
             System.out.println(user.toString());
             usersMapper.save(user);
-            return "Google 계정 자동 가입 완료";
-        } catch (Exception e){
+            log.info("Google 계정 자동 가입 완료");
+        } catch (Exception e) {
             e.printStackTrace();
-            return "가입 실패";
+            log.info("가입 실패");
         }
     }
 
@@ -148,7 +160,7 @@ public class GoogleAPI {
 
     public JsonObject getCalendarList() {
         WebClient webClient = WebClient.create();
-        String calendarListUrl = "https://www.googleapis.com/calendar/v3/users/me/calendarList&key="+googleKey;
+        String calendarListUrl = "https://www.googleapis.com/calendar/v3/users/me/calendarList&key=" + googleKey;
         String token = usersToken.getAccess_token();
         JsonObject calendarListJson = webClient.get()
                 .uri(calendarListUrl)
@@ -167,19 +179,19 @@ public class GoogleAPI {
         String AUTH_URL = googleAuthUrl;
         // 요청 url에 대한 파라미터 생성
         Map<String, Object> auth_params = new HashMap<>();
-        auth_params.put("client_id",googleClientId);
+        auth_params.put("client_id", googleClientId);
         auth_params.put("redirect_uri", googleRedirectUrl);
         auth_params.put("response_type", "code");
         auth_params.put("scope", googleScope());
         auth_params.put("access_type", "offline");
         auth_params.put("prompt", "consent");
         // 요청 파라미터를 String으로 형변환
-        String parameterString=auth_params.entrySet().stream()
-                .map(x->x.getKey()+"="+x.getValue())
+        String parameterString = auth_params.entrySet().stream()
+                .map(x -> x.getKey() + "=" + x.getValue())
                 .collect(Collectors.joining("&"));
         // 요청 url과 파라미터 결합
         String redirectURL = AUTH_URL + "?" + parameterString;
-        
+
         // 로그 출력으로 확인
         log.info("reqUrl : \r\n{}", redirectURL);
 
@@ -221,18 +233,23 @@ public class GoogleAPI {
         return googleToken;
     }
 
-//    public GoogleToken getNewAccessToken() {
-//        세션에 있는 User의 데이터의 ID를 사용해서 refresh_token 데이터를 받아오고
-//        String TOKEN_REQ = "https://oauth2.googleapis.com/token"
-//        Map<String, Object> token_params = new HashMap<>();
-//        token_params.put("client_id", googleClientId);
-//        token_params.put("client_secret", googleClientSecret);
-//        token_params.put("refresh_token", users.getRefreshToken());
-//        token_params.put("grant_type", "refresh_token");
-//        RestTemplate restTemplate = new RestTemplate();
-//        ResponseEntity<GoogleToken> apiResponse = restTemplate.postForEntity(TOKEN_REQ, token_params, GoogleToken.class);
-//        GoogleToken googleToken = apiResponse.getBody();
-//        log.info("accessToken\r\n{}", googleToken.getAccessToken());
-//        return googleToken;
-//    }
+    // 클라이언트로부터 Google API 요청이 들어왔을 경우
+    // 파라미터로 받은 옵저브 토큰으로, 해당 유저의 리프레시 토큰을 받아옴
+    // 리프레시 토큰으로 새로운 엑세스 토큰을 발급받아 요청을 진행
+    public String getNewAccessToken(String observeToken) {
+        String TOKEN_REQ = "https://oauth2.googleapis.com/token";
+        Map<String, Object> token_params = new HashMap<>();
+        token_params.put("client_id", googleClientId);
+        token_params.put("client_secret", googleClientSecret);
+        // 세션에 있는 User의 데이터의 ID를 사용해서 refresh_token 데이터를 받아오고
+        token_params.put("refresh_token", usersMapper.getRefreshTokenByObserve(observeToken));
+        token_params.put("grant_type", "refresh_token");
+        RestTemplate restTemplate = new RestTemplate();
+        // 새로운 토큰을 요청
+        ResponseEntity<GoogleToken> apiResponse = restTemplate.postForEntity(TOKEN_REQ, token_params, GoogleToken.class);
+        GoogleToken token = apiResponse.getBody();
+        log.info("accessToken\r\n{}", token.getAccess_token());
+        // 엑세스 토큰만 리턴하여 바로 사용할 수 있게끔 함
+        return token.getAccess_token();
+    }
 }

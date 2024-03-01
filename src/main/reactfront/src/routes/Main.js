@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from "react";
+import React, {useState} from "react";
 import {Outlet} from "react-router-dom";
 import Header from "./Header";
 import LeftBar from "./LeftBar";
@@ -14,10 +14,9 @@ export default function Main() {
         setIsSearchVisible(!isSearchVisible);
     }
 
-    return (
-        <div className={"Main"}>
-            <MyContext.Provider value={{isSearchVisible, handleToggle}}>
-                <div className={"3dan"}>
+    return (<div className={"Main"}>
+        <MyContext.Provider value={{isSearchVisible, handleToggle}}>
+            <div className={"3dan"}>
                 <Header/>
                 <div className={"leftOUT"}>
                     <LeftBar/>
@@ -25,8 +24,7 @@ export default function Main() {
                         {isSearchVisible ? <Search/> : <MainContent/>}
                     </Outlet>
                 </div>
-                </div>
-            </MyContext.Provider>
-        </div>
-    );
+            </div>
+        </MyContext.Provider>
+    </div>);
 }

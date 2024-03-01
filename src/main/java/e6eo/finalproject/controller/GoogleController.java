@@ -7,26 +7,32 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.net.URI;
+import java.util.HashMap;
+import java.util.Map;
+
 @RestController
 @RequestMapping("/google")
-@CrossOrigin(origins = "http://localhost:3000", allowCredentials = "true")
+@CrossOrigin(origins = "http://localhost:3000", exposedHeaders = {"Authorization"})
 public class GoogleController {
 
     @Autowired
     private GoogleAPI googleAPI;
 
     @GetMapping("/login")
-    // 리액트에서 리다이렉트 될 수 있게끔, return을 ResponseEntity<?> 를 String 으로 교체함
-    public String googleOAuth() throws Exception {
-        System.out.println("googleLogin");
-        return googleAPI.getGoogleAuthUrl().toString();
+    // 리액트에서 리다이렉트 될 수 있게끔, ResponseEntity<?> 에 URL을 String 타입으로 담아 반환
+    public ResponseEntity<?> googleOAuth() throws Exception {
+        Map<String, String> googleUrl = new HashMap<>();
+        googleUrl.put("redirect", googleAPI.getGoogleAuthUrl());
+        return ResponseEntity.ok(googleUrl);
     }
 
     @GetMapping("/check")
-    public String googleCheck(@RequestParam(value = "code") String authCode) throws Exception {
+    public ResponseEntity<Void> googleCheck(@RequestParam(value = "code") String authCode) throws Exception {
         googleAPI.getGoogleToken(authCode);
-        String result = googleAPI.checkGoogleEmail();
-        return result;
+        return ResponseEntity.status(HttpStatus.FOUND)
+                .location(URI.create("http://localhost:3000/check?autologin=true&observe=" + googleAPI.checkGoogleEmail()))
+                .build();
     }
 
     @GetMapping("/test")
