@@ -12,7 +12,7 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/google")
-@CrossOrigin(origins = "http://localhost:3000", exposedHeaders = {"Authorization"})
+@CrossOrigin(origins = "http://localhost:3000")
 public class GoogleController {
 
     @Autowired
