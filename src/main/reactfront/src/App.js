@@ -10,6 +10,8 @@ import Create from "./routes/Create";
 import Main from "./routes/Main";
 import Center from "./routes/Center";
 import Search from "./routes/Search";
+import Info from "./routes/Info";
+
 const router = createBrowserRouter([
     {
         path: "/",
@@ -28,6 +30,8 @@ const router = createBrowserRouter([
         children : [
             {index : true, element: <Center />},
             {path : '/main/search',element:<Search />},
+            {path : '/main/info',element:<Info />},
+
         ]
     }
 ]);
