@@ -1,11 +1,11 @@
-import React, { useContext, useState, useEffect } from "react";
+import React, {useContext, useEffect, useState} from "react";
 import logo from './nobglogo.png';
+import {MyContext} from "./Main";
+import {useNavigate} from "react-router-dom";
+import axios from "axios";
 
-import Main,{ MyContext } from "./Main";
-import { useNavigate  } from "react-router-dom";
-
-export default function Header () {
-    const { isMain, handleToggle } = useContext(MyContext);
+export default function Header() {
+    const {isMain, handleToggle} = useContext(MyContext);
     const navigate = useNavigate();
 
 
@@ -42,10 +42,19 @@ export default function Header () {
         if (event.target.checked) {
             navigate("/main/search");
         } else {
-            
+
             navigate("/main");
         }
-      };
+    };
+
+    const handleGoogleTest = () => {
+        axios.post("/google/test", {
+            observe: sessionStorage.getItem("observe"),
+        })
+            .then(function (response) {
+                console.log(response);
+            });
+    }
 
     return (
         <div className={"header"}>
@@ -54,11 +63,14 @@ export default function Header () {
             <h2 id="currentMonth"></h2>
             <button id={"nextBtn"} onClick={handleNextBtnClick}>→</button>
             <div>
-            <label className={"toggleSwitch"}>
-                    <input type="checkbox" checked={isMain} onChange={handleCheckboxChange} />
-                <span>캘린더/검색</span>
-            </label>
-
+                <label className={"toggleSwitch"}>
+                    <input type="checkbox" checked={isMain} onChange={handleCheckboxChange}/>
+                    <span>캘린더/검색</span>
+                </label>
+                <button type={"button"} id={"googletest"} onClick={() => {
+                    handleGoogleTest()
+                }}>구글 API 테스트 버튼
+                </button>
             </div>
         </div>
 

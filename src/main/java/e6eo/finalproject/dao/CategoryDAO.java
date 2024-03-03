@@ -5,8 +5,8 @@ import e6eo.finalproject.entity.CategoryEntity;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Scanner;
 
 @Service
@@ -18,8 +18,18 @@ public class CategoryDAO {
         Scanner s = new Scanner(System.in);
         System.out.print("아이디 입력! : ");
         String id = s.next();
-        System.out.print("목록 입력! : ");
-        String list = s.next();
+        Map<String, String> list = null;
+        String listKey = null;
+        String listValue = null;
+        do {
+            System.out.print("목록 아이디 입력! : ");
+            listKey = s.next();
+            System.out.print("목록 설명 입력! : ");
+            listValue = s.next();
+            list.put(listKey, listValue);
+            System.out.println("계속 입력하시겠습니까?");
+        } while (s.next() == "false");
+
         CategoryEntity lists = new CategoryEntity().builder().userId(id).categories(list).build();
         collectionsMapper.save(lists);
     }

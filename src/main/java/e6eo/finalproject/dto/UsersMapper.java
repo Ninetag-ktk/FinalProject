@@ -19,7 +19,7 @@ public interface UsersMapper extends JpaRepository<UsersEntity, String> {
     @Query(value = "select u from users u where u.observeToken=:observeToken")
     public Optional<UsersEntity> findByObserveToken(@Param("observeToken") String observeToken);
 
-    @Query(value = "select u.refreshToken from users u where u.observeToken=observeToken")
+    @Query(value = "select u.refreshToken from users u where u.observeToken=:observeToken")
     public Optional<String> getRefreshTokenByObserve(@Param("observeToken") String observeToken);
 
     @Modifying

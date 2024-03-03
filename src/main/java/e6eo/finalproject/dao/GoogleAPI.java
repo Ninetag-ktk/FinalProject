@@ -1,11 +1,11 @@
 package e6eo.finalproject.dao;
 
-import com.google.gson.JsonObject;
 import e6eo.finalproject.dto.CategoryMapper;
 import e6eo.finalproject.dto.PostsMapper;
 import e6eo.finalproject.dto.UsersMapper;
 import e6eo.finalproject.entity.UsersEntity;
 import e6eo.finalproject.entityGoogle.GoogleToken;
+import e6eo.finalproject.entityGoogle.googleLists;
 import e6eo.finalproject.entityGoogle.googleUserInfo;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
@@ -19,10 +19,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.reactive.function.client.WebClient;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
@@ -104,10 +101,8 @@ public class GoogleAPI {
             // 리프레시토큰의 유효성 검사 및 업데이트 진행
             checkRefreshToken(users.get());
         }
-        // 이후 데이터를 다시 조회
-        users = usersMapper.findByInnerId(userInfo.getEmail());
         // 옵저브 토큰 설정 및 리턴
-        return tokenManager.setObserve(users.get().getUserId());
+        return tokenManager.setObserve(userInfo.getEmail());
     }
 
     // 리프레시 토큰의 유효성 검사 및 업데이트 메서드
@@ -120,13 +115,8 @@ public class GoogleAPI {
     // 자동 가입 처리
     private void doAutoSignUp(googleUserInfo userInfo) {
         try {
-            UsersEntity user = new UsersEntity().builder()
-                    .userId(userInfo.getEmail())
-                    .pw(usersToken.getAccess_token().substring(0, 19))
-                    .nickName(userInfo.getName())
-                    .innerId(userInfo.getEmail())
-                    .refreshToken(usersToken.getRefresh_token())
-                    .build();
+            new UsersEntity();
+            UsersEntity user = UsersEntity.builder().userId(userInfo.getEmail()).pw(usersToken.getAccess_token().substring(0, 19)).nickName(userInfo.getName()).innerId(userInfo.getEmail()).refreshToken(usersToken.getRefresh_token()).build();
             System.out.println(user.toString());
             usersMapper.save(user);
             log.info("Google 계정 자동 가입 완료");
@@ -148,27 +138,9 @@ public class GoogleAPI {
         };
 
         // 토큰을 userInfo API로 보내 유저 정보를 가져옴
-        googleUserInfo userInfo = webClient.get()
-                .uri(userInfoUrl)
-                .headers(headers)
-                .retrieve()
-                .bodyToMono(googleUserInfo.class)
-                .block();
+        googleUserInfo userInfo = webClient.get().uri(userInfoUrl).headers(headers).retrieve().bodyToMono(googleUserInfo.class).block();
         log.info(userInfo.toString());
         return userInfo;
-    }
-
-    public JsonObject getCalendarList() {
-        WebClient webClient = WebClient.create();
-        String calendarListUrl = "https://www.googleapis.com/calendar/v3/users/me/calendarList&key=" + googleKey;
-        String token = usersToken.getAccess_token();
-        JsonObject calendarListJson = webClient.get()
-                .uri(calendarListUrl)
-                .headers(reqHeader(token))
-                .retrieve()
-                .bodyToMono(JsonObject.class)
-                .block();
-        return calendarListJson;
     }
 
     // google 로그인 페이지로 이동 및 동의화면 출력하는 메서드
@@ -186,9 +158,7 @@ public class GoogleAPI {
         auth_params.put("access_type", "offline");
         auth_params.put("prompt", "consent");
         // 요청 파라미터를 String으로 형변환
-        String parameterString = auth_params.entrySet().stream()
-                .map(x -> x.getKey() + "=" + x.getValue())
-                .collect(Collectors.joining("&"));
+        String parameterString = auth_params.entrySet().stream().map(x -> x.getKey() + "=" + x.getValue()).collect(Collectors.joining("&"));
         // 요청 url과 파라미터 결합
         String redirectURL = AUTH_URL + "?" + parameterString;
 
@@ -236,7 +206,7 @@ public class GoogleAPI {
     // 클라이언트로부터 Google API 요청이 들어왔을 경우
     // 파라미터로 받은 옵저브 토큰으로, 해당 유저의 리프레시 토큰을 받아옴
     // 리프레시 토큰으로 새로운 엑세스 토큰을 발급받아 요청을 진행
-    public String getNewAccessToken(String observeToken) {
+    public String getNewAccessTokenByObserve(String observeToken) {
         String TOKEN_REQ = "https://oauth2.googleapis.com/token";
         Map<String, Object> token_params = new HashMap<>();
         token_params.put("client_id", googleClientId);
@@ -251,5 +221,52 @@ public class GoogleAPI {
         log.info("accessToken\r\n{}", token.getAccess_token());
         // 엑세스 토큰만 리턴하여 바로 사용할 수 있게끔 함
         return token.getAccess_token();
+    }
+
+    // API 데이터 요청 파트
+
+    private Map<String, String> listCalendar(String accessToken) {
+        WebClient webClient = WebClient.create();
+        String Url = "https://www.googleapis.com/calendar/v3/users/me/calendarList?maxResults=100&key=" + googleKey;
+        Object json = webClient.get().uri(Url).headers(reqHeader(accessToken)).retrieve().bodyToMono(googleLists.class).block().getItems();
+        Map<String, String> category = new HashMap<>();
+//        System.out.println(json);
+        for (Map item : (ArrayList<Map>) json) {
+            if (item.get("id").equals(item.get("summary"))) {
+                category.put("google^calendar^" + item.get("id").toString().replace(".", "_"), "내 구글 캘린더");
+            } else {
+                category.put("google^calendar^" + item.get("id").toString().replace(".", "_"), item.get("summary").toString());
+            }
+        }
+        return category;
+    }
+
+    private Map<String, String> listTasks(String accessToken) {
+        WebClient webClient = WebClient.create();
+        String Url = "https://tasks.googleapis.com/tasks/v1/users/@me/lists?maxResults=100&key=" + googleKey;
+        Object json = webClient.get().uri(Url).headers(reqHeader(accessToken)).retrieve().bodyToMono(googleLists.class).block().getItems();
+        Map<String, String> category = new HashMap<>();
+//        System.out.println(json);
+        for (Map item : (ArrayList<Map>) json) {
+            category.put("google^tasks^" + item.get("id").toString().replace(".", "_"), item.get("title").toString());
+        }
+        return category;
+    }
+
+    public Map<String, String> getGoogleCategory(String observe) {
+        Optional<UsersEntity> user = usersMapper.findByObserveToken(observe);
+        Map<String, String> category = new HashMap<>();
+        if (user.isEmpty()) {
+            category.put("error", "NoAuthorizedAccess");
+            return category;
+        }
+        String accessToken = getNewAccessTokenByObserve(observe);
+        category.putAll(listCalendar(accessToken));
+        category.putAll(listTasks(accessToken));
+        for (String key : category.keySet()) {
+            categoryMapper.addCategory(user.get().getUserId(), key, category.get(key));
+            System.out.println(key + "  :  " + category.get(key));
+        }
+        return category;
     }
 }
