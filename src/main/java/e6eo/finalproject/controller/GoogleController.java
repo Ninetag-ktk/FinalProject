@@ -1,6 +1,5 @@
 package e6eo.finalproject.controller;
 
-import com.google.gson.JsonObject;
 import e6eo.finalproject.dao.GoogleAPI;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -35,10 +34,10 @@ public class GoogleController {
                 .build();
     }
 
-    @GetMapping("/test")
-    public JsonObject googleTest() {
-        return googleAPI.getCalendarList();
+    @ResponseBody
+    @PostMapping("/test")
+    public void googleTest(@RequestBody Map<String, String> data) {
+        System.out.println(data.get("observe"));
+        googleAPI.getGoogleCategory(data.get("observe"));
     }
-
-
 }
