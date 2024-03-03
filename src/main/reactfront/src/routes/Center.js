@@ -7,7 +7,7 @@ export default function Center() {
   const [month, setMonth] = useState(0);
 
   useEffect(() => {
-    const today = new Date(); // 2024년 3월 1일을 기준으로 설정합니다.
+    const today = new Date(); 
     const year = today.getFullYear();
     const month = today.getMonth();
 
