@@ -1,19 +1,14 @@
 package e6eo.finalproject.dao;
 
-import com.google.api.client.util.DateTime;
 import e6eo.finalproject.dto.CategoryMapper;
 import e6eo.finalproject.dto.PostsMapper;
 import e6eo.finalproject.dto.UsersMapper;
-import e6eo.finalproject.entity.PostsEntity;
 import e6eo.finalproject.entity.UsersEntity;
 import e6eo.finalproject.entityGoogle.GoogleToken;
-import e6eo.finalproject.entityGoogle.googleEvent;
-import e6eo.finalproject.entityGoogle.googleLists;
 import e6eo.finalproject.entityGoogle.googleUserInfo;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.bson.json.JsonObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
@@ -21,14 +16,13 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.client.RestTemplate;
-import org.springframework.web.reactive.function.client.ExchangeStrategies;
 import org.springframework.web.reactive.function.client.WebClient;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import java.time.temporal.ChronoUnit;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
@@ -36,34 +30,35 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 public class GoogleAPI {
-    @Autowired
-    private final UsersMapper usersMapper;
-    @Autowired
-    private final CategoryMapper categoryMapper;
-    @Autowired
-    private final PostsMapper postsMapper;
-    @Autowired
-    private final TokenManager tokenManager;
+    protected GoogleToken usersToken = null;
     //  출처: https://ecolumbus.tistory.com/169 [슬기로운 개발자 생활:티스토리]
     @Value("${google.auth}")
-    private String googleAuthUrl;
+    protected String googleAuthUrl;
     // redirect 경로를 여러개를 지정했을 때
     // @Value("${google.redirect}")
     // private List<String> googleRedirectUrlLs;
     @Value("${google.redirect}")
-    private String googleRedirectUrl;
+    protected String googleRedirectUrl;
     @Value("${google.client.id}")
-    private String googleClientId;
+    protected String googleClientId;
     @Value("${google.client.secret}")
-    private String googleClientSecret;
+    protected String googleClientSecret;
     @Value("${google.scope}")
-    private List<String> googleScopeLs;
+    protected List<String> googleScopeLs;
     @Value("${google.key}")
-    private String googleKey;
-    private GoogleToken usersToken = null;
+    protected String googleKey;
+
+    @Autowired
+    protected UsersMapper usersMapper;
+    @Autowired
+    protected CategoryMapper categoryMapper;
+    @Autowired
+    protected PostsMapper postsMapper;
+    @Autowired
+    protected TokenManager tokenManager;
 
     // API 요청에 사용되는 기본적인 헤더
-    private Consumer<HttpHeaders> reqHeader(String accessToken) {
+    protected Consumer<HttpHeaders> reqHeader(String accessToken) {
         Consumer<HttpHeaders> headers = header -> {
             header.add("Authorization", "Bearer " + accessToken);
             header.add("Accept", "application/json");
@@ -94,50 +89,16 @@ public class GoogleAPI {
         return scope.toString();
     }
 
-    /////////////////////////////////////////
-    // 작동 메서드
-
-    // 구글 계정으로 가입된 아이디가 있는지 확인
-    public String checkGoogleEmail() {
-        googleUserInfo userInfo = getUserInfo();
-        Optional<UsersEntity> users = usersMapper.findByInnerId(userInfo.getEmail());
-        if (users.isEmpty()) {
-            // 가입되지 않은 아이디라면
-            // 자동 가입 처리
-            doAutoSignUp(userInfo);
-        } else {
-            // 이미 가입되어있는 회원이라면
-            // 리프레시토큰의 유효성 검사 및 업데이트 진행
-            checkRefreshToken(users.get());
-        }
-        // 옵저브 토큰 설정 및 리턴
-        return tokenManager.setObserve(userInfo.getEmail());
-    }
 
     // 리프레시 토큰의 유효성 검사 및 업데이트 메서드
-    private void checkRefreshToken(UsersEntity users) {
+    protected void checkRefreshToken(UsersEntity users) {
         if (!usersToken.getRefresh_token().isEmpty() && !users.getRefreshToken().equals(usersToken.getRefresh_token())) {
             usersMapper.updateRefreshToken(users.getUserId(), usersToken.getRefresh_token());
         }
     }
 
-    // 자동 가입 처리
-    private void doAutoSignUp(googleUserInfo userInfo) {
-        try {
-            new UsersEntity();
-            UsersEntity user = UsersEntity.builder().userId(userInfo.getEmail()).pw(usersToken.getAccess_token().substring(0, 19)).nickName(userInfo.getName()).innerId(userInfo.getEmail()).refreshToken(usersToken.getRefresh_token()).build();
-            System.out.println(user.toString());
-            usersMapper.save(user);
-            categoryMapper.createDefaultCategory(user.getUserId(), user.getNickName());
-            log.info("Google 계정 자동 가입 완료");
-        } catch (Exception e) {
-            e.printStackTrace();
-            log.info("가입 실패");
-        }
-    }
-
     // 구글 계정에서 userInfo 데이터 가져옴
-    private googleUserInfo getUserInfo() {
+    protected googleUserInfo getUserInfo() {
         WebClient webClient = WebClient.create();
         String userInfoUrl = "https://www.googleapis.com/oauth2/v2/userinfo";
         String token = usersToken.getAccess_token();
@@ -173,7 +134,7 @@ public class GoogleAPI {
         String redirectURL = AUTH_URL + "?" + parameterString;
 
         // 로그 출력으로 확인
-        log.info("reqUrl : \r\n{}", redirectURL);
+//        log.info("reqUrl : \r\n{}", redirectURL);
 
         // HttpHeaders 를 사용해 바로 리다이렉션 할 수 있는 경로로 컨트롤러에 전달
 //        HttpHeaders redirectReq = new HttpHeaders();
@@ -235,65 +196,8 @@ public class GoogleAPI {
 
     // API 데이터 요청 파트
 
-    private Map<String, String> listCalendar(String accessToken) {
-        WebClient webClient = WebClient.create();
-        String Url = "https://www.googleapis.com/calendar/v3/users/me/calendarList?maxResults=100&key=" + googleKey;
-        Object json = webClient.get().uri(Url).headers(reqHeader(accessToken)).retrieve().bodyToMono(googleLists.class).block().getItems();
-        Map<String, String> category = new HashMap<>();
-//        System.out.println(json);
-        for (Map item : (ArrayList<Map>) json) {
-            if (item.get("id").equals("ko.south_korea#holiday@group.v.calendar.google.com")) {
-                continue;
-            } else if (item.get("id").equals(item.get("summary"))) {
-                category.put("google^calendar^" + item.get("id").toString().replace(".", "_"), "내 구글 캘린더");
-            } else {
-                category.put("google^calendar^" + item.get("id").toString().replace(".", "_"), item.get("summary").toString());
-            }
-        }
-        return category;
-    }
 
-    private Map<String, String> listTasks(String accessToken) {
-        WebClient webClient = WebClient.create();
-        String Url = "https://tasks.googleapis.com/tasks/v1/users/@me/lists?maxResults=100&key=" + googleKey;
-        Object json = webClient.get().uri(Url).headers(reqHeader(accessToken)).retrieve().bodyToMono(googleLists.class).block().getItems();
-        Map<String, String> category = new HashMap<>();
-//        System.out.println(json);
-        for (Map item : (ArrayList<Map>) json) {
-            category.put("google^tasks^" + item.get("id").toString().replace(".", "_"), item.get("title").toString());
-        }
-        return category;
-    }
-
-    public Map<String, String> getGoogleCategory(String observe) {
-        Optional<UsersEntity> user = usersMapper.findByObserveToken(observe);
-        Map<String, String> categories = new HashMap<>();
-        if (user.isEmpty()) {
-            categories.put("error", "NoAuthorizedAccess");
-            return categories;
-        }
-        String accessToken = getNewAccessTokenByObserve(observe);
-        categories.putAll(listCalendar(accessToken));
-        categories.putAll(listTasks(accessToken));
-        for (String key : categories.keySet()) {
-            categoryMapper.addCategory(user.get().getUserId(), key, categories.get(key));
-//            System.out.println(key + "  :  " + category.get(key));
-        }
-        return categories;
-    }
-
-    public void getGooglePosts(String observe) {
-        Optional<UsersEntity> user = usersMapper.findByObserveToken(observe);
-        if (user.isEmpty()) {
-            return;
-        }
-        String[] categories = categoryMapper.findById(user.get().getUserId()).get().getCategories().keySet().toArray(new String[0]);
-        String accessToken = getNewAccessTokenByObserve(observe);
-        Map<String, ArrayList<String>> categoryMap = convertList(categories);
-        postCalendar(user.get().getUserId(), categoryMap.get("calendar"), accessToken);
-    }
-
-    private Map<String, ArrayList<String>> convertList(String[] categoryList) {
+    protected Map<String, ArrayList<String>> decodeCategory(String[] categoryList) {
         Map<String, ArrayList<String>> result = new HashMap<>();
         ArrayList<String> calendarLists = new ArrayList<>();
         ArrayList<String> taskLists = new ArrayList<>();
@@ -310,7 +214,7 @@ public class GoogleAPI {
             }
         }
         result.put("calendar", calendarLists);
-        result.put("task", taskLists);
+        result.put("tasks", taskLists);
 //        System.out.println("캘린더");
 //        for (String calendar : calendarLists) {
 //            System.out.println(calendar);
@@ -322,54 +226,16 @@ public class GoogleAPI {
         return result;
     }
 
-    private void postCalendar(String userId, ArrayList<String> list, String accessToken) {
-        ArrayList<PostsEntity> posts = new ArrayList<>();
-        WebClient webClient = WebClient.builder().codecs(configurer -> configurer.defaultCodecs().maxInMemorySize(-1)).build();
-        Map<String, String> dateTime = calcDateTime();
-        String StartUrl = "https://www.googleapis.com/calendar/v3/calendars/";
-        String EndUrl = "/events?";
-        for (String calendar : list) {
-            Object json = webClient.get()
-                    .uri(StartUrl + calendar + EndUrl)
-//                    .attribute("timeMax", dateTime.get("end"))
-                    .attribute("timeMin", dateTime.get("start"))
-                    .attribute("key", googleKey)
-                    .headers(reqHeader(accessToken))
-                    .retrieve()
-                    .bodyToMono(googleLists.class)
-                    .block().getItems();
-            for (Map<String, Object> event : (ArrayList<Map>) json) {
-                PostsEntity post = PostsEntity.builder()
-                        .id(event.get("id"))
-                        .categoryId(userId + "^google^calendar^" + calendar)
-                        .status(event.get("status"))
-                        .startTime(event.get("Start"))
-                        .endTime(event.get("end"))
-                        .title(event.get("summary"))
-                        .contents(event.get("description"))
-                        .build();
-                posts.add(post);
-            }
-        }
-        for (PostsEntity post : posts) {
-            System.out.println(post.getTitle());
-
-        }
-    }
-
-    private Map<String, String> calcDateTime() {
+    protected Map<String, String> calcDateTime() {
         Map<String, String> dateTime = new HashMap<>();
-        String timeZone = ":00+09:00";
         // 데이터가 조회되는 현재(now)의 월 첫날로 세팅하고(withDayofMonth(1)), 하루를 빼(minusDays(1)) 전 월의 마지막일 설정
-        String startTimeStamp = LocalDate.now().withDayOfMonth(1).minusDays(1).atStartOfDay().toString() + timeZone;
-//        System.out.println("스타트타임" + startTimeStamp);
+        String startTimeStamp = LocalDate.now().withDayOfMonth(1).minusDays(1).atStartOfDay().plusHours(9) + ":00Z";
         // 데이터가 조회되는 현재(now)의 월 첫날로 세팅하고(withDayofMonth(1)), 한달을 더해(plusMonths(1)) 전 월의 마지막일 설정
-        String endTimeStamp = LocalDate.now().withDayOfMonth(1).plusMonths(1).atStartOfDay().toString() + timeZone;
-//        System.out.println("엔드타임" + endTimeStamp);
+        String endTimeStamp = LocalDate.now().withDayOfMonth(1).plusMonths(1).atStartOfDay().plusHours(9) + ":00Z";
         dateTime.put("start", startTimeStamp);
         dateTime.put("end", endTimeStamp);
-        System.out.println(dateTime.get("start"));
-        System.out.println(dateTime.get("end"));
+//        System.out.println(dateTime.get("start"));
+//        System.out.println(dateTime.get("end"));
         return dateTime;
     }
 }
