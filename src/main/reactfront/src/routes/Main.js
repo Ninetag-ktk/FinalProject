@@ -46,7 +46,7 @@ export default function Main() {
                     <Header onNextMonthClick={handleNextMonth} onPrevMonthClick={handlePrevMonth} />
                     <div className={"leftOUT"}>
                         <LeftBar />
-                        {isSearchVisible ? <Search /> : <Center />}
+                        {isSearchVisible ? <Search /> : <Center currentMonth={currentMonth} currentYear={currentYear} />}
                     </div>
                 </div>
             </MyContext.Provider>

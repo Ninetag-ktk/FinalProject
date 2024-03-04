@@ -1,12 +1,22 @@
-// Center.js
 import React, { useState, useEffect } from "react";
 
-export default function Center({ handleNextMonthClick }) {
+export default function Center({ currentMonth, currentYear, onPrevMonthClick, onNextMonthClick }) {
   const [firstDay, setFirstDay] = useState(null);
   const [lastDay, setLastDay] = useState(null);
   const [year, setYear] = useState(0);
-  const [currentMonth, setCurrentMonth] = useState(new Date().getMonth());
-  const [currentYear, setCurrentYear] = useState(new Date().getFullYear());
+
+  useEffect(() => {
+    const today = new Date();
+    const year = today.getFullYear();
+    const month = currentMonth; // 현재 월 가져오기
+
+    const firstDayOfMonth = new Date(year, month, 1); // 월의 첫째 날
+    const lastDayOfMonth = new Date(year, month + 1, 0); // 월의 마지막 날
+
+    setFirstDay(firstDayOfMonth);
+    setLastDay(lastDayOfMonth);
+    setYear(year);
+  }, [currentMonth]);
 
   useEffect(() => {
     const monthName = [
@@ -27,39 +37,18 @@ export default function Center({ handleNextMonthClick }) {
   }, [currentMonth, currentYear]);
 
   const handlePrevBtnClick = () => {
-    let newMonth = currentMonth - 1;
-    let newYear = currentYear;
-    if (newMonth < 0) {
-      newMonth = 11;
-      newYear = currentYear - 1;
-    }
-    setCurrentMonth(newMonth);
-    setCurrentYear(newYear);
+    const newMonth = currentMonth === 0 ? 11 : currentMonth - 1;
+    const newYear = currentMonth === 0 ? currentYear - 1 : currentYear;
+
+    onPrevMonthClick(newMonth, newYear);
   };
 
   const handleNextBtnClick = () => {
-    let newMonth = currentMonth + 1;
-    let newYear = currentYear;
-    if (newMonth > 11) {
-      newMonth = 0;
-      newYear = currentYear + 1;
-    }
-    setCurrentMonth(newMonth);
-    setCurrentYear(newYear);
+    const newMonth = currentMonth === 11 ? 0 : currentMonth + 1;
+    const newYear = currentMonth === 11 ? currentYear + 1 : currentYear;
+
+    onNextMonthClick(newMonth, newYear);
   };
-
-  useEffect(() => {
-    const today = new Date();
-    const year = today.getFullYear();
-    const month = today.getMonth();
-
-    const firstDayOfMonth = new Date(year, month, 1);
-    const lastDayOfMonth = new Date(year, month + 1, 0);
-
-    setFirstDay(firstDayOfMonth);
-    setLastDay(lastDayOfMonth);
-    setYear(year);
-  }, []);
 
   const renderDays = () => {
     const days = [];
