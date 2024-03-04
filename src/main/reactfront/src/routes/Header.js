@@ -1,3 +1,6 @@
+
+// Header.js
+
 import React, {useContext, useEffect, useState} from "react";
 import logo from './nobglogo.png';
 import {MyContext} from "./Main";
