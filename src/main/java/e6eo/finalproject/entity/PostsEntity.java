@@ -2,34 +2,48 @@ package e6eo.finalproject.entity;
 
 
 import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
 
+import java.util.Map;
+
 @Document(collection = "posts")
+@Data
+@NoArgsConstructor
 public class PostsEntity {
     @Id
-    private String id;
+    @Field(name = "_id")
+    private Object id;
     @Field(name = "category_id")
-    private String categoryId;
-    @Field(name = "have_repost")
-    private String haveRepost;
+    private Object categoryId;
+    @Field(name = "status")
+    private Object status;
     @Field(name = "start_time")
-    private String startTime;
+    private Object startTime;
     @Field(name = "end_time")
-    private String endTime;
+    private Object endTime;
+    @Field(name="title")
+    private Object title;
     @Field(name = "contents")
-    private String contents;
+    private Object contents;
     @Field(name = "etag")
-    private String etag;
+    private Object etag;
+    @Field(name = "have_repost")
+    private Object haveRepost;
 
     @Builder
-    public PostsEntity(String categoryId, String haveRepost, String startTime, String endTime, String contents, String etag) {
+    public PostsEntity(Object id, Object categoryId, Object status, Object startTime, Object endTime, Object title, Object contents, Object etag, Object haveRepost) {
+        this.id = id;
         this.categoryId = categoryId;
-        this.haveRepost = haveRepost;
+        this.status = status;
         this.startTime = startTime;
         this.endTime = endTime;
+        this.title = title;
         this.contents = contents;
         this.etag = etag;
+        this.haveRepost = haveRepost;
     }
 }

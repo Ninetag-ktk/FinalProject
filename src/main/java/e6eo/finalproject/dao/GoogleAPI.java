@@ -1,15 +1,19 @@
 package e6eo.finalproject.dao;
 
+import com.google.api.client.util.DateTime;
 import e6eo.finalproject.dto.CategoryMapper;
 import e6eo.finalproject.dto.PostsMapper;
 import e6eo.finalproject.dto.UsersMapper;
+import e6eo.finalproject.entity.PostsEntity;
 import e6eo.finalproject.entity.UsersEntity;
 import e6eo.finalproject.entityGoogle.GoogleToken;
+import e6eo.finalproject.entityGoogle.googleEvent;
 import e6eo.finalproject.entityGoogle.googleLists;
 import e6eo.finalproject.entityGoogle.googleUserInfo;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.bson.json.JsonObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
@@ -17,8 +21,13 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.reactive.function.client.ExchangeStrategies;
 import org.springframework.web.reactive.function.client.WebClient;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoUnit;
 import java.util.*;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
@@ -119,6 +128,7 @@ public class GoogleAPI {
             UsersEntity user = UsersEntity.builder().userId(userInfo.getEmail()).pw(usersToken.getAccess_token().substring(0, 19)).nickName(userInfo.getName()).innerId(userInfo.getEmail()).refreshToken(usersToken.getRefresh_token()).build();
             System.out.println(user.toString());
             usersMapper.save(user);
+            categoryMapper.createDefaultCategory(user.getUserId(), user.getNickName());
             log.info("Google 계정 자동 가입 완료");
         } catch (Exception e) {
             e.printStackTrace();
@@ -232,7 +242,9 @@ public class GoogleAPI {
         Map<String, String> category = new HashMap<>();
 //        System.out.println(json);
         for (Map item : (ArrayList<Map>) json) {
-            if (item.get("id").equals(item.get("summary"))) {
+            if (item.get("id").equals("ko.south_korea#holiday@group.v.calendar.google.com")) {
+                continue;
+            } else if (item.get("id").equals(item.get("summary"))) {
                 category.put("google^calendar^" + item.get("id").toString().replace(".", "_"), "내 구글 캘린더");
             } else {
                 category.put("google^calendar^" + item.get("id").toString().replace(".", "_"), item.get("summary").toString());
@@ -255,18 +267,109 @@ public class GoogleAPI {
 
     public Map<String, String> getGoogleCategory(String observe) {
         Optional<UsersEntity> user = usersMapper.findByObserveToken(observe);
-        Map<String, String> category = new HashMap<>();
+        Map<String, String> categories = new HashMap<>();
         if (user.isEmpty()) {
-            category.put("error", "NoAuthorizedAccess");
-            return category;
+            categories.put("error", "NoAuthorizedAccess");
+            return categories;
         }
         String accessToken = getNewAccessTokenByObserve(observe);
-        category.putAll(listCalendar(accessToken));
-        category.putAll(listTasks(accessToken));
-        for (String key : category.keySet()) {
-            categoryMapper.addCategory(user.get().getUserId(), key, category.get(key));
-            System.out.println(key + "  :  " + category.get(key));
+        categories.putAll(listCalendar(accessToken));
+        categories.putAll(listTasks(accessToken));
+        for (String key : categories.keySet()) {
+            categoryMapper.addCategory(user.get().getUserId(), key, categories.get(key));
+//            System.out.println(key + "  :  " + category.get(key));
         }
-        return category;
+        return categories;
+    }
+
+    public void getGooglePosts(String observe) {
+        Optional<UsersEntity> user = usersMapper.findByObserveToken(observe);
+        if (user.isEmpty()) {
+            return;
+        }
+        String[] categories = categoryMapper.findById(user.get().getUserId()).get().getCategories().keySet().toArray(new String[0]);
+        String accessToken = getNewAccessTokenByObserve(observe);
+        Map<String, ArrayList<String>> categoryMap = convertList(categories);
+        postCalendar(user.get().getUserId(), categoryMap.get("calendar"), accessToken);
+    }
+
+    private Map<String, ArrayList<String>> convertList(String[] categoryList) {
+        Map<String, ArrayList<String>> result = new HashMap<>();
+        ArrayList<String> calendarLists = new ArrayList<>();
+        ArrayList<String> taskLists = new ArrayList<>();
+
+        for (String category : categoryList) {
+//            System.out.println(category);
+            String[] index = category.replace("_", ".").split("\\^");
+            if (index[0].equals("google")) {
+                if (index[1].equals("calendar")) {
+                    calendarLists.add(index[2]);
+                } else if (index[1].equals("tasks")) {
+                    taskLists.add(index[2]);
+                }
+            }
+        }
+        result.put("calendar", calendarLists);
+        result.put("task", taskLists);
+//        System.out.println("캘린더");
+//        for (String calendar : calendarLists) {
+//            System.out.println(calendar);
+//        }
+//        System.out.println("태스크");
+//        for (String task : taskLists) {
+//            System.out.println(task);
+//        }
+        return result;
+    }
+
+    private void postCalendar(String userId, ArrayList<String> list, String accessToken) {
+        ArrayList<PostsEntity> posts = new ArrayList<>();
+        WebClient webClient = WebClient.builder().codecs(configurer -> configurer.defaultCodecs().maxInMemorySize(-1)).build();
+        Map<String, String> dateTime = calcDateTime();
+        String StartUrl = "https://www.googleapis.com/calendar/v3/calendars/";
+        String EndUrl = "/events?";
+        for (String calendar : list) {
+            Object json = webClient.get()
+                    .uri(StartUrl + calendar + EndUrl)
+//                    .attribute("timeMax", dateTime.get("end"))
+                    .attribute("timeMin", dateTime.get("start"))
+                    .attribute("key", googleKey)
+                    .headers(reqHeader(accessToken))
+                    .retrieve()
+                    .bodyToMono(googleLists.class)
+                    .block().getItems();
+            for (Map<String, Object> event : (ArrayList<Map>) json) {
+                PostsEntity post = PostsEntity.builder()
+                        .id(event.get("id"))
+                        .categoryId(userId + "^google^calendar^" + calendar)
+                        .status(event.get("status"))
+                        .startTime(event.get("Start"))
+                        .endTime(event.get("end"))
+                        .title(event.get("summary"))
+                        .contents(event.get("description"))
+                        .build();
+                posts.add(post);
+            }
+        }
+        for (PostsEntity post : posts) {
+            System.out.println(post.getTitle());
+
+        }
+    }
+
+    private Map<String, String> calcDateTime() {
+        Map<String, String> dateTime = new HashMap<>();
+        String timeZone = ":00+09:00";
+        // 데이터가 조회되는 현재(now)의 월 첫날로 세팅하고(withDayofMonth(1)), 하루를 빼(minusDays(1)) 전 월의 마지막일 설정
+        String startTimeStamp = LocalDate.now().withDayOfMonth(1).minusDays(1).atStartOfDay().toString() + timeZone;
+//        System.out.println("스타트타임" + startTimeStamp);
+        // 데이터가 조회되는 현재(now)의 월 첫날로 세팅하고(withDayofMonth(1)), 한달을 더해(plusMonths(1)) 전 월의 마지막일 설정
+        String endTimeStamp = LocalDate.now().withDayOfMonth(1).plusMonths(1).atStartOfDay().toString() + timeZone;
+//        System.out.println("엔드타임" + endTimeStamp);
+        dateTime.put("start", startTimeStamp);
+        dateTime.put("end", endTimeStamp);
+        System.out.println(dateTime.get("start"));
+        System.out.println(dateTime.get("end"));
+        return dateTime;
     }
 }

@@ -11,6 +11,7 @@ import Main from "./routes/Main";
 import Center from "./routes/Center";
 import Search from "./routes/Search";
 import Info from "./routes/Info";
+import LoginCheck from "./routes/temp_LoginCheck"
 
 const router = createBrowserRouter([
     {
@@ -20,7 +21,8 @@ const router = createBrowserRouter([
         children : [
             {index : true, element: <Login />},
             {path : '/create',element:<Create />},
-            {path : '/main',element:<Main />}
+            {path : '/main',element:<Main />},
+            {path : '/check', element: <LoginCheck/>}
         ]
     },
     {

@@ -38,6 +38,6 @@ public class GoogleController {
     @PostMapping("/test")
     public void googleTest(@RequestBody Map<String, String> data) {
         System.out.println(data.get("observe"));
-        googleAPI.getGoogleCategory(data.get("observe"));
+        googleAPI.getGooglePosts(data.get("observe"));
     }
 }
