@@ -20,9 +20,7 @@ public class CategoryEntity {
     private Map<String, String> categories; // 문자열 구분은 공백없이 반점(,)만 사용할 것
 
     @Builder
-    public CategoryEntity(String userId, Map<String, String> categories) {
+    public CategoryEntity(String userId) {
         this.userId = userId;
-        this.categories = categories;
     }
-
 }
