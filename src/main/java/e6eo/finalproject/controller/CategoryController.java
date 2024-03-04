@@ -15,7 +15,7 @@ public class CategoryController {
 
     @GetMapping("/test")
     public String test() {
-        cDAO.saveCollection();
+//        cDAO.saveCollection();
         return "테스트";
     }
 

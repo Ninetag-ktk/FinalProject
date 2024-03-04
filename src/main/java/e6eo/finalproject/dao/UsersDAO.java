@@ -57,4 +57,24 @@ public class UsersDAO {
             return ResponseEntity.ok(result);
         }
     }
+
+    //이동범 미완성 코드
+    public ResponseEntity<?> testToken(String observeToken, String pw) {
+        Map<String, String> result = new HashMap<>();
+         Optional<UsersEntity> user = usersMapper.findByObserveToken(observeToken);
+         if (user.isEmpty()) {
+             result.put("code", "400");
+             result.put("body", "false");
+             return ResponseEntity.badRequest().body(result);
+         } else if (!pw.equals(user.get().getPw())) {
+             result.put("code", "400");
+             result.put("body", "false");
+             return ResponseEntity.badRequest().body(result);
+
+         } else {
+             result.put("code", "200");
+             result.put("body", "true");
+             return ResponseEntity.ok(result);
+         }
+     }
 }

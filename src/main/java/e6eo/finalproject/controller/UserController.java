@@ -39,6 +39,11 @@ public class UserController {
         return null;
 
     }
+//이동범 미완성 코드
+    @PostMapping("/testToken")
+    public ResponseEntity<?> testToken(@RequestBody Map<String, String> req) {
+        return usersDao.testToken(req.get("observeToken"), req.get("pw"));
+    }
 }
 
 

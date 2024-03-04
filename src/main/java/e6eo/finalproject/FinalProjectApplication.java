@@ -6,7 +6,7 @@ import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfi
 import org.springframework.data.mongodb.repository.config.EnableMongoRepositories;
 
 @SpringBootApplication(exclude = {SecurityAutoConfiguration.class})
-//@EnableMongoRepositories(basePackages = "e6eo.finalproject.dto")
+@EnableMongoRepositories(basePackages = "e6eo.finalproject.dto")
 public class FinalProjectApplication {
 
     public static void main(String[] args) {

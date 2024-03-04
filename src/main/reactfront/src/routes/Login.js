@@ -1,6 +1,7 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import logo from './temp_logo.png'
-import {useNavigate} from "react-router-dom";
+import {redirect, useNavigate} from "react-router-dom";
+import axios from "axios";
 
 
 export default function Login() {
@@ -41,6 +42,31 @@ export default function Login() {
         });
         const result = await response.json();
         window.location.href = result.redirect;
+    };
+    // 이동범 코드 미완성
+    useEffect(() => {
+        if (window.localStorage.getItem("observe")!=null){
+            return "obs";
+        }
+    }, []);
+
+    const tokenSave = async () => {
+        const response = await axios({
+            url: "/user/logintestToken",
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json; charset=utf-8",
+                "Accept": "application/json; charset=utf-8",
+            },
+            data: loginInfo,
+        });
+        const res = response.data;
+        if (res.code === "200") {
+            // 로그인 성공 처리
+            window.localStorage.setItem("observe");
+        } else {
+            window.localStorage.removeItem("observe");
+        }
     };
 
     return (

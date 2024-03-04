@@ -12,7 +12,7 @@ import java.util.Scanner;
 @Service
 public class CategoryDAO {
     @Autowired
-    private CategoryMapper collectionsMapper;
+    private CategoryMapper categoryMapper;
 
     public void saveCollection() {
         Scanner s = new Scanner(System.in);
@@ -31,11 +31,11 @@ public class CategoryDAO {
         } while (s.next() == "false");
 
         CategoryEntity lists = new CategoryEntity().builder().userId(id).categories(list).build();
-        collectionsMapper.save(lists);
+        categoryMapper.save(lists);
     }
 
     public List<CategoryEntity> findCollection() {
-        List<CategoryEntity> categories = collectionsMapper.findAll();
+        List<CategoryEntity> categories = categoryMapper.findAll();
         for (CategoryEntity category : categories) {
             System.out.println("확인: " + category);
         }
