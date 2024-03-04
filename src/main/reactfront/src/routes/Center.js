@@ -1,16 +1,55 @@
-
 // Center.js
-
 import React, { useState, useEffect } from "react";
 
-export default function Center() {
+export default function Center({ handleNextMonthClick }) {
   const [firstDay, setFirstDay] = useState(null);
   const [lastDay, setLastDay] = useState(null);
   const [year, setYear] = useState(0);
-  const [month, setMonth] = useState(0);
+  const [currentMonth, setCurrentMonth] = useState(new Date().getMonth());
+  const [currentYear, setCurrentYear] = useState(new Date().getFullYear());
 
   useEffect(() => {
-    const today = new Date(); // 2024년 3월 1일을 기준으로 설정합니다.
+    const monthName = [
+      "1월",
+      "2월",
+      "3월",
+      "4월",
+      "5월",
+      "6월",
+      "7월",
+      "8월",
+      "9월",
+      "10월",
+      "11월",
+      "12월"
+    ][currentMonth];
+    document.getElementById("currentMonth").innerHTML = `${currentYear}.${monthName} `;
+  }, [currentMonth, currentYear]);
+
+  const handlePrevBtnClick = () => {
+    let newMonth = currentMonth - 1;
+    let newYear = currentYear;
+    if (newMonth < 0) {
+      newMonth = 11;
+      newYear = currentYear - 1;
+    }
+    setCurrentMonth(newMonth);
+    setCurrentYear(newYear);
+  };
+
+  const handleNextBtnClick = () => {
+    let newMonth = currentMonth + 1;
+    let newYear = currentYear;
+    if (newMonth > 11) {
+      newMonth = 0;
+      newYear = currentYear + 1;
+    }
+    setCurrentMonth(newMonth);
+    setCurrentYear(newYear);
+  };
+
+  useEffect(() => {
+    const today = new Date();
     const year = today.getFullYear();
     const month = today.getMonth();
 
@@ -20,30 +59,34 @@ export default function Center() {
     setFirstDay(firstDayOfMonth);
     setLastDay(lastDayOfMonth);
     setYear(year);
-    setMonth(month);
   }, []);
 
   const renderDays = () => {
     const days = [];
-    let week = []; // 각 주를 담는 배열
+    let week = [];
 
-    if (!firstDay) return days; // firstDay가 null일 때 빈 배열 반환
+    if (!firstDay) return days;
 
-    // 첫째 주의 빈 날짜와 함께 실제 날짜를 출력합니다.
     days.push(
       <div key="first-row" className="divTableRow">
         {[...Array(firstDay.getDay())].map((_, index) => (
-          <div key={`empty-${index}`} className="divTableCell">&nbsp;</div>
+          <div key={`empty-${index}`} className="divTableCell">
+            &nbsp;
+          </div>
         ))}
         {[...Array(7 - firstDay.getDay())].map((_, index) => (
-          <div key={`day-${firstDay.getDate() + index}`} className="divTableCell">{firstDay.getDate() + index}</div>
+          <div
+            key={`day-${firstDay.getDate() + index}`}
+            className="divTableCell"
+          >
+            {firstDay.getDate() + index}
+          </div>
         ))}
       </div>
     );
 
-    // 나머지 주의 날짜를 출력합니다.
-    let currentDate = new Date(year, month, 1 + (7 - firstDay.getDay())); // 다음 주의 시작일로 설정합니다.
-    while (currentDate.getMonth() === month) {
+    let currentDate = new Date(year, currentMonth, 1 + (7 - firstDay.getDay()));
+    while (currentDate.getMonth() === currentMonth) {
       week = [];
       for (let i = 0; i < 7; i++) {
         week.push(
