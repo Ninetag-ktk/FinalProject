@@ -1,15 +1,13 @@
 import React, {useState} from 'react';
 import logo from './temp_logo.png'
-import {useNavigate} from "react-router-dom";
+import {json} from "react-router-dom";
 
 
 export default function Login() {
-    const redirect = useNavigate();
     const [loginInfo, setLoginInfo] = useState({
         id: "",
         pw: "",
     });
-    const [autoLogin, setAutoLogin] = useState(false);
 
     const handleLogin = async () => {
         const response = await fetch("/user/login", {
@@ -23,7 +21,8 @@ export default function Login() {
         const result = await response.json();
         if (result.code === "200") {
             // 로그인 성공 처리
-            redirect(`/check?autologin=${autoLogin}&observe=${result.body}`,);
+            window.sessionStorage.setItem("observe", result.body);
+            window.location.href = "/main";
         } else {
             // 로그인 실패 처리
             alert(result.body);
@@ -34,13 +33,10 @@ export default function Login() {
     const handleGoogleLogin = async () => {
         const response = await fetch("/google/login", {
             mode: "no-cors",
-            headers: {
-                "Content-Type": "application/json; charset=utf-8",
-                "Accept": "application/json; charset=utf-8",
-            },
-        });
-        const result = await response.json();
-        window.location.href = result.redirect;
+        }); // fetch 호출이 아예 안됨
+        console.log(response.json());
+        alert(response.json());
+        window.location.href = response.json();
     };
 
     return (
@@ -50,7 +46,7 @@ export default function Login() {
                     <img src={logo}/>
                 </div>
                 <div className={"logininput"}>
-                    <div className={"loginForm"}>
+                    <div className={"loginForm1"}>
                         <input
                             type="text"
                             className="inputtext"
@@ -67,13 +63,14 @@ export default function Login() {
                             value={loginInfo.pw}
                             onChange={(e) => setLoginInfo({...loginInfo, pw: e.target.value})}
                         />
-                        <input
-                            type={"checkbox"} checked={autoLogin}
-                            onChange={(e) => setAutoLogin(e.target.checked)}
-                        />로그인유지
+                        <div className={"autologin"}>
+                        <input type={"checkbox"}/>로그인유지
+                        </div>
                         <button className={"btn"} type={"submit"} onClick={handleLogin}>로그인</button>
                     </div>
+                    <a href={"/create"}>
                     <button className={"btn"}>회원가입</button>
+                        </a>
                     <hr/>
                     <button className={"btn"} onClick={handleGoogleLogin}>google계정으로 로그인</button>
                 </div>
@@ -81,4 +78,3 @@ export default function Login() {
         </div>
     )
 }
-

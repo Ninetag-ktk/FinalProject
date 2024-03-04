@@ -4,17 +4,18 @@ spring:
     url: jdbc:mariadb://43.203.30.193:3306/e6eo
     username: root
     password: 76435855
+    name: users
 
   data:
     mongodb:
       uri: mongodb://root:76435855@43.203.30.193:27017/e6eo?authSource=admin
-  #      host: 43.203.30.193e6eo
-  #      port: 27017
-  #      username: root
-  #      password: 76435855
-  #      authentication-database: admin
-  #      database: e6eo
-  #      auto-index-creation: true
+#      host: 43.203.30.193
+#      port: 27017
+#      username: root
+#      password: 76435855
+#      authentication-database: admin
+#      database: e6eo
+#      auto-index-creation: true
 
 
 
@@ -38,6 +39,7 @@ spring:
 
 google:
   auth: https://accounts.google.com/o/oauth2/v2/auth
+  login: https://accounts.google.com
   redirect: http://localhost:8080/google/check
   client:
     id: 463906750748-9buq9vk60mfu2qctpqi3cbidlnpqsrb2.apps.googleusercontent.com

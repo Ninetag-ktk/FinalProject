@@ -43,24 +43,13 @@ public class UsersDAO extends GoogleAPI {
             UsersEntity user = UsersEntity.builder().userId(userInfo.getEmail()).pw(usersToken.getAccess_token().substring(0, 19)).nickName(userInfo.getName()).innerId(userInfo.getEmail()).refreshToken(usersToken.getRefresh_token()).build();
             System.out.println(user.toString());
             usersMapper.save(user);
+            categoryMapper.createDefaultCategory(user.getUserId(), user.getNickName());
             log.info("Google 계정 자동 가입 완료");
         } catch (Exception e) {
             e.printStackTrace();
             log.info("가입 실패");
         }
     }
-
-
-    public void userJoin(@RequestBody UsersEntity users) {
-        Optional<UsersEntity> user = usersMapper.findById(users.getUserId());
-        if (user.isEmpty()) {
-            usersMapper.save(users);
-            System.out.println("성공");
-        } else {
-            System.out.println("실패!");
-        }
-    }
-
     public ResponseEntity<?> login(String id, String pw) {
 //        System.out.println("check");
         Map<String, String> result = new HashMap<>();
@@ -82,4 +71,15 @@ public class UsersDAO extends GoogleAPI {
             return ResponseEntity.ok(result);
         }
     }
+
+    public void userJoin(@RequestBody UsersEntity users) {
+        Optional<UsersEntity> user = usersMapper.findById(users.getUserId());
+        if (user.isEmpty()) {
+            usersMapper.save(users);
+            System.out.println("성공");
+        } else {
+            System.out.println("실패!");
+        }
+    }
+
 }

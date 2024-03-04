@@ -7,7 +7,6 @@ export default function Temp_LoginCheck() {
     const autoLogin = params.get("autologin");
     const observe = params.get("observe");
     useEffect(() => {
-        console.log("check");
         if (autoLogin === "true") {
             window.localStorage.setItem("observe", observe);
         }

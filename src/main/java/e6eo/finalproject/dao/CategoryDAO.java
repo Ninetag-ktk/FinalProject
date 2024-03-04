@@ -15,6 +15,23 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class CategoryDAO extends GoogleAPI {
 
+    public Map<String, String> getGoogleCategory(String observe) {
+        Optional<UsersEntity> user = usersMapper.findByObserveToken(observe);
+        Map<String, String> categories = new HashMap<>();
+        if (user.isEmpty()) {
+            categories.put("error", "NoAuthorizedAccess");
+            return categories;
+        }
+        String accessToken = getNewAccessTokenByObserve(observe);
+        categories.putAll(listCalendar(accessToken));
+        categories.putAll(listTasks(accessToken));
+        for (String key : categories.keySet()) {
+            categoryMapper.addCategory(user.get().getUserId(), key, categories.get(key));
+//            System.out.println(key + "  :  " + category.get(key));
+        }
+        return categories;
+    }
+
     private Map<String, String> listCalendar(String accessToken) {
         WebClient webClient = WebClient.create();
         String Url = "https://www.googleapis.com/calendar/v3/users/me/calendarList?maxResults=100&key=" + googleKey;
@@ -44,22 +61,4 @@ public class CategoryDAO extends GoogleAPI {
         }
         return category;
     }
-
-    public Map<String, String> getGoogleCategory(String observe) {
-        Optional<UsersEntity> user = usersMapper.findByObserveToken(observe);
-        Map<String, String> categories = new HashMap<>();
-        if (user.isEmpty()) {
-            categories.put("error", "NoAuthorizedAccess");
-            return categories;
-        }
-        String accessToken = getNewAccessTokenByObserve(observe);
-        categories.putAll(listCalendar(accessToken));
-        categories.putAll(listTasks(accessToken));
-        for (String key : categories.keySet()) {
-            categoryMapper.addCategory(user.get().getUserId(), key, categories.get(key));
-//            System.out.println(key + "  :  " + category.get(key));
-        }
-        return categories;
-    }
-
 }
