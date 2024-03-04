@@ -30,7 +30,7 @@ export default function SignupForm() {
     return (
         <div className={"create"}>
 
-                <a href={"/"}> <img className={"createlogo"} src={logo}/> </a>
+                <a href={"/main"}> <img className={"createlogo"} src={logo}/> </a>
 
 
 

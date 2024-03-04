@@ -24,6 +24,15 @@ export default function  LeftBar  () {
                     <li>2024년 3월 1일 - 프로젝트 발표</li>
                 </ul>
             </div>
+            <div className={"profile"}>
+                <a href={"/info"}>
+                <button>내 정보</button>
+                </a>
+            </div>
+            <div className={"logout"}>
+                <button>로그아웃</button>
+            </div>
+
         </div>
     )
 }
