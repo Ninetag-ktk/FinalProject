@@ -78,11 +78,20 @@ export default function Center({ currentMonth, currentYear, onPrevMonthClick, on
     while (currentDate.getMonth() === currentMonth) {
       week = [];
       for (let i = 0; i < 7; i++) {
-        week.push(
-          <div key={`day-${currentDate.getDate()}`} className="divTableCell">
-            {currentDate.getDate()}
-          </div>
-        );
+        if (currentDate.getMonth() !== currentMonth) {
+          // 현재 월이 아닌 경우에는 빈 칸을 추가
+          week.push(
+              <div key={`empty-${currentDate.getDate()}`} className="divTableCell">
+                &nbsp;
+              </div>
+          );
+        } else {
+          week.push(
+              <div key={`day-${currentDate.getDate()}`} className="divTableCell">
+                {currentDate.getDate()}
+              </div>
+          );
+        }
         currentDate.setDate(currentDate.getDate() + 1);
       }
       days.push(<div key={`week-${currentDate.getDate()}`} className="divTableRow">{week}</div>);
