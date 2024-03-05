@@ -10,15 +10,17 @@ import org.springframework.data.mongodb.core.mapping.Field;
 
 import java.util.Map;
 
-@Document(collection = "posts")
+@Document(collection = "notes")
 @Data
 @NoArgsConstructor
-public class PostsEntity {
+public class NotesEntity {
     @Id
     @Field(name = "_id")
     private Object id;
     @Field(name = "category_id")
     private Object categoryId;
+    @Field(name = "type")
+    private Object type;
     @Field(name = "status")
     private Object status;
     @Field(name = "start_time")
@@ -35,9 +37,10 @@ public class PostsEntity {
     private Object haveRepost;
 
     @Builder
-    public PostsEntity(Object id, Object categoryId, Object status, Object startTime, Object endTime, Object title, Object contents, Object etag, Object haveRepost) {
+    public NotesEntity(Object id, Object categoryId, Object type, Object status, Object startTime, Object endTime, Object title, Object contents, Object etag, Object haveRepost) {
         this.id = id;
         this.categoryId = categoryId;
+        this.type = type;
         this.status = status;
         this.startTime = startTime;
         this.endTime = endTime;
@@ -47,12 +50,14 @@ public class PostsEntity {
         this.haveRepost = haveRepost;
     }
 
-    public PostsEntity eventParser(Map<String, Object> event, String userId, String calendar) {
+    public NotesEntity eventParser(Map<String, Object> event, String userId, String calendar) {
         Map<String, String> start = (Map<String, String>) event.get("start");
         Map<String, String> end = (Map<String, String>) event.get("end");
-        PostsEntity post = PostsEntity.builder()
+        String kind = event.get("kind").toString().split("#")[1];
+        NotesEntity post = NotesEntity.builder()
                 .id(event.get("id"))
                 .categoryId(userId + "#google^calendar^" + calendar)
+                .type(kind)
                 .status(event.get("status"))
                 .startTime(start.get("date") != null ? start.get("date") : start.get("dateTime"))
                 .endTime(end.get("date") != null ? end.get("date") : end.get("dateTime"))
@@ -63,10 +68,12 @@ public class PostsEntity {
         return post;
     }
 
-    public PostsEntity taskParser(Map<String, Object> task, String userId, String tasklist) {
-        PostsEntity post = PostsEntity.builder()
+    public NotesEntity taskParser(Map<String, Object> task, String userId, String tasklist) {
+        String kind = task.get("kind").toString().split("#")[1];
+        NotesEntity post = NotesEntity.builder()
                 .id(task.get("id"))
                 .categoryId(userId + "#google^tasks^" + tasklist)
+                .type(kind)
                 .status(task.get("status"))
                 .startTime(task.get("due"))
                 .endTime(task.get("due"))

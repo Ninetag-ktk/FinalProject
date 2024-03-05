@@ -1,7 +1,7 @@
 package e6eo.finalproject.dao;
 
 import e6eo.finalproject.dto.CategoryMapper;
-import e6eo.finalproject.dto.PostsMapper;
+import e6eo.finalproject.dto.NotesMapper;
 import e6eo.finalproject.dto.UsersMapper;
 import e6eo.finalproject.entity.UsersEntity;
 import e6eo.finalproject.entityGoogle.GoogleToken;
@@ -53,7 +53,7 @@ public class GoogleAPI {
     @Autowired
     protected CategoryMapper categoryMapper;
     @Autowired
-    protected PostsMapper postsMapper;
+    protected NotesMapper notesMapper;
     @Autowired
     protected TokenManager tokenManager;
 

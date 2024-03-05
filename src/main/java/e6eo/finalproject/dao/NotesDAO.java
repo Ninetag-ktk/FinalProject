@@ -1,6 +1,6 @@
 package e6eo.finalproject.dao;
 
-import e6eo.finalproject.entity.PostsEntity;
+import e6eo.finalproject.entity.NotesEntity;
 import e6eo.finalproject.entity.UsersEntity;
 import e6eo.finalproject.entityGoogle.googleLists;
 import lombok.RequiredArgsConstructor;
@@ -13,9 +13,9 @@ import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
-public class PostsDAO extends GoogleAPI {
+public class NotesDAO extends GoogleAPI {
 
-    public void getGooglePosts(String observe) {
+    public void getGoogleNotes(String observe) {
         Optional<UsersEntity> user = usersMapper.findByObserveToken(observe);
         if (user.isEmpty()) {
             return;
@@ -23,13 +23,13 @@ public class PostsDAO extends GoogleAPI {
         String[] categories = categoryMapper.findById(user.get().getUserId()).get().getCategories().keySet().toArray(new String[0]);
         String accessToken = getNewAccessTokenByObserve(observe);
         Map<String, ArrayList<String>> categoryMap = decodeCategory(categories);
-        postCalendar(user.get().getUserId(), categoryMap.get("calendar"), accessToken);
-        postTasks(user.get().getUserId(), categoryMap.get("tasks"), accessToken);
+        noteCalendar(user.get().getUserId(), categoryMap.get("calendar"), accessToken);
+        noteTasks(user.get().getUserId(), categoryMap.get("tasks"), accessToken);
         System.out.println("GetPostFromGoogle_Complete");
     }
 
-    private void postCalendar(String userId, ArrayList<String> list, String accessToken) {
-        ArrayList<PostsEntity> posts = new ArrayList<>();
+    private void noteCalendar(String userId, ArrayList<String> list, String accessToken) {
+        ArrayList<NotesEntity> posts = new ArrayList<>();
         WebClient webClient = WebClient.builder().codecs(configurer -> configurer.defaultCodecs().maxInMemorySize(-1))
                 .baseUrl("https://www.googleapis.com/calendar/v3/calendars/")
                 .defaultHeaders(reqHeader(accessToken))
@@ -43,15 +43,15 @@ public class PostsDAO extends GoogleAPI {
             Object json = webClient.get().uri(calendar + requestUrl)
                     .retrieve().bodyToMono(googleLists.class).block().getItems();
             for (Map<String, Object> event : (ArrayList<Map>) json) {
-                PostsEntity post = new PostsEntity().eventParser(event, userId, calendar);
+                NotesEntity post = new NotesEntity().eventParser(event, userId, calendar);
                 posts.add(post);
             }
         }
-        postsMapper.saveAll(posts);
+        notesMapper.saveAll(posts);
     }
 
-    private void postTasks(String userId, ArrayList<String> list, String accessToken) {
-        ArrayList<PostsEntity> posts = new ArrayList<>();
+    private void noteTasks(String userId, ArrayList<String> list, String accessToken) {
+        ArrayList<NotesEntity> posts = new ArrayList<>();
         WebClient webClient = WebClient.builder().codecs(configurer -> configurer.defaultCodecs().maxInMemorySize(-1))
                 .baseUrl("https://tasks.googleapis.com/tasks/v1/lists/")
                 .defaultHeaders(reqHeader(accessToken))
@@ -66,10 +66,10 @@ public class PostsDAO extends GoogleAPI {
             Object json = webClient.get().uri(tasklist + requestUrl)
                     .retrieve().bodyToMono(googleLists.class).block().getItems();
             for (Map<String, Object> task : (ArrayList<Map>) json) {
-                PostsEntity post = new PostsEntity().taskParser(task, userId, tasklist);
+                NotesEntity post = new NotesEntity().taskParser(task, userId, tasklist);
                 posts.add(post);
             }
         }
-        postsMapper.saveAll(posts);
+        notesMapper.saveAll(posts);
     }
 }
