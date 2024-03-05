@@ -79,8 +79,10 @@ public class NotesDAO extends GoogleAPI {
         NotesEntity note = new NotesEntity().noteWriter(data);
         notesMapper.save(note);
 
-
     }
 
+    public void gNoteDelete(){
+
+    }
 
 }

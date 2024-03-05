@@ -9,6 +9,8 @@ export default function Login() {
         pw: "",
     });
 
+
+
     const handleLogin = async () => {
         const response = await fetch("/user/login", {
             method: "POST",
@@ -27,6 +29,30 @@ export default function Login() {
             // 로그인 실패 처리
             alert(result.body);
             // window.location.href = "/";
+        }
+    };
+
+    const [logoutInfo, setLogoutInfo] = useState({
+        observe: sessionStorage.getItem("observe"),
+    });
+
+    const handleLogout = async () => {
+        const response = await fetch("/user/allLogout", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json; charset=utf-8",
+                "Accept": "application/json; charset=utf-8",
+            },
+            body: JSON.stringify(logoutInfo),
+        });
+        const result = await response.json();
+        if (result.code === "200") {
+            // 전체 로그아웃 성공 처리
+            window.sessionStorage.setItem("observe", null);
+            window.location.href = "";
+        } else {
+            // 전체 로그아웃 실패 처리
+            alert(result.body);
         }
     };
 

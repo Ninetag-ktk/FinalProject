@@ -36,4 +36,5 @@ public interface UsersMapper extends JpaRepository<UsersEntity, String> {
     @Transactional
     @Query(value = "update users u set u.observeToken=null where u.observeToken=:observeToken")
     public void emptyObserve(@Param("observeToken") String observeToken);
+
 }

@@ -40,6 +40,11 @@ public class UserController {
 
     }
 
+    @PostMapping("/allLogout")
+    public ResponseEntity<?> allLogout(@RequestBody Map<String, String> req) {
+        return usersDao.allLogout(req.get("observe"));
+    }
+
 }
 
 

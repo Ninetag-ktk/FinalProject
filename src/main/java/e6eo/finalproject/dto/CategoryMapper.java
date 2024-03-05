@@ -16,4 +16,6 @@ public interface CategoryMapper extends MongoRepository<CategoryEntity, String> 
     @Query("{ '_id' :  ?0}")
     @Update("{ '$set' : { 'categories.?1' : ?2 }}")
     void addCategory(String id, String key, String value);
+
+
 }

@@ -52,13 +52,13 @@ public class NotesEntity {
 
     public NotesEntity noteWriter(Map<String, String> data){
         NotesEntity post = NotesEntity.builder()
-//                .id()
                 .categoryId("e6eo")
                 .type(data.get("kind"))
                 .status(data.get("status"))
                 .startTime(data.get("start"))
                 .endTime(data.get("end"))
                 .title(data.get("title"))
+                .etag(null)
                 .contents(data.get("description"))
                 .build();
         return post;
