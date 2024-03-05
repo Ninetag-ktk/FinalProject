@@ -1,34 +1,78 @@
 package e6eo.finalproject.dao;
 
-import e6eo.finalproject.dto.UsersMapper;
 import e6eo.finalproject.entity.UsersEntity;
-import jakarta.servlet.http.Cookie;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
+import e6eo.finalproject.entityGoogle.googleUserInfo;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.RequestBody;
 
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
-import org.springframework.web.bind.annotation.RequestBody;
 
-
+@Slf4j
 @Service
 @Transactional
 @RequiredArgsConstructor
-public class UsersDAO {
+public class UsersDAO extends GoogleAPI {
+
+    public String checkGoogleEmail() {
+        googleUserInfo userInfo = getUserInfo();
+        Optional<UsersEntity> users = usersMapper.findByInnerId(userInfo.getEmail());
+        if (users.isEmpty()) {
+            // 가입되지 않은 아이디라면
+            // 자동 가입 처리
+            doAutoSignUp(userInfo);
+        } else {
+            // 이미 가입되어있는 회원이라면
+            // 리프레시토큰의 유효성 검사 및 업데이트 진행
+            checkRefreshToken(users.get());
+        }
+        // 옵저브 토큰 설정 및 리턴
+        return tokenManager.setObserve(userInfo.getEmail());
+    }
 
 
-    @Autowired
-    private final UsersMapper usersMapper;
-    private final TokenManager tokenManager;
-    private UsersEntity usersEntity;
+    // 자동 가입 처리
+    private void doAutoSignUp(googleUserInfo userInfo) {
+        try {
+            new UsersEntity();
+            UsersEntity user = UsersEntity.builder().userId(userInfo.getEmail()).pw(usersToken.getAccess_token().substring(0, 19)).nickName(userInfo.getName()).innerId(userInfo.getEmail()).refreshToken(usersToken.getRefresh_token()).build();
+            System.out.println(user.toString());
+            usersMapper.save(user);
+            categoryMapper.createDefaultCategory(user.getUserId(), user.getNickName());
+            log.info("Google 계정 자동 가입 완료");
+        } catch (Exception e) {
+            e.printStackTrace();
+            log.info("가입 실패");
+        }
+    }
+    public ResponseEntity<?> login(String id, String pw) {
+//        System.out.println("check");
+        Map<String, String> result = new HashMap<>();
+        Optional<UsersEntity> user = usersMapper.findById(id);
+        if (user.isEmpty()) {
+//            System.out.println("noId");
+            result.put("code", "400");
+            result.put("body", "가입되지 않은 아이디입니다");
+            return ResponseEntity.badRequest().body(result);
+        } else if (!pw.equals(user.get().getPw())) {
+//            System.out.println("noPw");
+            result.put("code", "400");
+            result.put("body", "비밀번호가 일치하지 않습니다");
+            return ResponseEntity.badRequest().body(result);
+        } else {
+//            System.out.println("ok");
+            result.put("code", "200");
+            result.put("body", tokenManager.setObserve(id));
+            return ResponseEntity.ok(result);
+        }
+    }
 
-
-    public void userJoin(@RequestBody UsersEntity users) {
+    public void userJoin(UsersEntity users) {
         Optional<UsersEntity> user = usersMapper.findById(users.getUserId());
         if (user.isEmpty()) {
             usersMapper.save(users);
@@ -38,35 +82,5 @@ public class UsersDAO {
         }
     }
 
-
-    public String idCheck(String id, String pw, HttpServletRequest req, HttpServletResponse res) {
-        Optional<UsersEntity> user = usersMapper.findById(id);
-        String cookieToken = tokenManager.setObserve(id);
-        Cookie cookie = new Cookie(id, cookieToken);
-
-
-        System.out.println(user);
-        if (user.isEmpty()) {
-            System.out.println("아이디 없음");
-            return "아이디 없음";
-        } else {
-            if (pw.equals(user.get().getPw())) {
-                System.out.println(cookie);
-                res.addCookie(cookie);
-                return "로그인";
-            } else {
-                System.out.println("비번불일치");
-                return "비번불일치";
-            }
-        }
-    }
-
-
-    public void findAll() {
-        List<UsersEntity> users = usersMapper.findAll();
-        for (UsersEntity user : users) {
-            System.out.println(user);
-        }
-    }
 
 }

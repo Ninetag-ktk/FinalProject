@@ -7,7 +7,6 @@ import logo from './temp_logo.png';
 
 export default function SignupForm() {
     const [username, setUsername] = useState('');
-    const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
 
     const handleSubmit = (e) => {
@@ -51,21 +50,6 @@ export default function SignupForm() {
                     />
                 </div>
                 <div className="form-group">
-                    <label htmlFor="email">이메일</label>
-                    <input
-                        type="email"
-                        name="email"
-                        id="email"
-                        placeholder="이메일 주소를 입력하세요"
-                        value={email}
-                        onChange={(e) => setEmail(e.target.value)}
-                        data-parsley-required
-                        data-parsley-type="email"
-                        data-parsley-remote-email
-                        data-parsley-remote-email-message="이미 사용 중인 이메일 주소입니다."
-                    />
-                </div>
-                <div className="form-group">
                     <label htmlFor="password">비밀번호(대문자,소문자,숫자,특수문자를 포함해야합니다.)</label>
                     <input
                         type="password"
@@ -94,7 +78,7 @@ export default function SignupForm() {
                         data-parsley-error-message="비밀번호가 일치하지 않습니다."
                     />
                 </div>
-                <button type="submit">회원가입</button>
+                <button type="submit">회원정보저장</button>
             </form>
 
         </div>

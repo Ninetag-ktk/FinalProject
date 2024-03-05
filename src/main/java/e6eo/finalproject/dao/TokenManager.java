@@ -26,26 +26,20 @@ public class TokenManager {
         Optional<UsersEntity> user = usersMapper.findById(userId);
         // user에 옵저브 토큰이 없다면 새로 값을 입력
         // user에 옵저브 토큰이 이미 있다면 해당 값을 반환
-        if (user.isPresent()) {
-            if (user.get().getObserveToken() == null) {
-                do {
-                    // 랜덤값 생성
-                    observe = observeGenerator();
-                    // 랜덤값을 가진 객체가 이미 있다면 반복
-                } while (usersMapper.findByObserveToken(observe).isEmpty());
-                // 랜덤값을 가진 객체가 없다면 DB에 저장
-                usersMapper.updateObserveByUserId(userId, observe);
-            } else {
-                observe = user.get().getObserveToken();
-            }
-            // 랜덤값을 return하여 바로 set할 수 있도록 함
-            return observe;
+        if (user.get().getObserveToken() == null) {
+            do {
+                // 랜덤값 생성
+                observe = observeGenerator();
+                // 랜덤값을 가진 객체가 이미 있다면 반복
+            } while (usersMapper.findByObserveToken(observe).isPresent());
+            // 랜덤값을 가진 객체가 없다면 DB에 저장
+            usersMapper.updateObserveByUserId(userId, observe);
         } else {
-            return "id없음";
+            observe = user.get().getObserveToken();
         }
+        // 랜덤값을 return하여 바로 set할 수 있도록 함
+        return observe;
     }
-
-
 
     public void emptyObserve(String observe) {
         // 옵저브 토큰의 값을 삭제
@@ -54,9 +48,8 @@ public class TokenManager {
         usersMapper.emptyObserve(observe);
     }
 
+    // 옵저브 토큰으로 유저 데이터를 받아오는 메서드
     public UsersEntity getUser(String observe) {
         return usersMapper.findByObserveToken(observe).get();
     }
-
-
 }

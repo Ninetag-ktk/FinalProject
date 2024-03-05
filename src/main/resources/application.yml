@@ -9,7 +9,6 @@ spring:
   data:
     mongodb:
       uri: mongodb://root:76435855@43.203.30.193:27017/e6eo?authSource=admin
-      replica-set-name: Posts
 #      host: 43.203.30.193
 #      port: 27017
 #      username: root

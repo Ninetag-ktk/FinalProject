@@ -64,12 +64,12 @@ body {
 }
 
 #root {
-    height: 100vh;
-    width: 100vw;
     background-color: #E8F9FF;
     display: flex;
     justify-content: center;
     align-items: flex-start;
+    height: 100vh;
+    width: 100vw;
 }
 
 
@@ -84,75 +84,73 @@ body {
 
 }
 
-.toggleSwitch{ 
- display: inline-flex;
- align-items: center;
- gap: 0.5rem;
- cursor: pointer;
+.toggleSwitch {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    cursor: pointer;
 }
 
 
 [type="checkbox"] {
- appearance: none;
- position: relative;
- border: max(2px, 0.1em) solid gray;
- border-radius: 1.25em;
- width: 2.25em;
- height: 1.25em;
+    appearance: none;
+    position: relative;
+    border: max(2px, 0.1em) solid gray;
+    border-radius: 1.25em;
+    width: 2.25em;
+    height: 1.25em;
 }
 
 [type="checkbox"]::before {
- content: "";
- position: absolute;
- left: 0;
- width: 1em;
- height: 1em;
- border-radius: 50%;
- transform: scale(0.8);
- background-color: gray;
- transition: left 250ms linear;
+    content: "";
+    position: absolute;
+    left: 0;
+    width: 1em;
+    height: 1em;
+    border-radius: 50%;
+    transform: scale(0.8);
+    background-color: gray;
+    transition: left 250ms linear;
 }
 
 [type="checkbox"]:checked {
- background-color: tomato;
- border-color: tomato;
+    background-color: tomato;
+    border-color: tomato;
 }
 
 [type="checkbox"]:checked::before {
- background-color: white;
- left: 1em;
+    background-color: white;
+    left: 1em;
 }
 
 [type="checkbox"]:disabled {
- border-color: lightgray;
- opacity: 0.7;
- cursor: not-allowed;
+    border-color: lightgray;
+    opacity: 0.7;
+    cursor: not-allowed;
 }
 
 [type="checkbox"]:disabled:before {
- background-color: lightgray;
+    background-color: lightgray;
 }
 
 [type="checkbox"]:disabled + span {
- opacity: 0.7;
- cursor: not-allowed;
+    opacity: 0.7;
+    cursor: not-allowed;
 }
 
 [type="checkbox"]:focus-visible {
-  outline-offset: max(2px, 0.1em);
-  outline: max(2px, 0.1em) solid tomato;
+    outline-offset: max(2px, 0.1em);
+    outline: max(2px, 0.1em) solid tomato;
 }
 
 [type="checkbox"]:enabled:hover {
- box-shadow: 0 0 0 max(4px, 0.2em) lightgray;
+    box-shadow: 0 0 0 max(4px, 0.2em) lightgray;
 }
 
 /* Global CSS */
 body {
-    display: grid;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
+
+
 }
 
 fieldset {
@@ -177,17 +175,24 @@ fieldset {
 
 .Main {
     width: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+.leftOUT {
+    display: flex;
+    height: 100vh;
 }
 
 .leftbar {
     /* 왼쪽에 고정 */
-    position: absolute;
-    top: 65px;
+    position: relative;
+    top: 0;
     left: 0;
 
 
     /* 너비 설정 */
-    width: 200px;
+    width: 400px;
 
     /* 높이 설정 */
     height: 100%;
@@ -206,14 +211,53 @@ fieldset {
 
 .center {
     position: relative;
-    top: 0;
-    left: 240px;
-
-    background-color: white;
-
-    height: 100vh;
+    width: 100%;
 
 }
+
+.searchp {
+    position: relative;
+    width: 100%;
+}
+
+.divTable {
+    display: table;
+    width: 100%;
+    height: 100%;
+
+}
+
+.divTableRow {
+    display: table-row;
+}
+
+.divTableHeading {
+    background-color: #EEE;
+    display: table-header-group;
+}
+
+.divTableCell, .divTableHead {
+    border: 1px solid #999999;
+    display: table-cell;
+    padding: 3px 10px;
+}
+
+.divTableHeading {
+    background-color: #EEE;
+    display: table-header-group;
+    font-weight: bold;
+}
+
+.divTableFoot {
+    background-color: #EEE;
+    display: table-footer-group;
+    font-weight: bold;
+}
+
+.divTableBody {
+    display: table-row-group;
+}
+
 
 /* 화면 크기가 작을 때 LeftBar 숨기기 */
 @media (max-width: 768px) {
@@ -225,7 +269,7 @@ fieldset {
 .search {
     position: relative;
     top: 0;
-    left: 240px;
+    left: 310px;
     height: 40px;
     width: 400px;
     border: 1px solid #61dafb;
@@ -252,5 +296,154 @@ fieldset {
     }
 }
 
+.loginall {
+
+    .login-main {
+        display: flex;
+        width: 90%;
+        justify-content: space-evenly;
+        align-items: center;
+    }
+
+    .logininput {
+        width: 400px;
+    }
+
+    .loginForm1 {
+        display: flex;
+        flex-direction: column;
+    }
 
 
+    button:hover {
+        background-color: black;
+    }
+
+    input::placeholder {
+        color: gray;
+    }
+
+    /*input{*/
+    /*  border: black;*/
+    /*}*/
+
+    .login-main {
+        display: flex;
+        align-items: center;
+        height: 100vh;
+        justify-content: center;
+    }
+
+    /* 750px보다 좁은 화면에 대한 스타일 */
+    @media screen and (max-width: 750px) {
+        .login-main {
+            flex-direction: column;
+            align-items: center;
+        }
+    }
+
+
+    .Logoclass {
+        margin-right: 0px; /* 로고를 오른쪽에 정렬 */
+        margin-bottom: 20px;
+    }
+
+    .logininput {
+
+        max-width: 400px; /* 로그인 입력창의 최대 너비 설정 */
+    }
+
+    .loginForm1 {
+        margin-bottom: 20px;
+    }
+
+    .inputtext {
+        width: 100%;
+        padding: 10px;
+        margin-bottom: 10px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+    }
+
+    .btn {
+        width: 100%;
+        padding: 10px;
+        background-color: #2B2F33;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+    }
+
+    #btn:hover {
+        background-color: #0056b3;
+    }
+
+    hr {
+        margin: 20px 0;
+        border: 0;
+        border-top: 1px solid #ccc;
+    }
+}
+
+.create {
+    #createlogocreatelogo {
+        height: 100%;
+        width: 100%;
+
+    }
+
+    .create {
+        display: flex;
+        width: 100%;
+        height: 100%;
+        flex-direction: column;
+        align-items: center;
+
+    }
+
+    #signup-form {
+        width: 100%;
+        padding: 20px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        background-color: #f9f9f9;
+        margin-bottom: 20px;
+
+    }
+
+    .form-group {
+        margin-bottom: 20px;
+    }
+
+    label {
+        display: block;
+        margin-bottom: 5px;
+    }
+
+    input[type="text"],
+    input[type="email"],
+    input[type="password"] {
+        width: 100%;
+        padding: 10px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+
+    }
+
+    button[type="submit"] {
+        width: 100%;
+        padding: 10px;
+        background-color: #2B2F33;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+    }
+
+    button[type="submit"]:hover {
+        background-color: #0056b3;
+    }
+}
