@@ -50,6 +50,21 @@ public class NotesEntity {
         this.haveRepost = haveRepost;
     }
 
+    public NotesEntity noteWriter(Map<String, String> data){
+        NotesEntity post = NotesEntity.builder()
+//                .id()
+                .categoryId("e6eo")
+                .type(data.get("kind"))
+                .status(data.get("status"))
+                .startTime(data.get("start"))
+                .endTime(data.get("end"))
+                .title(data.get("title"))
+                .contents(data.get("description"))
+                .build();
+        return post;
+
+    }
+
     public NotesEntity eventParser(Map<String, Object> event, String userId, String calendar) {
         Map<String, String> start = (Map<String, String>) event.get("start");
         Map<String, String> end = (Map<String, String>) event.get("end");

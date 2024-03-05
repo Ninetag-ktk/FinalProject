@@ -5,6 +5,7 @@ import e6eo.finalproject.entity.UsersEntity;
 import e6eo.finalproject.entityGoogle.googleLists;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.reactive.function.client.WebClient;
 
 import java.util.ArrayList;
@@ -72,4 +73,14 @@ public class NotesDAO extends GoogleAPI {
         }
         notesMapper.saveAll(posts);
     }
+
+    public void noteWrite(Map<String, String> data) {
+        String userId = usersMapper.findByObserveToken(data.get("observe")).get().getUserId();
+        NotesEntity note = new NotesEntity().noteWriter(data);
+        notesMapper.save(note);
+
+
+    }
+
+
 }

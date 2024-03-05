@@ -72,7 +72,7 @@ public class UsersDAO extends GoogleAPI {
         }
     }
 
-    public void userJoin(@RequestBody UsersEntity users) {
+    public void userJoin(UsersEntity users) {
         Optional<UsersEntity> user = usersMapper.findById(users.getUserId());
         if (user.isEmpty()) {
             usersMapper.save(users);
@@ -81,5 +81,6 @@ public class UsersDAO extends GoogleAPI {
             System.out.println("실패!");
         }
     }
+
 
 }
