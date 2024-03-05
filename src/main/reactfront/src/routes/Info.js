@@ -80,6 +80,7 @@ export default function SignupForm() {
                 </div>
                 <button type="submit">회원정보저장</button>
             </form>
+            <button>회원 탈퇴</button>
 
         </div>
     );
