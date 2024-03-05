@@ -384,20 +384,19 @@ input::placeholder{
 }
 
 .create {
+    display: flex;
+    width: 100%;
+    height: 100vh;
+    flex-direction: column;
+    align-items: center;
+
     #createlogocreatelogo {
         height: 100%;
         width: 100%;
 
     }
 
-    .create {
-        display: flex;
-        width: 100%;
-        height: 100%;
-        flex-direction: column;
-        align-items: center;
 
-    }
 
     #signup-form {
         width: 100%;
