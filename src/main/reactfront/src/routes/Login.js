@@ -43,31 +43,31 @@ export default function Login() {
         const result = await response.json();
         window.location.href = result.redirect;
     };
-    // 이동범 코드 미완성
+
+    // 자동 로그인 기능
     useEffect(() => {
-        if (window.localStorage.getItem("observe")!=null){
-            return "obs";
+        if (window.localStorage.getItem("observe") != null) {
+            const checkToken = async () => {
+                const response = await axios({
+                    url: "/user/checkToken",
+                    method: "POST",
+                    // headers: {
+                    //     "Content-Type": "application/json; charset=utf-8",
+                    //     "Accept": "application/json; charset=utf-8",
+                    // }, => Content-Type는 기본값을 설정되므로 생략해도 됨.
+                    //       Accept는 응답 데이터 형식을 명시하지 않아도 되므로 생략해도 됨.
+                    data: window.localStorage.getItem("observe"),
+                });
+
+                const res = response.data;
+                if (res.code === "200") {
+                    window.sessionStorage.setItem("observe");
+                } else {
+                    window.localStorage.removeItem("observe");
+                }
+            };
         }
     }, []);
-
-    const tokenSave = async () => {
-        const response = await axios({
-            url: "/user/logintestToken",
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json; charset=utf-8",
-                "Accept": "application/json; charset=utf-8",
-            },
-            data: loginInfo,
-        });
-        const res = response.data;
-        if (res.code === "200") {
-            // 로그인 성공 처리
-            window.localStorage.setItem("observe");
-        } else {
-            window.localStorage.removeItem("observe");
-        }
-    };
 
     return (
         <div className={"loginall"}>

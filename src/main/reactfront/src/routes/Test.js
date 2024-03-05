@@ -95,30 +95,97 @@ useEffect(() => {
 // 어떻게 : 옵저브 토큰이 DB에 있는지 usersMapper.findByObserveToken(observeToken)으로 확인 후
 //         observeToken 값이 있으면 세션에 저장 없으면 로컬스토리지의 데이터 삭제.
 
-useEffect(() => {
-    if (==true) {
-        widow.localStorage.setItem("observe");
-        } else {
-        widow.localStorage.removeItem("observe");
-    }
-}, []);
+// useEffect(() => {
+//     if (==true) {
+//         widow.localStorage.setItem("observe");
+//         } else {
+//         widow.localStorage.removeItem("observe");
+//     }
+// }, []);
 
 ////////////////////////////////////////////
 //UserController
 // @PostMapping("/testToken")
 //         public String testToken(@RequestBody UsersEntity users) {
 //             usersDao.testToken(users);
-//             return null;
+//             return ;
 //         }
 //
 // UserDAO
 // public ResponseEntity<?> testToken(String observeToken, String pw) {
-//         Optional<UsersEntity> user = usersMapper.findByObserveToken(observeToken);
-//         if (user.isEmpty()) {
-//             window.localStorage.removeItem("observe");
-//         } else if (!pw.equals(user.get().getPw())) {
-//             window.localStorage.removeItem("observe");
+//         Map<String, String> result = new HashMap<>();
+//          Optional<UsersEntity> user = usersMapper.findByObserveToken(observeToken);
+//          if (user.isEmpty()) {
+//              result.put("code", "400");
+//              result.put("body", "false");
+//              return ResponseEntity.badRequest().body(result);
+//          } else if (!pw.equals(user.get().getPw())) {
+//              result.put("code", "400");
+//              result.put("body", "false");
+//              return ResponseEntity.badRequest().body(result);
+//
+//          } else {
+//              result.put("code", "200");
+//              result.put("body", "true");
+//              return ResponseEntity.ok(result);
+//          }
+//      }
+//
+//const handleLogin = async () => {
+//         const response = await fetch("/user/login", {
+//             method: "POST",
+//             headers: {
+//                 "Content-Type": "application/json; charset=utf-8",
+//                 "Accept": "application/json; charset=utf-8",
+//             },
+//             body: JSON.stringify(loginInfo),
+//         });
+//         const result = await response.json();
+//         if (result.code === "200") {
+//             // 로그인 성공 처리
+//             redirect(`/check?autologin=${autoLogin}&observe=${result.body}`,);
 //         } else {
-//             window.sessionStorage.setItem("observe");
+//             // 로그인 실패 처리
+//             alert(result.body);
+//             // window.location.href = "/";
 //         }
-//     }
+//     };
+
+////////////////////////////////////////////
+// 159~166번줄이 task:get,insert,patch,deldete 캘린더:insert,patch,delete별로 적으면됨 나머지 줄들은 1번만 써주면 됨
+//const [apiKey, setApiKey] = useState("");
+// const [accessToken, setAccessToken] = useState("");
+//
+// const insertTask = {
+// 	url = "~~~~/?key={apiKey}",
+// 	methpd = "post",
+// 	header: {
+// 		'Authorization: Bearer {accessToken}'
+// 		'Accept: application/json'
+//     		'Content-Type: application/json',
+// }
+//
+//
+// fetch("/서버요청" , {
+// 	method: ~~,
+// 	headers: {
+// 		"Content-Type": "application/json; charset=utf-8",
+//                	 "Accept": "application/json; charset=utf-8",
+// 	},
+// 	body: JSON.stringify("observe":window.sessionStorage.getItem("observe")),
+// }).then(response => {
+// 	const result = response.json()
+// 	setApiKey(result.get("apiKey"));
+// 	setAccessToken(result.get("accessToken"));
+// 	axios(insertTask)
+// }
+const [apiKey, setApiKey] = useState("");
+const [accessToken, setAccessToken] = useState("");
+
+const getTask = {
+ 	url: "https://www.googleapis.com/calendar/v3/calendars/calendarId/events={apiKey}",
+ 	method: "POST",
+ 	header: {
+        "Authorization": "Bearer {accessToken}",
+        "Accept": "application/json",
+ }
