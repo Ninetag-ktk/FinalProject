@@ -17,11 +17,11 @@ export default function  LeftBar  () {
             </div>
 
             <div className="schedule">
-                <h2>일정</h2>
+                <h2>캘린더 리스트</h2>
                 <ul>
-                    <li>2024년 2월 27일 - 회의</li>
-                    <li>2024년 2월 28일 - 팀 미팅</li>
-                    <li>2024년 3월 1일 - 프로젝트 발표</li>
+                    <li>경조사</li>
+                    <li>출장</li>
+                    <li>예비군</li>
                 </ul>
             </div>
             <div className={"profile"}>
