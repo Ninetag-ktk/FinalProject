@@ -4,7 +4,18 @@ export default function  LeftBar  () {
     return(
         <div className="leftbar">
             <div className="category-create">
-                <button>카테고리 추가</button>
+                <input />
+                <button>(캘린더)카테고리 추가</button>
+            </div>
+
+
+            <div className="schedule">
+                <h2>캘린더 리스트</h2>
+                <ul>
+                    <li>경조사</li>
+                    <li>출장</li>
+                    <li>예비군</li>
+                </ul>
             </div>
 
             <div className="today-tasks">
@@ -16,17 +27,10 @@ export default function  LeftBar  () {
                 </ul>
             </div>
 
-            <div className="schedule">
-                <h2>캘린더 리스트</h2>
-                <ul>
-                    <li>경조사</li>
-                    <li>출장</li>
-                    <li>예비군</li>
-                </ul>
-            </div>
+
             <div className={"profile"}>
                 <a href={"/info"}>
-                <button>내 정보</button>
+                    <button>내 정보</button>
                 </a>
             </div>
             <div className={"logout"}>
