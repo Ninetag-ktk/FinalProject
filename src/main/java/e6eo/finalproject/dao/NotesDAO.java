@@ -8,12 +8,31 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 public class NotesDAO extends GoogleAPI {
+
+    public void checkGoogleNotes(UsersEntity user, String accessToken) {
+        List<NotesEntity> notes = notesMapper.findByUserId(user.getUserId());
+        Map<Object, Object> notesEtag = notes.stream().collect(Collectors.toMap(NotesEntity::getId, NotesEntity::getEtag));
+        Map<String, ArrayList<String>> categories = decodeCategory(
+                categoryMapper.findById(user.getUserId()).get().getCategories().keySet().toArray(new String[0]));
+        noteCalendar(user.getUserId(), categories.get("calendar"), accessToken);
+        noteTasks(user.getUserId(), categories.get("tasks"), accessToken);
+    }
+
+    private void scanCalendarNotes(Map<Object, Object> notesEtag, ArrayList<NotesEntity> noteCalendar) {
+        for (NotesEntity note : noteCalendar) {
+            if (!note.getEtag().equals(notesEtag.get(note.getId()))) {
+
+            }
+        }
+    }
 
     public void getGoogleNotes(String observe) {
         Optional<UsersEntity> user = usersMapper.findByObserveToken(observe);
@@ -28,8 +47,16 @@ public class NotesDAO extends GoogleAPI {
         System.out.println("GetPostFromGoogle_Complete");
     }
 
-    private void noteCalendar(String userId, ArrayList<String> list, String accessToken) {
-        ArrayList<NotesEntity> posts = new ArrayList<>();
+    public void getGoogleNotes(UsersEntity user, String accessToken) {
+        String[] categories = categoryMapper.findById(user.getUserId()).get().getCategories().keySet().toArray(new String[0]);
+        Map<String, ArrayList<String>> categoryMap = decodeCategory(categories);
+        notesMapper.saveAll(noteCalendar(user.getUserId(), categoryMap.get("calendar"), accessToken));
+        notesMapper.saveAll(noteTasks(user.getUserId(), categoryMap.get("tasks"), accessToken));
+        System.out.println("GetPostFromGoogle_Complete");
+    }
+
+    private ArrayList<NotesEntity> noteCalendar(String userId, ArrayList<String> list, String accessToken) {
+        ArrayList<NotesEntity> notes = new ArrayList<>();
         WebClient webClient = WebClient.builder().codecs(configurer -> configurer.defaultCodecs().maxInMemorySize(-1))
                 .baseUrl("https://www.googleapis.com/calendar/v3/calendars/")
                 .defaultHeaders(reqHeader(accessToken))
@@ -44,14 +71,14 @@ public class NotesDAO extends GoogleAPI {
                     .retrieve().bodyToMono(googleLists.class).block().getItems();
             for (Map<String, Object> event : (ArrayList<Map>) json) {
                 NotesEntity post = new NotesEntity().eventParser(event, userId, calendar);
-                posts.add(post);
+                notes.add(post);
             }
         }
-        notesMapper.saveAll(posts);
+        return notes;
     }
 
-    private void noteTasks(String userId, ArrayList<String> list, String accessToken) {
-        ArrayList<NotesEntity> posts = new ArrayList<>();
+    private ArrayList<NotesEntity> noteTasks(String userId, ArrayList<String> list, String accessToken) {
+        ArrayList<NotesEntity> notes = new ArrayList<>();
         WebClient webClient = WebClient.builder().codecs(configurer -> configurer.defaultCodecs().maxInMemorySize(-1))
                 .baseUrl("https://tasks.googleapis.com/tasks/v1/lists/")
                 .defaultHeaders(reqHeader(accessToken))
@@ -67,9 +94,9 @@ public class NotesDAO extends GoogleAPI {
                     .retrieve().bodyToMono(googleLists.class).block().getItems();
             for (Map<String, Object> task : (ArrayList<Map>) json) {
                 NotesEntity post = new NotesEntity().taskParser(task, userId, tasklist);
-                posts.add(post);
+                notes.add(post);
             }
         }
-        notesMapper.saveAll(posts);
+       return notes;
     }
 }

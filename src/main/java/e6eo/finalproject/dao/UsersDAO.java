@@ -35,7 +35,6 @@ public class UsersDAO extends GoogleAPI {
         return tokenManager.setObserve(userInfo.getEmail());
     }
 
-
     // 자동 가입 처리
     private void doAutoSignUp(googleUserInfo userInfo) {
         try {
@@ -72,13 +71,20 @@ public class UsersDAO extends GoogleAPI {
         }
     }
 
-    public void userJoin(@RequestBody UsersEntity users) {
+    public ResponseEntity<?> userJoin(UsersEntity users) {
+        Map<String, String> result = new HashMap<>();
         Optional<UsersEntity> user = usersMapper.findById(users.getUserId());
         if (user.isEmpty()) {
             usersMapper.save(users);
+            result.put("code", "200");
+            result.put("body", "회원가입 성공");
             System.out.println("성공");
+            return ResponseEntity.badRequest().body(result);
         } else {
+            result.put("code", "400");
+            result.put("body", "회원가입 실패");
             System.out.println("실패!");
+            return ResponseEntity.ok(result);
         }
     }
 
