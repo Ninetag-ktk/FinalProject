@@ -1,3 +1,4 @@
+// Main.js
 import React, { useState } from "react";
 import Header from "./Header";
 import LeftBar from "./LeftBar";
@@ -9,13 +10,13 @@ export const MyContext = React.createContext();
 export default function Main() {
     const [isSearchVisible, setIsSearchVisible] = useState(false);
     const [calendar, setCalendar] = useState(null);
-    const [calendarTitle, setCalendarTitle] = useState(""); // title 상태 추가
+    const [calendarTitle, setCalendarTitle] = useState("");
+    const [events, setEvents] = useState([]);
 
     function handleToggle() {
         setIsSearchVisible(!isSearchVisible);
     }
 
-    //전달 버튼
     const handlePrevButtonClick = () => {
         if (calendar) {
             calendar.prev();
@@ -23,13 +24,13 @@ export default function Main() {
         }
     };
 
-    //담달 버튼
     const handleNextButtonClick = () => {
         if (calendar) {
             calendar.next();
             setTitle(calendar.view.title);
         }
     };
+
     const gotoday = () => {
         if (calendar) {
             calendar.today();
@@ -41,23 +42,23 @@ export default function Main() {
         setCalendarTitle(title);
     };
 
-    const handleAddEventButtonClick = () => {
-        // Handle add event button click functionality
+    const handleSaveEvent = (event) => {
+        setEvents([...events, event]);
     };
 
     return (
         <div className={"Main"}>
             <MyContext.Provider value={{ isSearchVisible, handleToggle }}>
-                <div className={"3dan"}>
+                <div className={"frame"}>
                     <Header
                         onPrevButtonClick={handlePrevButtonClick}
                         onNextButtonClick={handleNextButtonClick}
                         today={gotoday}
-                        currentTitle={calendarTitle} /* 수정: currentTitle prop 전달 */
+                        currentTitle={calendarTitle}
                     />
                     <div className={"leftOUT"}>
-                        <LeftBar />
-                        {isSearchVisible ? <Search /> : <Center setMainCalendar={setCalendar} setTitle={setTitle} />} {/* setTitle prop 추가 */}
+                        <LeftBar onSave={handleSaveEvent} />
+                        {isSearchVisible ? <Search /> : <Center setMainCalendar={setCalendar} setTitle={setTitle} events={events} />}
                     </div>
                 </div>
             </MyContext.Provider>

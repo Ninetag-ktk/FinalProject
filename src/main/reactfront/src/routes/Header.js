@@ -26,11 +26,21 @@ export default function Header({ onPrevButtonClick, onNextButtonClick, currentTi
 
     return (
         <div className={"header"}>
+            <div>
             <a href={"/main"}> <img className={"logo"} src={logo} alt="Logo"/></a>
+                </div>
+            <div>
             <button id={"prevBtn"} onClick={onPrevButtonClick}>←</button>
+            </div>
+            <div>
             <h2 id="currentMonth">{currentTitle}</h2> {/* 수정: currentMonth prop 사용 */}
+            </div>
+            <div>
             <button id={"nextBtn"} onClick={onNextButtonClick}>→</button>
+            </div>
+            <div>
             <button id={"today"} onClick={today} >오늘</button>
+            </div>
             <div>
                 <label className={"toggleSwitch"}>
                     <input type="checkbox" checked={isSearchVisible} onChange={handleCheckboxChange}/>

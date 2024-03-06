@@ -42,6 +42,15 @@ const router = createBrowserRouter([
             {index : true, element: <Info />}
 
         ]
+    },
+    {
+        path: "/info",
+        element: <Info />,
+        errorElement : <p>Not Found</p>,
+        children : [
+            {index : true, element: <Info />}
+
+        ]
     }
 ]);
 
