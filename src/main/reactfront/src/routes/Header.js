@@ -1,10 +1,9 @@
-// Header.js
 import React, { useContext } from "react";
 import logo from './nobglogo.png';
 import axios from "axios";
 import { MyContext } from './Main';
 
-export default function Header({ onNextMonthClick, onPrevMonthClick, onAddEventButtonClick }) {
+export default function Header({ onPrevButtonClick, onNextButtonClick, onAddEventButtonClick }) {
     const { isSearchVisible, handleToggle } = useContext(MyContext);
 
     const handleCheckboxChange = (event) => {
@@ -22,10 +21,10 @@ export default function Header({ onNextMonthClick, onPrevMonthClick, onAddEventB
 
     return (
         <div className={"header"}>
-            <a href={"/main"}> <img className={"logo"} src={logo} /></a>
-            <button id={"prevBtn"} onClick={onPrevMonthClick}>←</button>
+            <a href={"/main"}> <img className={"logo"} src={logo} alt="Logo" /></a>
+            <button id={"prevBtn"} onClick={onPrevButtonClick}>←</button>
             <h2 id="currentMonth"></h2>
-            <button id={"nextBtn"} onClick={onNextMonthClick}>→</button>
+            <button id={"nextBtn"} onClick={onNextButtonClick}>→</button>
             <div>
                 <button type={"button"} onClick={onAddEventButtonClick}>일정 추가</button>
                 <label className={"toggleSwitch"}>
