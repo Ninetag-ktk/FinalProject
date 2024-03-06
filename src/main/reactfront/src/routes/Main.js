@@ -10,12 +10,14 @@ export const MyContext = React.createContext();
 export default function Main() {
     const redirect = useNavigate()
 
+
     useEffect(() => {
         // alert(window.sessionStorage.getItem("observe"));
         if (window.sessionStorage.getItem("observe") == null) {
             redirect("/");
         }
-    }, );
+    }, []);
+
 
 
 
@@ -23,13 +25,21 @@ export default function Main() {
     const [calendar, setCalendar] = useState(null);
     const [calendarTitle, setCalendarTitle] = useState(""); // title 상태 추가
 
+    let observe = {observe: sessionStorage.getItem("observe")}
 
-
-    let ymData = {
-        year: 0,
-        month: 0,
-        observe: "",
+    const SucessLogin = async () => {
+        const response = await fetch("/google/updateCheck", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json; charset=utf-8",
+                "Accept": "application/json; charset=utf-8",
+            },
+            body: JSON.stringify(observe),
+        });
     };
+
+
+
 
 
     function handleToggle() {
@@ -38,6 +48,15 @@ export default function Main() {
 
 
 
+
+
+
+
+    let ymData = {
+        year: 0,
+        month: 0,
+        observe: "",
+    };
 
     //전달 버튼
     const handlePrevButtonClick = () => {
@@ -56,9 +75,7 @@ export default function Main() {
     };
 
 
-
     //담달 버튼
-
     const handleNextButtonClick = () => {
         if (calendar) {
             calendar.next();
@@ -98,16 +115,16 @@ export default function Main() {
     }
 
 
+
+
+
     const setTitle = (title) => {
         setCalendarTitle(title);
     };
 
-    const handleAddEventButtonClick = () => {
-        // Handle add event button click functionality
-    };
 
     return (
-        <div className={"Main"}>
+        <div className={"Main"} onLoad={SucessLogin}>
             <MyContext.Provider value={{isSearchVisible, handleToggle}}>
                 <div className={"3dan"}>
                     <Header

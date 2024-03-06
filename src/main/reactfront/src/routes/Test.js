@@ -9,11 +9,6 @@ export default function Login() {
         pw: "",
     });
 
-    const otherInfo = {
-        name: "",
-        age: 0,
-    };
-
 
     const handleLogin = async () => {
         const response = await fetch("/user/login", {
