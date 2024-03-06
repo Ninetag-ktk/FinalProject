@@ -44,9 +44,9 @@ public class UserController {
     }
 
     @PostMapping("/checkToken")
-    public boolean checkObserve(@RequestBody String observe) {
+    public ResponseEntity<?> checkObserve(@RequestBody String observe) {
         Optional<UsersEntity> user = usersMapper.findByObserveToken(observe);
-        return user.isEmpty() ? false : true;
+        return user.isEmpty() ? ResponseEntity.ok(true) : ResponseEntity.ok(false);
     }
 }
 

@@ -1,10 +1,42 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import logo from './temp_logo.png'
 import {useNavigate} from "react-router-dom";
+import axios from "axios";
 
 
 export default function Login() {
+
+    // 자동 로그인 기능
     const redirect = useNavigate();
+
+    useEffect(() => {
+        // 로그인 이력이 있다면(세션에 저장된 내용이 있다면)
+        // 바로 main으로 이동
+        if (window.sessionStorage.getItem("observe")) {
+            redirect("/main");
+        }
+
+        // 로그인된 이력이 없지만, 자동로그인 기록이 있다면(로컬에 저장된 내용이 있다면)
+        // 옵저브 토큰 검사
+        if (window.localStorage.getItem("observe")) {
+            axios("/user/checkToken", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json; charset=utf-8",
+                    "Accept": "application/json; charset=utf-8",
+                },
+                data: window.localStorage.getItem("observe"),
+            }).then(response => {
+                    if (response.data == true) {
+                        window.sessionStorage.setItem("observe", window.localStorage.getItem("observe"));
+                        redirect("/main");
+                    } else {
+                        window.localStorage.removeItem("observe");
+                    }
+                })
+        }
+    }, []);
+
     const [loginInfo, setLoginInfo] = useState({
         id: "",
         pw: "",
@@ -42,31 +74,6 @@ export default function Login() {
         const result = await response.json();
         window.location.href = result.redirect;
     };
-
-    // 자동 로그인 기능
-    useEffect(() => {
-        if (window.localStorage.getItem("observe") != null) {
-            const checkToken = async () => {
-                const response = await axios({
-                    url: "/user/checkToken",
-                    method: "POST",
-                    // headers: {
-                    //     "Content-Type": "application/json; charset=utf-8",
-                    //     "Accept": "application/json; charset=utf-8",
-                    // }, => Content-Type는 기본값을 설정되므로 생략해도 됨.
-                    //       Accept는 응답 데이터 형식을 명시하지 않아도 되므로 생략해도 됨.
-                    data: window.localStorage.getItem("observe"),
-                });
-
-                const res = response.data;
-                if (res.code === "200") {
-                    window.sessionStorage.setItem("observe");
-                } else {
-                    window.localStorage.removeItem("observe");
-                }
-            };
-        }
-    }, []);
 
     return (
         <div className={"loginall"}>
