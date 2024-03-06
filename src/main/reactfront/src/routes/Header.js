@@ -4,7 +4,7 @@ import logo from './nobglogo.png';
 import axios from "axios";
 import { MyContext } from './Main';
 
-export default function Header({ onPrevButtonClick, onNextButtonClick, currentTitle  }) {
+export default function Header({ onPrevButtonClick, onNextButtonClick, currentTitle,today  }) {
     const { isSearchVisible, handleToggle } = useContext(MyContext);
 
 
@@ -30,6 +30,7 @@ export default function Header({ onPrevButtonClick, onNextButtonClick, currentTi
             <button id={"prevBtn"} onClick={onPrevButtonClick}>←</button>
             <h2 id="currentMonth">{currentTitle}</h2> {/* 수정: currentMonth prop 사용 */}
             <button id={"nextBtn"} onClick={onNextButtonClick}>→</button>
+            <button id={"today"} onClick={today} >오늘</button>
             <div>
                 <label className={"toggleSwitch"}>
                     <input type="checkbox" checked={isSearchVisible} onChange={handleCheckboxChange}/>

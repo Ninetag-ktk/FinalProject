@@ -30,6 +30,12 @@ export default function Main() {
             setTitle(calendar.view.title);
         }
     };
+    const gotoday = () => {
+        if (calendar) {
+            calendar.today();
+            setTitle(calendar.view.title);
+        }
+    };
 
     const setTitle = (title) => {
         setCalendarTitle(title);
@@ -46,6 +52,7 @@ export default function Main() {
                     <Header
                         onPrevButtonClick={handlePrevButtonClick}
                         onNextButtonClick={handleNextButtonClick}
+                        today={gotoday}
                         currentTitle={calendarTitle} /* 수정: currentTitle prop 전달 */
                     />
                     <div className={"leftOUT"}>
