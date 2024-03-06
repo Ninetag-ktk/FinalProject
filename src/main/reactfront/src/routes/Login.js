@@ -1,14 +1,15 @@
 import React, {useState} from 'react';
 import logo from './temp_logo.png'
-import {json} from "react-router-dom";
-import axios from "axios";
+import {useNavigate} from "react-router-dom";
 
 
 export default function Login() {
+    const redirect = useNavigate();
     const [loginInfo, setLoginInfo] = useState({
         id: "",
         pw: "",
     });
+    const [autoLogin, setAutoLogin] = useState(false);
 
     const handleLogin = async () => {
         const response = await fetch("/user/login", {
@@ -22,8 +23,7 @@ export default function Login() {
         const result = await response.json();
         if (result.code === "200") {
             // 로그인 성공 처리
-            window.sessionStorage.setItem("observe", result.body);
-            window.location.href = "/main";
+            redirect(`/check?autologin=${autoLogin}&observe=${result.body}`,);
         } else {
             // 로그인 실패 처리
             alert(result.body);
@@ -34,11 +34,39 @@ export default function Login() {
     const handleGoogleLogin = async () => {
         const response = await fetch("/google/login", {
             mode: "no-cors",
-        }); // fetch 호출이 아예 안됨
-        console.log(response.json());
-        alert(response.json());
-        window.location.href = response.json();
+            headers: {
+                "Content-Type": "application/json; charset=utf-8",
+                "Accept": "application/json; charset=utf-8",
+            },
+        });
+        const result = await response.json();
+        window.location.href = result.redirect;
     };
+
+    // 자동 로그인 기능
+    useEffect(() => {
+        if (window.localStorage.getItem("observe") != null) {
+            const checkToken = async () => {
+                const response = await axios({
+                    url: "/user/checkToken",
+                    method: "POST",
+                    // headers: {
+                    //     "Content-Type": "application/json; charset=utf-8",
+                    //     "Accept": "application/json; charset=utf-8",
+                    // }, => Content-Type는 기본값을 설정되므로 생략해도 됨.
+                    //       Accept는 응답 데이터 형식을 명시하지 않아도 되므로 생략해도 됨.
+                    data: window.localStorage.getItem("observe"),
+                });
+
+                const res = response.data;
+                if (res.code === "200") {
+                    window.sessionStorage.setItem("observe");
+                } else {
+                    window.localStorage.removeItem("observe");
+                }
+            };
+        }
+    }, []);
 
     return (
         <div className={"loginall"}>
@@ -47,7 +75,7 @@ export default function Login() {
                     <img src={logo}/>
                 </div>
                 <div className={"logininput"}>
-                    <div className={"loginForm1"}>
+                    <div className={"loginForm"}>
                         <input
                             type="text"
                             className="inputtext"
@@ -64,9 +92,10 @@ export default function Login() {
                             value={loginInfo.pw}
                             onChange={(e) => setLoginInfo({...loginInfo, pw: e.target.value})}
                         />
-                        <div className={"autologin"}>
-                        <input type={"checkbox"}/>로그인유지
-                        </div>
+                        <input
+                            type={"checkbox"} checked={autoLogin}
+                            onChange={(e) => setAutoLogin(e.target.checked)}
+                        />로그인유지
                         <button className={"btn"} type={"submit"} onClick={handleLogin}>로그인</button>
                     </div>
                     <a href={"/create"}>
@@ -79,3 +108,4 @@ export default function Login() {
         </div>
     )
 }
+

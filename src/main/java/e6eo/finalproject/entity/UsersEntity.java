@@ -19,7 +19,7 @@ public class UsersEntity {
     @Column(name = "nickname", nullable = false)
     private String nickName;
     @Column(name = "observe_token", nullable = true, unique = true)
-    private String observeToken;
+        private String observeToken;
     @Column(name = "inner_id", nullable = true)
     private String innerId;
     @Column(name = "refresh_token", nullable = true)
