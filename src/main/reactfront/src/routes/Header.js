@@ -1,12 +1,11 @@
 // Header.js
-import React, { useContext, useEffect, useState } from "react";
+import React, {useContext, useEffect, useState} from "react";
 import logo from './nobglogo.png';
 import axios from "axios";
-import { MyContext } from './Main';
+import {MyContext} from './Main';
 
-export default function Header({ onPrevButtonClick, onNextButtonClick, currentTitle  }) {
-    const { isSearchVisible, handleToggle } = useContext(MyContext);
-
+export default function Header({onPrevButtonClick, onNextButtonClick, currentTitle}) {
+    const {isSearchVisible, handleToggle} = useContext(MyContext);
 
     const handleCheckboxChange = (event) => {
         handleToggle();
@@ -21,22 +20,21 @@ export default function Header({ onPrevButtonClick, onNextButtonClick, currentTi
             });
     };
 
-
-
-
     return (
         <div className={"header"}>
             <a href={"/main"}> <img className={"logo"} src={logo} alt="Logo"/></a>
-            <button id={"prevBtn"} onClick={onPrevButtonClick}>←</button>
-            <h2 id="currentMonth">{currentTitle}</h2> {/* 수정: currentMonth prop 사용 */}
-            <button id={"nextBtn"} onClick={onNextButtonClick}>→</button>
+            <div className={"calendarDate"}>
+                <button id={"prevBtn"} className={"calendarBtn"} onClick={onPrevButtonClick}>←</button>
+                <div className="currentTitle">{currentTitle}</div> {/* 수정: currentMonth prop 사용 */}
+                <button id={"nextBtn"} className={"calendarBtn"} onClick={onNextButtonClick}>→</button>
+            </div>
             <div>
                 <label className={"toggleSwitch"}>
                     <input type="checkbox" checked={isSearchVisible} onChange={handleCheckboxChange}/>
                     <span>캘린더/검색</span>
                 </label>
-                <button type={"button"} id={"googletest"} onClick={handleGoogleTest}>구글 API 테스트 버튼</button>
             </div>
+                <button type={"button"} id={"googletest"} onClick={handleGoogleTest}>구글 API 테스트 버튼</button>
         </div>
     );
 }

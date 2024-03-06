@@ -52,7 +52,7 @@ export default function Main() {
     return (
         <div className={"Main"}>
             <MyContext.Provider value={{ isSearchVisible, handleToggle }}>
-                <div className={"3dan"}>
+                <div className={"Frame"}>
                     <Header
                         onPrevButtonClick={handlePrevButtonClick}
                         onNextButtonClick={handleNextButtonClick}
