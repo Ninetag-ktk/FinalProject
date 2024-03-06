@@ -41,6 +41,8 @@ export default function Login() {
         id: "",
         pw: "",
     });
+
+
     const [autoLogin, setAutoLogin] = useState(false);
 
     const handleLogin = async () => {

@@ -53,7 +53,7 @@ public class GoogleController {
                 .build();
     }
 
-    @PostMapping("/updateCheck")
+    @PostMapping("/updateCheck1")
     public void checkGoogleAccount(@RequestBody Map<String, String> req) {
         System.out.println("구글 데이터 업데이트 테스트");
         UsersEntity user = usersMapper.findByObserveToken(req.get("observe")).get();
@@ -67,6 +67,10 @@ public class GoogleController {
                 notesDAO.checkGoogleNotes(user, accessToken);
             }
         }
+    }
+    @PostMapping("/updateCheck")
+    public void test11(@RequestBody Map<String, String> req){
+        System.out.println(req.get("observe"));
     }
 
     @ResponseBody

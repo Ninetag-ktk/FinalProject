@@ -48,6 +48,12 @@ public class UserController {
         Optional<UsersEntity> user = usersMapper.findByObserveToken(observe);
         return user.isEmpty() ? ResponseEntity.ok(true) : ResponseEntity.ok(false);
     }
+
+    @PostMapping("/allLogout")
+    public ResponseEntity<?> allLogout(@RequestBody Map<String, String> req) {
+        return usersDao.allLogout(req.get("observe"));
+    }
+
 }
 
 

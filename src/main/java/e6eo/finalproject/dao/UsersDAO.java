@@ -58,4 +58,21 @@ public class UsersDAO extends GoogleAPI {
         }
     }
 
+
+    public ResponseEntity<?> allLogout(String observe) {
+        Map<String, String> result = new HashMap<>();
+        Optional<UsersEntity> user = usersMapper.findByObserveToken(observe);
+        if (user.isEmpty()) {
+            result.put("code", "400");
+            result.put("body", "토큰이 없는 아이디입니다");
+            return ResponseEntity.badRequest().body(result);
+        } else {
+            tokenManager.emptyObserve(observe);
+            result.put("code", "200");
+            result.put("body", "전체 로그아웃되었습니다.");
+            return ResponseEntity.ok(result);
+        }
+    }
+
+
 }
