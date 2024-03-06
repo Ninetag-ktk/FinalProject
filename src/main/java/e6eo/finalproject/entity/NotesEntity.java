@@ -77,7 +77,7 @@ public class NotesEntity {
                 .id(task.get("id"))
                 .categoryId(userId + "#google^tasks^" + tasklist)
                 .type(kind)
-                .status(task.get("status"))
+                .status(task.get("deleted") == null ? task.get("status") : "cancelled")
                 .startTime(task.get("due"))
                 .endTime(task.get("due"))
                 .title(task.get("title"))
