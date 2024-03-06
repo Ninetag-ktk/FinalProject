@@ -9,6 +9,10 @@ export default function Login() {
         pw: "",
     });
 
+    const otherInfo = {
+        name: "",
+        age: 0,
+    };
 
 
     const handleLogin = async () => {
@@ -32,29 +36,19 @@ export default function Login() {
         }
     };
 
-    const [logoutInfo, setLogoutInfo] = useState({
-        observe: sessionStorage.getItem("observe"),
-    });
-
-    const handleLogout = async () => {
-        const response = await fetch("/user/allLogout", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json; charset=utf-8",
-                "Accept": "application/json; charset=utf-8",
-            },
-            body: JSON.stringify(logoutInfo),
-        });
-        const result = await response.json();
-        if (result.code === "200") {
-            // 전체 로그아웃 성공 처리
-            window.sessionStorage.setItem("observe", null);
-            window.location.href = "";
-        } else {
-            // 전체 로그아웃 실패 처리
-            alert(result.body);
-        }
+    const handleGoogleLogin = async () => {
+        const response = await fetch("/google/login", {
+            mode: "no-cors",
+        }); // fetch 호출이 아예 안됨
+        console.log(response.json());
+        alert(response.json());
+        window.location.href = response.json();
     };
+
+
+    const [observeToken] = useState({
+        observe : sessionStorage.getItem("observe")
+    });
 
     const [noteWrite, setNoteWrite] = useState({
         categoryId : "",
@@ -67,8 +61,6 @@ export default function Login() {
 
     });
 
-
-
     const handleNoteWrite = async () => {
         const response = await fetch("/notes/write", {
             method: "POST",
@@ -76,12 +68,11 @@ export default function Login() {
                 "Content-Type": "application/json; charset=utf-8",
                 "Accept": "application/json; charset=utf-8",
             },
-            body: JSON.stringify(loginInfo),
+            body: JSON.stringify({...noteWrite, ...observeToken}),
         });
         const result = await response.json();
         if (result.code === "200") {
             // 글 작성 성공 성공 처리
-            window.sessionStorage.setItem("observe", result.body);
             window.location.href = "/main";
         } else {
             // 로그인 실패 처리
@@ -90,13 +81,44 @@ export default function Login() {
         }
     };
 
-    const handleGoogleLogin = async () => {
-        const response = await fetch("/google/login", {
-            mode: "no-cors",
-        }); // fetch 호출이 아예 안됨
-        console.log(response.json());
-        alert(response.json());
-        window.location.href = response.json();
+
+    const handleLogout = async () => {
+        const response = await fetch("/user/allLogout", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json; charset=utf-8",
+                "Accept": "application/json; charset=utf-8",
+            },
+            body: JSON.stringify(observeToken),
+        });
+        const result = await response.json();
+        if (result.code === "200") {
+            // 전체 로그아웃 성공 처리
+            window.sessionStorage.setItem("observe", null);
+            window.location.href = "";
+        } else {
+            // 전체 로그아웃 실패 처리
+            alert(result.body);
+        }
+    };
+
+    const handleUnlink = async () => {
+        const response = await fetch("/notes/unlink", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json; charset=utf-8",
+                "Accept": "application/json; charset=utf-8",
+            },
+            body: JSON.stringify(observeToken),
+        });
+        const result = await response.json();
+        if (result.code === "200") {
+            // 연동 해제 성공시 처리
+            window.location.href = "/main";
+        } else {
+            // 연동해제 실패 처리
+            alert(result.body);
+        }
     };
 
     return (
