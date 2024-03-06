@@ -56,6 +56,40 @@ export default function Login() {
         }
     };
 
+    const [noteWrite, setNoteWrite] = useState({
+        categoryId : "",
+        type : "",
+        status : "",
+        startTime : "",
+        endTime : "",
+        title : "",
+        contents : "",
+
+    });
+
+
+
+    const handleNoteWrite = async () => {
+        const response = await fetch("/notes/write", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json; charset=utf-8",
+                "Accept": "application/json; charset=utf-8",
+            },
+            body: JSON.stringify(loginInfo),
+        });
+        const result = await response.json();
+        if (result.code === "200") {
+            // 글 작성 성공 성공 처리
+            window.sessionStorage.setItem("observe", result.body);
+            window.location.href = "/main";
+        } else {
+            // 로그인 실패 처리
+            alert(result.body);
+            // window.location.href = "/";
+        }
+    };
+
     const handleGoogleLogin = async () => {
         const response = await fetch("/google/login", {
             mode: "no-cors",
