@@ -1,12 +1,22 @@
-import React, { useState } from "react";
+import React, {useEffect, useState} from "react";
 import Header from "./Header";
 import LeftBar from "./LeftBar";
 import Search from "./Search";
 import Center from "./Center";
+import {useNavigate} from "react-router-dom";
 
 export const MyContext = React.createContext();
 
 export default function Main() {
+    const redirect = useNavigate()
+
+    useEffect(() => {
+        // alert(window.sessionStorage.getItem("observe"));
+        if (window.sessionStorage.getItem("observe") == null) {
+            redirect("/");
+        }
+    }, []);
+
     const [isSearchVisible, setIsSearchVisible] = useState(false);
     const [calendar, setCalendar] = useState(null);
 

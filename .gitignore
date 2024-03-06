@@ -37,7 +37,8 @@ out/
 .vscode/
 
 ### InteliJ ###
-/tokens/StoredCredential
+/src/main/resources/static/json
+/src/main/resources/static/html
 /src/main/resources/static/static/css/
 /src/main/resources/static/static/js/
 /src/main/resources/static/static/json/
