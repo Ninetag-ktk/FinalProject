@@ -44,7 +44,7 @@ export default function Main() {
 
     const handleSaveEvent = (event) => {
         setEvents([...events, event]);
-    };
+};
 
     return (
         <div className={"Main"}>

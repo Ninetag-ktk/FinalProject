@@ -213,6 +213,16 @@ fieldset {
 
 }
 
+.fc .fc-listDay-view {
+
+        width: 350px;
+        height: 400px;
+
+    }
+
+ .fc-direction-ltr{
+    height: 450px;
+}
 
 .center {
     position: relative;
