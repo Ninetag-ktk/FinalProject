@@ -32,7 +32,16 @@ const router = createBrowserRouter([
         children : [
             {index : true, element: <Center />},
             {path : '/main/search',element:<Search />},
-            {path : '/main/info',element:<Info />},
+            {path : '/main/info',element:<Info />}
+
+        ]
+    },
+    {
+        path: "/info",
+        element: <Info />,
+        errorElement : <p>Not Found</p>,
+        children : [
+            {index : true, element: <Info />}
 
         ]
     }

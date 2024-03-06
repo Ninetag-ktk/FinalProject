@@ -1,42 +1,50 @@
-import React, {useState} from "react";
-import {Outlet} from "react-router-dom";
+import React, { useState } from "react";
 import Header from "./Header";
 import LeftBar from "./LeftBar";
 import Search from "./Search";
-import MainContent from "./MainContent";
 import Center from "./Center";
 
 export const MyContext = React.createContext();
 
-
 export default function Main() {
-    const redirect = useNavigate();
     const [isSearchVisible, setIsSearchVisible] = useState(false);
-    const [currentMonth, setCurrentMonth] = useState(new Date().getMonth());
-    const [currentYear, setCurrentYear] = useState(new Date().getFullYear());
+    const [calendar, setCalendar] = useState(null);
 
     function handleToggle() {
         setIsSearchVisible(!isSearchVisible);
     }
 
-    useEffect(() => {
-        alert(window.sessionStorage.getItem("observe"));
-        if (window.sessionStorage.getItem("observe") == null) {
-            redirect("/");
+    const handlePrevButtonClick = () => {
+        if (calendar) {
+            calendar.prev();
         }
-    }, []);
+    };
 
-    return (<div className={"Main"}>
-        <MyContext.Provider value={{isSearchVisible, handleToggle}}>
-            <div className={"3dan"}>
-                <Header/>
-                <div className={"leftOUT"}>
-                    <LeftBar/>
-                    <Outlet>
-                        {isSearchVisible ? <Search/> : <MainContent/>}
-                    </Outlet>
+    const handleNextButtonClick = () => {
+        if (calendar) {
+            calendar.next();
+        }
+    };
+
+    const handleAddEventButtonClick = () => {
+        // Handle add event button click functionality
+    };
+
+    return (
+        <div className={"Main"}>
+            <MyContext.Provider value={{ isSearchVisible, handleToggle }}>
+                <div className={"3dan"}>
+                    <Header
+                        onPrevButtonClick={handlePrevButtonClick}
+                        onNextButtonClick={handleNextButtonClick}
+                        onAddEventButtonClick={handleAddEventButtonClick}
+                    />
+                    <div className={"leftOUT"}>
+                        <LeftBar />
+                        {isSearchVisible ? <Search /> : <Center setMainCalendar={setCalendar} />}
+                    </div>
                 </div>
-            </div>
-        </MyContext.Provider>
-    </div>);
+            </MyContext.Provider>
+        </div>
+    );
 }
