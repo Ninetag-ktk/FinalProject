@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useState} from 'react';
 import logo from './temp_logo.png'
 import {useNavigate} from "react-router-dom";
 import axios from "axios";
@@ -9,9 +9,10 @@ export default function Login() {
     // 자동 로그인 기능
     const redirect = useNavigate();
 
-    useEffect(() => {
+    const autoLoginCheck = () => {
         // 로그인 이력이 있다면(세션에 저장된 내용이 있다면)
         // 바로 main으로 이동
+        window.sessionStorage.setItem("check", "")
         if (window.sessionStorage.getItem("observe")) {
             redirect("/main");
         }
@@ -27,15 +28,15 @@ export default function Login() {
                 },
                 data: window.localStorage.getItem("observe"),
             }).then(response => {
-                    if (response.data == true) {
-                        window.sessionStorage.setItem("observe", window.localStorage.getItem("observe"));
-                        redirect("/main");
-                    } else {
-                        window.localStorage.removeItem("observe");
-                    }
-                })
+                if (response.data == true) {
+                    window.sessionStorage.setItem("observe", window.localStorage.getItem("observe"));
+                    redirect("/main");
+                } else {
+                    window.localStorage.removeItem("observe");
+                }
+            })
         }
-    }, []);
+    };
 
     const [loginInfo, setLoginInfo] = useState({
         id: "",
@@ -78,7 +79,7 @@ export default function Login() {
     };
 
     return (
-        <div className={"loginall"}>
+        <div className={"loginall"} onLoad={autoLoginCheck}>
             <div className={"login-main"}>
                 <div className={"Logoclass"}>
                     <img src={logo}/>
@@ -108,8 +109,8 @@ export default function Login() {
                         <button className={"btn"} type={"submit"} onClick={handleLogin}>로그인</button>
                     </div>
                     <a href={"/create"}>
-                    <button className={"btn"}>회원가입</button>
-                        </a>
+                        <button className={"btn"}>회원가입</button>
+                    </a>
                     <hr/>
                     <button className={"btn"} onClick={handleGoogleLogin}>google계정으로 로그인</button>
                 </div>

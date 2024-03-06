@@ -1,9 +1,9 @@
 // Center.js
-import React, { useState, useRef, useEffect } from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import FullCalendar from '@fullcalendar/react';
 import dayGridPlugin from '@fullcalendar/daygrid';
 
-const Center = ({ setMainCalendar, setTitle }) => {
+const Center = ({setMainCalendar, setTitle, events, setEvents}) => {
     const calendarRef = useRef(null);
     const [calendar, setCalendar] = useState(null);
     const [isModalOpen, setIsModalOpen] = useState(false);
@@ -39,7 +39,7 @@ const Center = ({ setMainCalendar, setTitle }) => {
                 events={events}
                 eventClick={handleEventClick}
             />
-          </div>
+        </div>
     );
 };
 

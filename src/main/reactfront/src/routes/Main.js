@@ -11,109 +11,56 @@ export const MyContext = React.createContext();
 export default function Main() {
     const redirect = useNavigate()
 
-    useEffect(() => {
-        // alert(window.sessionStorage.getItem("observe"));
+    /*처음 페이지가 로드될 때 실행 == onLoad 이벤트*/
+    const stateCheck = () => {
+        /*만약 정상적인 로그인이 아니라면 == 세션에 데이터가 없다면*/
         if (window.sessionStorage.getItem("observe") == null) {
+            /*홈 화면으로 튕겨냄*/
             redirect("/");
         }
-    }, []);
+        if (window.sessionStorage.getItem("check") !== null) {
+            /*서버로 옵저브 토큰을 보내, 데이터 업데이트*/
+            fetch("/google/updateCheck", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json; charset=utf-8",
+                    "Accept": "application/json; charset=utf-8",
+                },
+                body: JSON.stringify(window.sessionStorage.getItem("observe")),
+            });
+            window.sessionStorage.removeItem("check");
+        }
+    }
 
     const [isSearchVisible, setIsSearchVisible] = useState(false);
     const [calendar, setCalendar] = useState(null);
     const [calendarTitle, setCalendarTitle] = useState("");
     const [events, setEvents] = useState([]);
 
+    useEffect(() => {
+        console.log(calendarTitle);
+    }, [calendarTitle])
+
     let observe = {observe: sessionStorage.getItem("observe")}
 
-    const SucessLogin = async () => {
-        const response = await fetch("/google/updateCheck", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json; charset=utf-8",
-                "Accept": "application/json; charset=utf-8",
-            },
-            body: JSON.stringify(observe),
-        });
-    };
-
-
-
-
-
+    /*캘린더-검색창 전환을 위한 기능*/
     function handleToggle() {
         setIsSearchVisible(!isSearchVisible);
     }
 
-
-
-
-
-
-
-    let ymData = {
-        year: 0,
-        month: 0,
-        observe: "",
-    };
-
-    //전달 버튼
     const handlePrevButtonClick = () => {
         if (calendar) {
             calendar.prev();
             setTitle(calendar.view.title);
-            const nowDate = calendar.view.currentStart;
-            console.log(`현재 년도: ${nowDate.getFullYear()} / ${nowDate.getMonth() + 1}`);
-            ymData = ({
-                year: calendar.view.currentStart.getFullYear(),
-                month: calendar.view.currentStart.getMonth() + 1,
-                observe: sessionStorage.getItem("observe")
-            });
-            console.log(ymData)
         }
     };
 
-    //담달 버튼
     const handleNextButtonClick = () => {
         if (calendar) {
             calendar.next();
             setTitle(calendar.view.title);
-            const nowDate = calendar.view.currentStart;
-            console.log(`현재 년도: ${nowDate.getFullYear()} / ${nowDate.getMonth() + 1}`);
-            ymData = ({
-                year: calendar.view.currentStart.getFullYear(),
-                month: calendar.view.currentStart.getMonth() + 1,
-                observe: sessionStorage.getItem("observe")
-            });
-            console.log(ymData)
         }
     };
-
-
-    const handleYMData = async () => {
-        const response = await fetch("/notes/ymdata", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json; charset=utf-8",
-                "Accept": "application/json; charset=utf-8",
-            },
-            body: JSON.stringify(ymData),
-        });
-    };
-
-
-    const handleNextButtonClick1 = () => {
-        handleNextButtonClick();
-        handleYMData();
-    };
-
-    const handlePrevButtonClick1 = () => {
-        handlePrevButtonClick();
-        handleYMData();
-    }
-
-
-
-
 
     const gotoday = () => {
         if (calendar) {
@@ -128,12 +75,12 @@ export default function Main() {
 
     const handleSaveEvent = (event) => {
         setEvents([...events, event]);
-};
+    };
 
     return (
         <div className={"Main"}>
-            <MyContext.Provider value={{ isSearchVisible, handleToggle }}>
-                <div className={"frame"}>
+            <MyContext.Provider value={{isSearchVisible, handleToggle}}>
+                <div className={"frame"} onLoad={stateCheck}>
                     <Header
                         onPrevButtonClick={handlePrevButtonClick}
                         onNextButtonClick={handleNextButtonClick}
@@ -141,8 +88,9 @@ export default function Main() {
                         currentTitle={calendarTitle}
                     />
                     <div className={"leftOUT"}>
-                        <LeftBar onSave={handleSaveEvent} />
-                        {isSearchVisible ? <Search /> : <Center setMainCalendar={setCalendar} setTitle={setTitle} events={events} />}
+                        <LeftBar onSave={handleSaveEvent}/>
+                        {isSearchVisible ? <Search/> :
+                            <Center setMainCalendar={setCalendar} setTitle={setTitle} events={events}/>}
                     </div>
                 </div>
             </MyContext.Provider>

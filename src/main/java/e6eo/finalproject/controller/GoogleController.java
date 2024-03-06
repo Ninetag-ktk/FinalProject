@@ -68,9 +68,10 @@ public class GoogleController {
             }
         }
     }
+
     @PostMapping("/updateCheck")
-    public void test11(@RequestBody Map<String, String> req){
-        System.out.println(req.get("observe"));
+    public void test11(@RequestBody String req) {
+        System.out.println("컨트롤러 체크: " + req);
     }
 
     @ResponseBody
