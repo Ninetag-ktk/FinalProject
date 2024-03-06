@@ -1,3 +1,4 @@
+// Main.js
 import React, {useEffect, useState} from "react";
 import Header from "./Header";
 import LeftBar from "./LeftBar";
@@ -19,7 +20,8 @@ export default function Main() {
 
     const [isSearchVisible, setIsSearchVisible] = useState(false);
     const [calendar, setCalendar] = useState(null);
-    const [calendarTitle, setCalendarTitle] = useState(""); // title 상태 추가
+    const [calendarTitle, setCalendarTitle] = useState("");
+    const [events, setEvents] = useState([]);
 
     let observe = {observe: sessionStorage.getItem("observe")}
 
@@ -113,26 +115,34 @@ export default function Main() {
 
 
 
+    const gotoday = () => {
+        if (calendar) {
+            calendar.today();
+            setTitle(calendar.view.title);
+        }
+    };
+
     const setTitle = (title) => {
         setCalendarTitle(title);
     };
 
-    const handleAddEventButtonClick = () => {
-        // Handle add event button click functionality
-    };
+    const handleSaveEvent = (event) => {
+        setEvents([...events, event]);
+};
 
     return (
         <div className={"Main"}>
             <MyContext.Provider value={{ isSearchVisible, handleToggle }}>
-                <div className={"3dan"}>
+                <div className={"frame"}>
                     <Header
                         onPrevButtonClick={handlePrevButtonClick}
                         onNextButtonClick={handleNextButtonClick}
-                        currentTitle={calendarTitle} /* 수정: currentTitle prop 전달 */
+                        today={gotoday}
+                        currentTitle={calendarTitle}
                     />
                     <div className={"leftOUT"}>
-                        <LeftBar />
-                        {isSearchVisible ? <Search /> : <Center setMainCalendar={setCalendar} setTitle={setTitle} />} {/* setTitle prop 추가 */}
+                        <LeftBar onSave={handleSaveEvent} />
+                        {isSearchVisible ? <Search /> : <Center setMainCalendar={setCalendar} setTitle={setTitle} events={events} />}
                     </div>
                 </div>
             </MyContext.Provider>

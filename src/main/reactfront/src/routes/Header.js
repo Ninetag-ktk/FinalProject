@@ -1,11 +1,12 @@
 // Header.js
-import React, {useContext, useEffect, useState} from "react";
+import React, { useContext, useEffect, useState } from "react";
 import logo from './nobglogo.png';
 import axios from "axios";
-import {MyContext} from './Main';
+import { MyContext } from './Main';
 
-export default function Header({onPrevButtonClick, onNextButtonClick, currentTitle}) {
-    const {isSearchVisible, handleToggle} = useContext(MyContext);
+export default function Header({ onPrevButtonClick, onNextButtonClick, currentTitle,today  }) {
+    const { isSearchVisible, handleToggle } = useContext(MyContext);
+
 
     const handleCheckboxChange = (event) => {
         handleToggle();
@@ -20,13 +21,25 @@ export default function Header({onPrevButtonClick, onNextButtonClick, currentTit
             });
     };
 
+
+
+
     return (
         <div className={"header"}>
+            <div>
             <a href={"/main"}> <img className={"logo"} src={logo} alt="Logo"/></a>
-            <div className={"calendarDate"}>
-                <button id={"prevBtn"} className={"calendarBtn"} onClick={onPrevButtonClick}>←</button>
-                <div className="currentTitle">{currentTitle}</div> {/* 수정: currentMonth prop 사용 */}
-                <button id={"nextBtn"} className={"calendarBtn"} onClick={onNextButtonClick}>→</button>
+                </div>
+            <div>
+            <button id={"prevBtn"} onClick={onPrevButtonClick}>←</button>
+            </div>
+            <div>
+            <h2 id="currentMonth">{currentTitle}</h2> {/* 수정: currentMonth prop 사용 */}
+            </div>
+            <div>
+            <button id={"nextBtn"} onClick={onNextButtonClick}>→</button>
+            </div>
+            <div>
+            <button id={"today"} onClick={today} >오늘</button>
             </div>
             <div>
                 <label className={"toggleSwitch"}>

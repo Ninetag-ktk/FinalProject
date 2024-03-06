@@ -6,7 +6,7 @@ import dayGridPlugin from '@fullcalendar/daygrid';
 const Center = ({ setMainCalendar, setTitle }) => {
     const calendarRef = useRef(null);
     const [calendar, setCalendar] = useState(null);
-
+    const [isModalOpen, setIsModalOpen] = useState(false);
 
     useEffect(() => {
         const initializeCalendar = () => {
@@ -14,13 +14,19 @@ const Center = ({ setMainCalendar, setTitle }) => {
             setCalendar(newCalendar);
             setMainCalendar(newCalendar);
             setTitle(newCalendar.view.title);
-
         };
 
         initializeCalendar();
-    }, [setMainCalendar, setTitle]); // setTitle도 의존성 배열에 추가
+    }, [setMainCalendar, setTitle]);
 
+    const handleEventClick = (info) => {
+        setIsModalOpen(true);
+    };
 
+    const handleAddEvent = (event) => {
+        setEvents([...events, event]);
+        setIsModalOpen(false);
+    };
 
     return (
         <div>
@@ -28,8 +34,12 @@ const Center = ({ setMainCalendar, setTitle }) => {
                 ref={calendarRef}
                 plugins={[dayGridPlugin]}
                 headerToolbar={false}
+                dayMaxEvents={true}
+                locale={'ko'}
+                events={events}
+                eventClick={handleEventClick}
             />
-        </div>
+          </div>
     );
 };
 

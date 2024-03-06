@@ -301,13 +301,22 @@ fieldset {
         }
     }
 }
+.fc .fc-listDay-view {
+
+        width: 350px;
+        height: 400px;
+
+    }
+
+ .fc-direction-ltr{
+    height: 450px;
+}
 
 .center {
     position: relative;
     width: 100%;
 
 }
-
 /* 검색 페이지*/
 .searchp {
     position: relative;
@@ -484,6 +493,7 @@ fieldset {
         width: 100%;
 
     }
+
 
 
     #signup-form {
