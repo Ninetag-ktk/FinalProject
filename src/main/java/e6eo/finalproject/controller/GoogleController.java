@@ -49,7 +49,7 @@ public class GoogleController {
     public ResponseEntity<Void> googleCheck(@RequestParam(value = "code") String authCode) throws Exception {
         googleAPI.getGoogleToken(authCode);
         return ResponseEntity.status(HttpStatus.FOUND)
-                .location(URI.create("http://localhost:3000/check?autologin=true&observe=" + usersDAO.checkGoogleEmail()))
+                .location(URI.create("http://localhost:3000/check?autologin=true&observe=" + googleAPI.checkGoogleEmail()))
                 .build();
     }
 
