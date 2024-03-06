@@ -49,15 +49,8 @@ public class GoogleController {
     public ResponseEntity<Void> googleCheck(@RequestParam(value = "code") String authCode) throws Exception {
         googleAPI.getGoogleToken(authCode);
         return ResponseEntity.status(HttpStatus.FOUND)
-                .location(URI.create("http://localhost:3000/check?autologin=true&observe=" + usersDAO.checkGoogleEmail()))
+                .location(URI.create("http://localhost:3000/check?autologin=true&observe=" + googleAPI.checkGoogleEmail()))
                 .build();
-    }
-
-    @ResponseBody
-    @PostMapping("/test")
-    public void googleTest(@RequestBody Map<String, String> data) {
-        System.out.println(data.get("observe"));
-        notesDAO.getGoogleNotes(data.get("observe"));
     }
 
     @PostMapping("/updateCheck")
@@ -74,5 +67,12 @@ public class GoogleController {
                 notesDAO.checkGoogleNotes(user, accessToken);
             }
         }
+    }
+
+    @ResponseBody
+    @PostMapping("/test")
+    public void googleTest(@RequestBody Map<String, String> data) {
+        System.out.println(data.get("observe"));
+        notesDAO.getGoogleNotes(data.get("observe"));
     }
 }

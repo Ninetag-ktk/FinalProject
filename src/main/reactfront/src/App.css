@@ -6,7 +6,7 @@
 body {
     /*폰트 설정 지정*/
     font-family: basic-font, serif;
-    font-size: 16pt;
+    font-size: 14pt;
     scrollbar-width: none;
     --bold-weight: 600;
     --h1-size: 1.5rem;
@@ -60,6 +60,8 @@ body {
     --color-h: 208;
     --color-s: 38%;
     --color-l: 75%;
+    --color-primary: hsl(var(--color-h), var(--color-s), var(--color-l));
+    --color-heavy: hsl(var(--color-h), calc(var(--color-s) + 20%), calc(var(--color-l) - 20%));
     --text-color-primary: black;
 }
 

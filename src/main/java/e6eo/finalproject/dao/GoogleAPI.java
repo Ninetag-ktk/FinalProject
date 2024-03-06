@@ -19,10 +19,7 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.web.reactive.function.client.WebClient;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
@@ -89,11 +86,42 @@ public class GoogleAPI {
         return scope.toString();
     }
 
+    public String checkGoogleEmail() {
+        googleUserInfo userInfo = getUserInfo();
+        Optional<UsersEntity> users = usersMapper.findByInnerId(userInfo.getEmail());
+        if (users.isEmpty()) {
+            // 가입되지 않은 아이디라면
+            // 자동 가입 처리
+            doAutoSignUp(userInfo);
+        } else {
+            // 이미 가입되어있는 회원이라면
+            // 리프레시토큰의 유효성 검사 및 업데이트 진행
+            checkRefreshToken(users.get());
+        }
+        // 옵저브 토큰 설정 및 리턴
+        return tokenManager.setObserve(userInfo.getEmail());
+    }
+
 
     // 리프레시 토큰의 유효성 검사 및 업데이트 메서드
     protected void checkRefreshToken(UsersEntity users) {
         if (!usersToken.getRefresh_token().isEmpty() && !users.getRefreshToken().equals(usersToken.getRefresh_token())) {
             usersMapper.updateRefreshToken(users.getUserId(), usersToken.getRefresh_token());
+        }
+    }
+
+    // 자동 가입 처리
+    private void doAutoSignUp(googleUserInfo userInfo) {
+        try {
+            new UsersEntity();
+            UsersEntity user = UsersEntity.builder().userId(userInfo.getEmail()).pw(usersToken.getAccess_token().substring(0, 19)).nickName(userInfo.getName()).innerId(userInfo.getEmail()).refreshToken(usersToken.getRefresh_token()).build();
+            System.out.println(user.toString());
+            usersMapper.save(user);
+            categoryMapper.createDefaultCategory(user.getUserId(), user.getNickName());
+            log.info("Google 계정 자동 가입 완료");
+        } catch (Exception e) {
+            e.printStackTrace();
+            log.info("가입 실패");
         }
     }
 

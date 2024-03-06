@@ -19,36 +19,6 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class UsersDAO extends GoogleAPI {
 
-    public String checkGoogleEmail() {
-        googleUserInfo userInfo = getUserInfo();
-        Optional<UsersEntity> users = usersMapper.findByInnerId(userInfo.getEmail());
-        if (users.isEmpty()) {
-            // 가입되지 않은 아이디라면
-            // 자동 가입 처리
-            doAutoSignUp(userInfo);
-        } else {
-            // 이미 가입되어있는 회원이라면
-            // 리프레시토큰의 유효성 검사 및 업데이트 진행
-            checkRefreshToken(users.get());
-        }
-        // 옵저브 토큰 설정 및 리턴
-        return tokenManager.setObserve(userInfo.getEmail());
-    }
-
-    // 자동 가입 처리
-    private void doAutoSignUp(googleUserInfo userInfo) {
-        try {
-            new UsersEntity();
-            UsersEntity user = UsersEntity.builder().userId(userInfo.getEmail()).pw(usersToken.getAccess_token().substring(0, 19)).nickName(userInfo.getName()).innerId(userInfo.getEmail()).refreshToken(usersToken.getRefresh_token()).build();
-            System.out.println(user.toString());
-            usersMapper.save(user);
-            categoryMapper.createDefaultCategory(user.getUserId(), user.getNickName());
-            log.info("Google 계정 자동 가입 완료");
-        } catch (Exception e) {
-            e.printStackTrace();
-            log.info("가입 실패");
-        }
-    }
     public ResponseEntity<?> login(String id, String pw) {
 //        System.out.println("check");
         Map<String, String> result = new HashMap<>();
