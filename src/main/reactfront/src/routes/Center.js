@@ -8,13 +8,13 @@ const Center = ({ setMainCalendar, setTitle }) => {
     const [calendar, setCalendar] = useState(null);
 
 
-
     useEffect(() => {
         const initializeCalendar = () => {
             const newCalendar = calendarRef.current.getApi();
             setCalendar(newCalendar);
             setMainCalendar(newCalendar);
             setTitle(newCalendar.view.title);
+
         };
 
         initializeCalendar();
