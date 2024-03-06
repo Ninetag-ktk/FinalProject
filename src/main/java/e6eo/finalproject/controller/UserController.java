@@ -1,6 +1,7 @@
 package e6eo.finalproject.controller;
 
 import e6eo.finalproject.dao.UsersDAO;
+import e6eo.finalproject.dto.UsersMapper;
 import e6eo.finalproject.entity.UsersEntity;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -11,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.Map;
+import java.util.Optional;
 
 @Controller
 @RequestMapping("/user")
@@ -18,6 +20,9 @@ public class UserController {
 
     @Autowired
     private UsersDAO usersDao;
+
+    @Autowired
+    private UsersMapper usersMapper;
 
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody Map<String, String> req) {
@@ -27,9 +32,8 @@ public class UserController {
     }
 
     @PostMapping("/join")
-    public String userJoin(@RequestBody UsersEntity users) {
-        usersDao.userJoin(users);
-        return null;
+    public ResponseEntity<?> userJoin(@RequestBody UsersEntity users) {
+        return usersDao.userJoin(users);
     }
 
     @PostMapping("/test")
@@ -37,9 +41,13 @@ public class UserController {
 //        uDao.findAll();
         users.getUserId();
         return null;
-
     }
 
+    @PostMapping("/checkToken")
+    public ResponseEntity<?> checkObserve(@RequestBody String observe) {
+        Optional<UsersEntity> user = usersMapper.findByObserveToken(observe);
+        return user.isEmpty() ? ResponseEntity.ok(true) : ResponseEntity.ok(false);
+    }
 }
 
 

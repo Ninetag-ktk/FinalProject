@@ -1,52 +1,66 @@
-// Main.js
-import React, { useState } from "react";
+import React, {useEffect, useState} from "react";
 import Header from "./Header";
 import LeftBar from "./LeftBar";
 import Search from "./Search";
-import MainContent from "./MainContent";
 import Center from "./Center";
+import {useNavigate} from "react-router-dom";
 
 export const MyContext = React.createContext();
 
 export default function Main() {
+    const redirect = useNavigate()
+
+    useEffect(() => {
+        // alert(window.sessionStorage.getItem("observe"));
+        if (window.sessionStorage.getItem("observe") == null) {
+            redirect("/");
+        }
+    }, []);
+
     const [isSearchVisible, setIsSearchVisible] = useState(false);
-    const [currentMonth, setCurrentMonth] = useState(new Date().getMonth());
-    const [currentYear, setCurrentYear] = useState(new Date().getFullYear());
+    const [calendar, setCalendar] = useState(null);
+    const [calendarTitle, setCalendarTitle] = useState(""); // title 상태 추가
 
     function handleToggle() {
         setIsSearchVisible(!isSearchVisible);
     }
 
-    function handlePrevMonth() {
-        let newMonth = currentMonth - 1;
-        let newYear = currentYear;
-        if (newMonth < 0) {
-            newMonth = 11;
-            newYear = currentYear - 1;
+    //전달 버튼
+    const handlePrevButtonClick = () => {
+        if (calendar) {
+            calendar.prev();
+            setTitle(calendar.view.title);
         }
-        setCurrentMonth(newMonth);
-        setCurrentYear(newYear);
-    }
+    };
 
-    function handleNextMonth() {
-        let newMonth = currentMonth + 1;
-        let newYear = currentYear;
-        if (newMonth > 11) {
-            newMonth = 0;
-            newYear = currentYear + 1;
+    //담달 버튼
+    const handleNextButtonClick = () => {
+        if (calendar) {
+            calendar.next();
+            setTitle(calendar.view.title);
         }
-        setCurrentMonth(newMonth);
-        setCurrentYear(newYear);
-    }
+    };
+
+    const setTitle = (title) => {
+        setCalendarTitle(title);
+    };
+
+    const handleAddEventButtonClick = () => {
+        // Handle add event button click functionality
+    };
 
     return (
         <div className={"Main"}>
             <MyContext.Provider value={{ isSearchVisible, handleToggle }}>
                 <div className={"3dan"}>
-                    <Header onNextMonthClick={handleNextMonth} onPrevMonthClick={handlePrevMonth} />
+                    <Header
+                        onPrevButtonClick={handlePrevButtonClick}
+                        onNextButtonClick={handleNextButtonClick}
+                        currentTitle={calendarTitle} /* 수정: currentTitle prop 전달 */
+                    />
                     <div className={"leftOUT"}>
                         <LeftBar />
-                        {isSearchVisible ? <Search /> : <Center currentMonth={currentMonth} currentYear={currentYear} />}
+                        {isSearchVisible ? <Search /> : <Center setMainCalendar={setCalendar} setTitle={setTitle} />} {/* setTitle prop 추가 */}
                     </div>
                 </div>
             </MyContext.Provider>

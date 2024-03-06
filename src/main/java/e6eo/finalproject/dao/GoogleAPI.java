@@ -228,10 +228,12 @@ public class GoogleAPI {
 
     protected Map<String, String> calcDateTime() {
         Map<String, String> dateTime = new HashMap<>();
+        String updateTimeStamp = LocalDate.now().withDayOfMonth(1).atStartOfDay() + ":00Z";
         // 데이터가 조회되는 현재(now)의 월 첫날로 세팅하고(withDayofMonth(1)), 하루를 빼(minusDays(1)) 전 월의 마지막일 설정
         String startTimeStamp = LocalDate.now().withDayOfMonth(1).minusDays(1).atStartOfDay().plusHours(9) + ":00Z";
         // 데이터가 조회되는 현재(now)의 월 첫날로 세팅하고(withDayofMonth(1)), 한달을 더해(plusMonths(1)) 전 월의 마지막일 설정
         String endTimeStamp = LocalDate.now().withDayOfMonth(1).plusMonths(1).atStartOfDay().plusHours(9) + ":00Z";
+        dateTime.put("update", updateTimeStamp);
         dateTime.put("start", startTimeStamp);
         dateTime.put("end", endTimeStamp);
 //        System.out.println(dateTime.get("start"));

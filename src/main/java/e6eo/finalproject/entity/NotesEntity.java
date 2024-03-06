@@ -1,6 +1,8 @@
 package e6eo.finalproject.entity;
 
 
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -16,6 +18,7 @@ import java.util.Map;
 public class NotesEntity {
     @Id
     @Field(name = "_id")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Object id;
     @Field(name = "category_id")
     private Object categoryId;
@@ -89,7 +92,7 @@ public class NotesEntity {
                 .id(task.get("id"))
                 .categoryId(userId + "#google^tasks^" + tasklist)
                 .type(kind)
-                .status(task.get("status"))
+                .status(task.get("deleted") == null ? task.get("status") : "cancelled")
                 .startTime(task.get("due"))
                 .endTime(task.get("due"))
                 .title(task.get("title"))

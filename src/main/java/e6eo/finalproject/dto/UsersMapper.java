@@ -14,26 +14,26 @@ import java.util.Optional;
 @Repository
 public interface UsersMapper extends JpaRepository<UsersEntity, String> {
     @Query(value = "select u from users u where u.innerId=:innerId")
-    public Optional<UsersEntity> findByInnerId(@Param("innerId") String innerId);
+    Optional<UsersEntity> findByInnerId(@Param("innerId") String innerId);
 
     @Query(value = "select u from users u where u.observeToken=:observeToken")
-    public Optional<UsersEntity> findByObserveToken(@Param("observeToken") String observeToken);
+    Optional<UsersEntity> findByObserveToken(@Param("observeToken") String observeToken);
 
     @Query(value = "select u.refreshToken from users u where u.observeToken=:observeToken")
-    public Optional<String> getRefreshTokenByObserve(@Param("observeToken") String observeToken);
+    Optional<String> getRefreshTokenByObserve(@Param("observeToken") String observeToken);
 
     @Modifying
     @Transactional
     @Query(value = "update users u set u.refreshToken=:refreshToken where u.userId=:userId")
-    public void updateRefreshToken(@Param("userId") String userId, @Param("refreshToken") String refreshToken);
+    void updateRefreshToken(@Param("userId") String userId, @Param("refreshToken") String refreshToken);
 
     @Modifying
     @Transactional
     @Query(value = "update users u set u.observeToken=:observeToken where u.userId=:userId")
-    public void updateObserveByUserId(@Param("userId") String userId, @Param("observeToken") String observeToken);
+    void updateObserveByUserId(@Param("userId") String userId, @Param("observeToken") String observeToken);
 
     @Modifying
     @Transactional
     @Query(value = "update users u set u.observeToken=null where u.observeToken=:observeToken")
-    public void emptyObserve(@Param("observeToken") String observeToken);
+    void emptyObserve(@Param("observeToken") String observeToken);
 }
