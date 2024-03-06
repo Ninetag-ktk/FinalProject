@@ -1,19 +1,49 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import logo from './temp_logo.png'
-import {json} from "react-router-dom";
+import {useNavigate} from "react-router-dom";
+import axios from "axios";
 
 
 export default function Login() {
+
+    // 자동 로그인 기능
+    const redirect = useNavigate();
+
+    useEffect(() => {
+        // 로그인 이력이 있다면(세션에 저장된 내용이 있다면)
+        // 바로 main으로 이동
+        if (window.sessionStorage.getItem("observe")) {
+            redirect("/main");
+        }
+
+        // 로그인된 이력이 없지만, 자동로그인 기록이 있다면(로컬에 저장된 내용이 있다면)
+        // 옵저브 토큰 검사
+        if (window.localStorage.getItem("observe")) {
+            axios("/user/checkToken", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json; charset=utf-8",
+                    "Accept": "application/json; charset=utf-8",
+                },
+                data: window.localStorage.getItem("observe"),
+            }).then(response => {
+                    if (response.data == true) {
+                        window.sessionStorage.setItem("observe", window.localStorage.getItem("observe"));
+                        redirect("/main");
+                    } else {
+                        window.localStorage.removeItem("observe");
+                    }
+                })
+        }
+    }, []);
+
     const [loginInfo, setLoginInfo] = useState({
         id: "",
         pw: "",
     });
 
-    const otherInfo = {
-        name: "",
-        age: 0,
-    };
 
+    const [autoLogin, setAutoLogin] = useState(false);
 
     const handleLogin = async () => {
         const response = await fetch("/user/login", {
@@ -27,8 +57,7 @@ export default function Login() {
         const result = await response.json();
         if (result.code === "200") {
             // 로그인 성공 처리
-            window.sessionStorage.setItem("observe", result.body);
-            window.location.href = "/main";
+            redirect(`/check?autologin=${autoLogin}&observe=${result.body}`,);
         } else {
             // 로그인 실패 처리
             alert(result.body);
@@ -39,86 +68,13 @@ export default function Login() {
     const handleGoogleLogin = async () => {
         const response = await fetch("/google/login", {
             mode: "no-cors",
-        }); // fetch 호출이 아예 안됨
-        console.log(response.json());
-        alert(response.json());
-        window.location.href = response.json();
-    };
-
-
-    const [observeToken] = useState({
-        observe : sessionStorage.getItem("observe")
-    });
-
-    const [noteWrite, setNoteWrite] = useState({
-        categoryId : "",
-        type : "",
-        status : "",
-        startTime : "",
-        endTime : "",
-        title : "",
-        contents : "",
-
-    });
-
-    const handleNoteWrite = async () => {
-        const response = await fetch("/notes/write", {
-            method: "POST",
             headers: {
                 "Content-Type": "application/json; charset=utf-8",
                 "Accept": "application/json; charset=utf-8",
             },
-            body: JSON.stringify({...noteWrite, ...observeToken}),
         });
         const result = await response.json();
-        if (result.code === "200") {
-            // 글 작성 성공 성공 처리
-            window.location.href = "/main";
-        } else {
-            // 로그인 실패 처리
-            alert(result.body);
-            // window.location.href = "/";
-        }
-    };
-
-
-    const handleLogout = async () => {
-        const response = await fetch("/user/allLogout", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json; charset=utf-8",
-                "Accept": "application/json; charset=utf-8",
-            },
-            body: JSON.stringify(observeToken),
-        });
-        const result = await response.json();
-        if (result.code === "200") {
-            // 전체 로그아웃 성공 처리
-            window.sessionStorage.setItem("observe", null);
-            window.location.href = "";
-        } else {
-            // 전체 로그아웃 실패 처리
-            alert(result.body);
-        }
-    };
-
-    const handleUnlink = async () => {
-        const response = await fetch("/notes/unlink", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json; charset=utf-8",
-                "Accept": "application/json; charset=utf-8",
-            },
-            body: JSON.stringify(observeToken),
-        });
-        const result = await response.json();
-        if (result.code === "200") {
-            // 연동 해제 성공시 처리
-            window.location.href = "/main";
-        } else {
-            // 연동해제 실패 처리
-            alert(result.body);
-        }
+        window.location.href = result.redirect;
     };
 
     return (
@@ -128,7 +84,7 @@ export default function Login() {
                     <img src={logo}/>
                 </div>
                 <div className={"logininput"}>
-                    <div className={"loginForm1"}>
+                    <div className={"loginForm"}>
                         <input
                             type="text"
                             className="inputtext"
@@ -145,9 +101,10 @@ export default function Login() {
                             value={loginInfo.pw}
                             onChange={(e) => setLoginInfo({...loginInfo, pw: e.target.value})}
                         />
-                        <div className={"autologin"}>
-                        <input type={"checkbox"}/>로그인유지
-                        </div>
+                        <input
+                            type={"checkbox"} checked={autoLogin}
+                            onChange={(e) => setAutoLogin(e.target.checked)}
+                        />로그인유지
                         <button className={"btn"} type={"submit"} onClick={handleLogin}>로그인</button>
                     </div>
                     <a href={"/create"}>
@@ -160,3 +117,4 @@ export default function Login() {
         </div>
     )
 }
+

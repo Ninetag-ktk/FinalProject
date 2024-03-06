@@ -3,10 +3,12 @@ package e6eo.finalproject.entityGoogle;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
 @Builder
 @AllArgsConstructor
+@NoArgsConstructor
 public class GoogleToken {
     private String access_token;
     private int expires_in;

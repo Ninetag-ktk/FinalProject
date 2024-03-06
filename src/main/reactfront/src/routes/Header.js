@@ -1,21 +1,15 @@
 // Header.js
-import React, { useContext } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import logo from './nobglogo.png';
-import { useNavigate } from "react-router-dom";
 import axios from "axios";
-import { MyContext } from './Main'; // Main.js에서 내보낸 MyContext를 가져옵니다.
+import { MyContext } from './Main';
 
-export default function Header({ onNextMonthClick, onPrevMonthClick }) {
-    const { isSearchVisible, handleToggle } = useContext(MyContext); // MyContext에서 필요한 값 가져오기
-    const navigate = useNavigate();
+export default function Header({ onPrevButtonClick, onNextButtonClick, currentTitle  }) {
+    const { isSearchVisible, handleToggle } = useContext(MyContext);
+
 
     const handleCheckboxChange = (event) => {
         handleToggle();
-        if (event.target.checked) {
-            navigate("/main/search");
-        } else {
-            navigate("/main");
-        }
     };
 
     const handleGoogleTest = () => {
@@ -27,15 +21,18 @@ export default function Header({ onNextMonthClick, onPrevMonthClick }) {
             });
     };
 
+
+
+
     return (
         <div className={"header"}>
-            <a href={"/main"}> <img className={"logo"} src={logo} /></a>
-            <button id={"prevBtn"} onClick={onPrevMonthClick}>←</button>
-            <h2 id="currentMonth"></h2>
-            <button id={"nextBtn"} onClick={onNextMonthClick}>→</button>
+            <a href={"/main"}> <img className={"logo"} src={logo} alt="Logo"/></a>
+            <button id={"prevBtn"} onClick={onPrevButtonClick}>←</button>
+            <h2 id="currentMonth">{currentTitle}</h2> {/* 수정: currentMonth prop 사용 */}
+            <button id={"nextBtn"} onClick={onNextButtonClick}>→</button>
             <div>
                 <label className={"toggleSwitch"}>
-                    <input type="checkbox" checked={isSearchVisible} onChange={handleCheckboxChange} />
+                    <input type="checkbox" checked={isSearchVisible} onChange={handleCheckboxChange}/>
                     <span>캘린더/검색</span>
                 </label>
                 <button type={"button"} id={"googletest"} onClick={handleGoogleTest}>구글 API 테스트 버튼</button>
