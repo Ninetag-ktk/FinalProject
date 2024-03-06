@@ -1,5 +1,6 @@
 import {redirect, useNavigate} from "react-router-dom";
-import {useEffect} from "react";
+import {createContext, useEffect, useState} from "react";
+import axios from "axios";
 
 const handleLogin = async () => {
     const response = await fetch("/user/login", {
@@ -181,11 +182,46 @@ useEffect(() => {
 // }
 const [apiKey, setApiKey] = useState("");
 const [accessToken, setAccessToken] = useState("");
+export const TaskContext = createContext();
 
-const getTask = {
- 	url: "https://www.googleapis.com/calendar/v3/calendars/calendarId/events={apiKey}",
- 	method: "POST",
- 	header: {
-        "Authorization": "Bearer {accessToken}",
-        "Accept": "application/json",
- }
+ const serverRequest = async () => {
+     const observe = {
+         "observe" : window.sessionStorage.getItem("observe"),
+     };
+     const response = await fetch("/서버요청", {
+         method: "POST",
+         header: {
+             "Content-Type": "application/json; charset=utf-8",
+             "Accept": "application/json; charset=utf-8",
+         },
+         body: JSON.stringify(observe),
+     });
+ 	const result = response.json();
+ 	setApiKey(result.get("apiKey"));
+ 	setAccessToken(result.get("accessToken"));
+    axios({
+             method: "POST",
+             url: `https://tasks.googleapis.com/tasks/v1/lists/{tasklist}/tasks={apiKey}`+apiKey,
+             header: {
+                 "Authorization": `Bearer {accessToken}`,
+                 "Accept": "application/json",
+             },
+             data: {
+                        title: "",
+                        notes: "",
+                        status:"",
+                        due: "",
+             },
+         }).then( response =>{
+    })
+    ;
+ };
+//export const TaskContext = createContext();
+//method:
+/////////////////////////////////////////////////////////////////////////
+// 몽구스를 이용해서 몽고DB에서 데이터 받아오기
+const mongoose = require('mongoose')
+mongoose.connect("mongodb://localhost/category", {
+    useNewUrlParser: true, useUnifiedTopology: true, useCreateIndex: true, useFindAndModify: false
+}).then(() => console.log('MongoDB Connected..'))
+    .catch(err =>console.log(err))
