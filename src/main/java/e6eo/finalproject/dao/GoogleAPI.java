@@ -1,5 +1,6 @@
 package e6eo.finalproject.dao;
 
+import com.google.api.client.util.DateTime;
 import e6eo.finalproject.dto.CategoryMapper;
 import e6eo.finalproject.dto.NotesMapper;
 import e6eo.finalproject.dto.UsersMapper;
@@ -18,7 +19,12 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.reactive.function.client.WebClient;
 
+import javax.swing.text.DateFormatter;
+import java.text.DateFormat;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.YearMonth;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
@@ -124,6 +130,7 @@ public class GoogleAPI {
             log.info("가입 실패");
         }
     }
+
 
     // 구글 계정에서 userInfo 데이터 가져옴
     protected googleUserInfo getUserInfo() {
@@ -262,6 +269,24 @@ public class GoogleAPI {
         // 데이터가 조회되는 현재(now)의 월 첫날로 세팅하고(withDayofMonth(1)), 한달을 더해(plusMonths(1)) 전 월의 마지막일 설정
         String endTimeStamp = LocalDate.now().withDayOfMonth(1).plusMonths(1).atStartOfDay().plusHours(9) + ":00Z";
         dateTime.put("update", updateTimeStamp);
+        dateTime.put("start", startTimeStamp);
+        dateTime.put("end", endTimeStamp);
+//        System.out.println(dateTime.get("start"));
+//        System.out.println(dateTime.get("end"));
+        return dateTime;
+    }
+
+    protected Map<String, String> calcDateTime(String dateData) {
+        // String dateData을 yyyyMM 또는 yyyyM 형태로 변형
+        String date = dateData.replaceAll("[^\\d]", "");
+        // 위의 데이터에서 연과 월을 추출
+        int year = Integer.parseInt(date.substring(0, 4));
+        int month = Integer.parseInt(date.substring(4, date.length()));
+        Map<String, String> dateTime = new HashMap<>();
+        // 현재의 연월에서 한달을 뺀 데이터
+        String startTimeStamp = LocalDate.of(year, month, 1).minusMonths(1).atStartOfDay().plusHours(9) + ":00Z";
+        // 현재의 연월에서 두달을 더하고 하루를 빼, 다음달의 마지막 일의 데이터를 얻음
+        String endTimeStamp = LocalDate.of(year, month, 1).plusMonths(2).minusDays(1).atStartOfDay().plusHours(9) + ":00Z";
         dateTime.put("start", startTimeStamp);
         dateTime.put("end", endTimeStamp);
 //        System.out.println(dateTime.get("start"));

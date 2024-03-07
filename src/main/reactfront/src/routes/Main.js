@@ -23,12 +23,68 @@ export default function Main() {
             redirect("/");
         }
     }, []);
-    
+
     /*날짜 데이터가 바뀌면 해당 내용을 서버로 보내 미리 데이터를 받아올 수 있게끔 실행*/
     useEffect(() => {
-        // console.log(calendarTitle);
-        fetch("/google/")
+        console.log(calendarTitle);
+        if (calendarTitle !== "") {
+            let token = JSON.parse(window.sessionStorage.getItem("token"));
+            if (!token) {
+                fetch("/google/reqAccessToken", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json; charset=utf-8",
+                        "Accept": "application/json; charset=utf-8",
+                    },
+                    body: JSON.stringify({
+                        observe: window.sessionStorage.getItem("observe"),
+                    }),
+                }).then(response => response.json())
+                    .then((result) => {
+                        window.sessionStorage.setItem("token", JSON.stringify({
+                            access: result.access,
+                            expire: new Date().getTime() + (1000 * 60 * 50),
+                        }));
+                    }).then((token) => {
+                    fetch("/google/updateMonthly", {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json; charset=utf-8",
+                            "Accept": "application/json; charset=utf-8",
+                        },
+                        body: JSON.stringify({
+                            observe: window.sessionStorage.getItem("observe"),
+                            token: token,
+                            date: calendarTitle,
+                        }),
+                    });
+                })
+            } else {
+                fetch("/google/updateMonthly", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json; charset=utf-8",
+                        "Accept": "application/json; charset=utf-8",
+                    },
+                    body: JSON.stringify({
+                        observe: window.sessionStorage.getItem("observe"),
+                        token: token.access,
+                        date: calendarTitle,
+                    }),
+                });
+            }
+        }
     }, [calendarTitle]);
+
+    function checkToken() {
+        const token = JSON.parse(window.sessionStorage.getItem("token"))
+        const now = Date.now();
+        if (token != null) {
+            if (now.getTime > token.expire) {
+                window.sessionStorage.removeItem("token");
+            }
+        }
+    }
 
     /*캘린더-검색창 전환을 위한 기능*/
     function handleToggle() {
@@ -65,7 +121,7 @@ export default function Main() {
     };
 
     return (
-        <div className={"main"}>
+        <div className={"main"} onLoad={checkToken}>
             <MyContext.Provider value={{isSearchVisible, handleToggle}}>
                 <div className={"frame"}>
                     <Header

@@ -1,9 +1,6 @@
 package e6eo.finalproject.controller;
 
-import e6eo.finalproject.dao.CategoryDAO;
-import e6eo.finalproject.dao.GoogleAPI;
-import e6eo.finalproject.dao.NotesDAO;
-import e6eo.finalproject.dao.UsersDAO;
+import e6eo.finalproject.dao.*;
 import e6eo.finalproject.dto.CategoryMapper;
 import e6eo.finalproject.dto.NotesMapper;
 import e6eo.finalproject.dto.UsersMapper;
@@ -14,6 +11,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
+import java.time.format.DateTimeFormatter;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -67,6 +66,26 @@ public class GoogleController {
                 notesDAO.checkGoogleNotes(user, accessToken);
             }
         }
+    }
+
+    @PostMapping("/updateMonthly")
+    public void updateMonthly(@RequestBody Map<String, String> req) {
+        UsersEntity user = usersMapper.findByObserveToken(req.get("observe")).get();
+        if (!user.getInnerId().isEmpty()) {
+            notesDAO.checkGoogleNotes(req.get("observe"), req.get("token"), req.get("date"));
+        }
+    }
+
+    @PostMapping("/reqAccessToken")
+    public ResponseEntity<?> getAccessToken(@RequestBody Map<String, String> req) {
+        Map<String, String> accessToken = new HashMap<>();
+        UsersEntity user = usersMapper.findByObserveToken(req.get("observe")).get();
+        if (!user.getInnerId().isEmpty()) {
+            accessToken.put("access", googleAPI.getNewAccessTokenByObserve(req.get("observe")));
+        } else {
+            accessToken.put("access", "0");
+        }
+        return ResponseEntity.ok(accessToken);
     }
 
     @ResponseBody
