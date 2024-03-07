@@ -1,12 +1,13 @@
 import React, {useState, useEffect} from 'react';
 import Parsley from 'parsleyjs';
 import $ from 'jquery';
-import logo from './temp_logo.png';
+import logo from '../temp_logo.png';
 
 
 
 export default function SignupForm() {
     const [username, setUsername] = useState('');
+    const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
 
     const handleSubmit = (e) => {
@@ -30,7 +31,7 @@ export default function SignupForm() {
     return (
         <div className={"create"}>
 
-                <a href={"/main"}> <img className={"createlogo"} src={logo}/> </a>
+                <a href={"/"}> <img className={"createlogo"} src={logo}/> </a>
 
 
 
@@ -47,6 +48,21 @@ export default function SignupForm() {
                         data-parsley-required
                         data-parsley-minlength="1"
                         data-parsley-maxlength="20"
+                    />
+                </div>
+                <div className="form-group">
+                    <label htmlFor="email">이메일</label>
+                    <input
+                        type="email"
+                        name="email"
+                        id="email"
+                        placeholder="이메일 주소를 입력하세요"
+                        value={email}
+                        onChange={(e) => setEmail(e.target.value)}
+                        data-parsley-required
+                        data-parsley-type="email"
+                        data-parsley-remote-email
+                        data-parsley-remote-email-message="이미 사용 중인 이메일 주소입니다."
                     />
                 </div>
                 <div className="form-group">
@@ -78,9 +94,8 @@ export default function SignupForm() {
                         data-parsley-error-message="비밀번호가 일치하지 않습니다."
                     />
                 </div>
-                <button type="submit">회원정보저장</button>
+                <button type="submit">회원가입</button>
             </form>
-            <button>회원 탈퇴</button>
 
         </div>
     );

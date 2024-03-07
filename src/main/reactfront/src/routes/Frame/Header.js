@@ -1,6 +1,6 @@
 // Header.js
 import React, {useContext} from "react";
-import logo from './nobglogo.png';
+import logo from '../nobglogo.png';
 import axios from "axios";
 import {MyContext} from './Main';
 

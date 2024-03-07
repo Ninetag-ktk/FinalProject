@@ -2,8 +2,8 @@
 import React, {useEffect, useState} from "react";
 import Header from "./Header";
 import LeftBar from "./LeftBar";
-import Search from "./Search";
-import Center from "./Center";
+import Search from "./Outlet/Search";
+import Center from "./Outlet/Center";
 import {useNavigate} from "react-router-dom";
 
 export const MyContext = React.createContext();
