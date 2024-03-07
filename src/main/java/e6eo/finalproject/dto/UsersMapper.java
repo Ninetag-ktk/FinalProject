@@ -45,10 +45,10 @@ public interface UsersMapper extends JpaRepository<UsersEntity, String> {
     @Modifying
     @Transactional
     @Query(value = "update users u set u.innerId=:innerId, u.refreshToken=:refreshToken where u.userId=:userId")
-    void connectInnerId(@Param("userId") String userId, @Param("innerId") String innerId, @Param("refreshToken") String refreshToken);
+    void mergeWithInnerId(@Param("userId") String userId, @Param("innerId") String innerId, @Param("refreshToken") String refreshToken);
 
     @Modifying
     @Transactional
     @Query(value = "update users u set u.innerId=:innerId, u.refreshToken=:refreshToken, u.observeToken=:observeToken where u.userId=:userId")
-    void connectInnerId(@Param("userId") String userId, @Param("innerId") String innerId, @Param("refreshToken") String refreshToken, @Param("observeToken") String observeToken);
+    void mergeWithInnerId(@Param("userId") String userId, @Param("innerId") String innerId, @Param("refreshToken") String refreshToken, @Param("observeToken") String observeToken);
 }
