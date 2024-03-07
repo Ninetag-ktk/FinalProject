@@ -23,17 +23,17 @@ const Center = ({ setMainCalendar, setTitle, events, setEvents }) => {
         initializeCalendar();
     }, [setMainCalendar, setTitle]);
 
-    const handleEventClick = (info) => {
-
-        setModalContent(
-            <div>
-                <p>제목: {info.event.title}</p>
-                <p>시작일: {info.event.start.toString()}</p>
-                <p>종료일: {info.event.end.toString()}</p>
-            </div>
-        );
-        setShowModal(true);
-    };
+    // const handleEventClick = (info) => {
+    //
+    //     setModalContent(
+    //         <div>
+    //             <p>제목: {info.event.title}</p>
+    //             <p>시작일: {info.event.start.toString()}</p>
+    //             <p>종료일: {info.event.end.toString()}</p>
+    //         </div>
+    //     );
+    //     setShowModal(true);
+    // };
 
 
 
@@ -72,7 +72,6 @@ const Center = ({ setMainCalendar, setTitle, events, setEvents }) => {
                 dayMaxEvents={true}
                 locale={'ko'}
                 events={events}
-                eventClick={(info) => handleEventClick(info)} // 클릭 이벤트 핸들러 수정
                 selectable={true}
                 select={(selectInfo) => handleDateSelect(selectInfo)}
             />
