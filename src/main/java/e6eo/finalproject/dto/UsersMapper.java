@@ -36,4 +36,19 @@ public interface UsersMapper extends JpaRepository<UsersEntity, String> {
     @Transactional
     @Query(value = "update users u set u.observeToken=null where u.observeToken=:observeToken")
     void emptyObserve(@Param("observeToken") String observeToken);
+
+    @Modifying
+    @Transactional
+    @Query(value = "update users u set u.innerId=null where u.observeToken=:observeToken")
+    void emptyInnerId(@Param("observeToken") String observeToken);
+
+    @Modifying
+    @Transactional
+    @Query(value = "update users u set u.innerId=:innerId, u.refreshToken=:refreshToken where u.userId=:userId")
+    void connectInnerId(@Param("userId") String userId, @Param("innerId") String innerId, @Param("refreshToken") String refreshToken);
+
+    @Modifying
+    @Transactional
+    @Query(value = "update users u set u.innerId=:innerId, u.refreshToken=:refreshToken, u.observeToken=:observeToken where u.userId=:userId")
+    void connectInnerId(@Param("userId") String userId, @Param("innerId") String innerId, @Param("refreshToken") String refreshToken, @Param("observeToken") String observeToken);
 }

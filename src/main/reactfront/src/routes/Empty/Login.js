@@ -13,7 +13,21 @@ export default function Login() {
         // 로그인 이력이 있다면(세션에 저장된 내용이 있다면)
         // 바로 main으로 이동
         if (window.sessionStorage.getItem("observe")) {
-            redirect("/main");
+            axios("/user/checkToken", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json; charset=utf-8",
+                    "Accept": "application/json; charset=utf-8",
+                },
+                data: window.sessionStorage.getItem("observe"),
+            }).then(response => {
+                if (response.data == true) {
+                    window.sessionStorage.setItem("observe", window.localStorage.getItem("observe"));
+                    redirect("/main");
+                } else {
+                    window.sessionStorage.removeItem("observe");
+                }
+            })
         }
 
         // 로그인된 이력이 없지만, 자동로그인 기록이 있다면(로컬에 저장된 내용이 있다면)
@@ -107,9 +121,7 @@ export default function Login() {
                         />로그인유지
                         <button className={"btn"} type={"submit"} onClick={handleLogin}>로그인</button>
                     </div>
-                    <a href={"/create"}>
-                        <button className={"btn"}>회원가입</button>
-                    </a>
+                    <button className={"btn"} onClick={()=>{redirect("/join")}}>회원가입</button>
                     <hr/>
                     <button className={"btn"} onClick={handleGoogleLogin}>google계정으로 로그인</button>
                 </div>

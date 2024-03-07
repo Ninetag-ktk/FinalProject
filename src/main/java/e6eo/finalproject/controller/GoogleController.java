@@ -52,12 +52,18 @@ public class GoogleController {
                 .build();
     }
 
+    @PatchMapping("/patch")
+    public ResponseEntity<?> googleAccountMerge(@RequestBody Map<String, String> request) {
+        googleAPI.mergeGoogleAccount(request);
+        return ResponseEntity.ok(true);
+    }
+
     @PostMapping("/updateCheck")
     public void checkGoogleAccount(@RequestBody Map<String, String> req) {
         System.out.println("구글 데이터 업데이트");
         UsersEntity user = usersMapper.findByObserveToken(req.get("observe")).get();
         String accessToken = googleAPI.getNewAccessTokenByObserve(req.get("observe"));
-        if (!user.getInnerId().isEmpty()) {
+        if (!(user.getInnerId() == null)) {
             if (categoryDAO.checkGoogleCategory(user, accessToken)) {
                 // 구글 데이터를 받아온 적이 없는 경우
                 // 데이터를 요청해서 받아옴
@@ -71,7 +77,7 @@ public class GoogleController {
     @PostMapping("/updateMonthly")
     public void updateMonthly(@RequestBody Map<String, String> req) {
         UsersEntity user = usersMapper.findByObserveToken(req.get("observe")).get();
-        if (!user.getInnerId().isEmpty()) {
+        if (!(user.getInnerId() == null)) {
             notesDAO.checkGoogleNotes(req.get("observe"), req.get("token"), req.get("date"));
         }
     }
@@ -80,7 +86,7 @@ public class GoogleController {
     public ResponseEntity<?> getAccessToken(@RequestBody Map<String, String> req) {
         Map<String, String> accessToken = new HashMap<>();
         UsersEntity user = usersMapper.findByObserveToken(req.get("observe")).get();
-        if (!user.getInnerId().isEmpty()) {
+        if (!(user.getInnerId() == null)) {
             accessToken.put("access", googleAPI.getNewAccessTokenByObserve(req.get("observe")));
         } else {
             accessToken.put("access", "0");

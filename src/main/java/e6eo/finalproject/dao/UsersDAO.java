@@ -20,7 +20,7 @@ import java.util.Optional;
 public class UsersDAO extends GoogleAPI {
 
     public ResponseEntity<?> login(String id, String pw) {
-//        System.out.println("check");
+//        System.out.println(id);
         Map<String, String> result = new HashMap<>();
         Optional<UsersEntity> user = usersMapper.findById(id);
         if (user.isEmpty()) {
@@ -42,37 +42,12 @@ public class UsersDAO extends GoogleAPI {
     }
 
     public ResponseEntity<?> userJoin(UsersEntity users) {
-        Map<String, String> result = new HashMap<>();
         Optional<UsersEntity> user = usersMapper.findById(users.getUserId());
         if (user.isEmpty()) {
             usersMapper.save(users);
-            result.put("code", "200");
-            result.put("body", "회원가입 성공");
-            System.out.println("성공");
-            return ResponseEntity.badRequest().body(result);
+            return ResponseEntity.ok(true);
         } else {
-            result.put("code", "400");
-            result.put("body", "회원가입 실패");
-            System.out.println("실패!");
-            return ResponseEntity.ok(result);
+            return ResponseEntity.ok(false);
         }
     }
-
-
-    public ResponseEntity<?> allLogout(String observe) {
-        Map<String, String> result = new HashMap<>();
-        Optional<UsersEntity> user = usersMapper.findByObserveToken(observe);
-        if (user.isEmpty()) {
-            result.put("code", "400");
-            result.put("body", "토큰이 없는 아이디입니다");
-            return ResponseEntity.badRequest().body(result);
-        } else {
-            tokenManager.emptyObserve(observe);
-            result.put("code", "200");
-            result.put("body", "전체 로그아웃되었습니다.");
-            return ResponseEntity.ok(result);
-        }
-    }
-
-
 }

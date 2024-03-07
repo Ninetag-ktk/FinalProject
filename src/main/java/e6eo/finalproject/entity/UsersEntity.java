@@ -14,7 +14,7 @@ public class UsersEntity {
     @Id
     @Column(name = "user_id", unique = true, nullable = false)
     private String userId;
-    @Column(name = "pw", nullable = false)
+    @Column(name = "pw", nullable = true)
     private String pw;
     @Column(name = "nickname", nullable = false)
     private String nickName;
@@ -33,4 +33,6 @@ public class UsersEntity {
         this.innerId = innerId;
         this.refreshToken = refreshToken;
     }
+
+
 }

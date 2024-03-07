@@ -21,12 +21,20 @@ public class TokenManager {
         return UUID.randomUUID().toString();
     }
 
+    public String generateObserve() {
+        String observe;
+        do {
+            observe = observeGenerator();
+        } while (usersMapper.findByObserveToken(observe).isPresent());
+        return observe;
+    }
+
     public String setObserve(String userId) {
         String observe;
         Optional<UsersEntity> user = usersMapper.findById(userId);
         // user에 옵저브 토큰이 없다면 새로 값을 입력
         // user에 옵저브 토큰이 이미 있다면 해당 값을 반환
-        if (user.get().getObserveToken() == null) {
+        if (user.get().getObserveToken()==null) {
             do {
                 // 랜덤값 생성
                 observe = observeGenerator();
@@ -34,6 +42,25 @@ public class TokenManager {
             } while (usersMapper.findByObserveToken(observe).isPresent());
             // 랜덤값을 가진 객체가 없다면 DB에 저장
             usersMapper.updateObserveByUserId(userId, observe);
+        } else {
+            observe = user.get().getObserveToken();
+        }
+        // 랜덤값을 return하여 바로 set할 수 있도록 함
+        return observe;
+    }
+    public String setObserveByInnerId(String innerId) {
+        String observe;
+        Optional<UsersEntity> user = usersMapper.findByInnerId(innerId);
+        // user에 옵저브 토큰이 없다면 새로 값을 입력
+        // user에 옵저브 토큰이 이미 있다면 해당 값을 반환
+        if (user.get().getObserveToken()==null) {
+            do {
+                // 랜덤값 생성
+                observe = observeGenerator();
+                // 랜덤값을 가진 객체가 이미 있다면 반복
+            } while (usersMapper.findByObserveToken(observe).isPresent());
+            // 랜덤값을 가진 객체가 없다면 DB에 저장
+            usersMapper.updateObserveByUserId(user.get().getUserId(), observe);
         } else {
             observe = user.get().getObserveToken();
         }

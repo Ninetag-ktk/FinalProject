@@ -105,7 +105,7 @@ public class GoogleAPI {
             checkRefreshToken(users.get());
         }
         // 옵저브 토큰 설정 및 리턴
-        return tokenManager.setObserve(userInfo.getEmail());
+        return tokenManager.setObserveByInnerId(userInfo.getEmail());
     }
 
 
@@ -119,12 +119,17 @@ public class GoogleAPI {
     // 자동 가입 처리
     private void doAutoSignUp(googleUserInfo userInfo) {
         try {
-            new UsersEntity();
-            UsersEntity user = UsersEntity.builder().userId(userInfo.getEmail()).pw(usersToken.getAccess_token().substring(0, 19)).nickName(userInfo.getName()).innerId(userInfo.getEmail()).refreshToken(usersToken.getRefresh_token()).build();
-            System.out.println(user.toString());
-            usersMapper.save(user);
-            categoryMapper.createDefaultCategory(user.getUserId(), user.getNickName());
-            log.info("Google 계정 자동 가입 완료");
+            if (!(usersMapper.findById(userInfo.getEmail()).isEmpty())) {
+                usersMapper.connectInnerId(userInfo.getEmail(), userInfo.getEmail(), usersToken.getRefresh_token());
+                log.info("Google 계정 연동 완료");
+            } else {
+                new UsersEntity();
+                UsersEntity user = UsersEntity.builder().userId(userInfo.getEmail()).pw(usersToken.getAccess_token().substring(0, 19)).nickName(userInfo.getName()).innerId(userInfo.getEmail()).refreshToken(usersToken.getRefresh_token()).build();
+                System.out.println(user.toString());
+                usersMapper.save(user);
+                categoryMapper.createDefaultCategory(user.getUserId(), user.getNickName());
+                log.info("Google 계정 자동 가입 완료");
+            }
         } catch (Exception e) {
             e.printStackTrace();
             log.info("가입 실패");
@@ -229,9 +234,6 @@ public class GoogleAPI {
         return token.getAccess_token();
     }
 
-    // API 데이터 요청 파트
-
-
     protected Map<String, ArrayList<String>> decodeCategory(String[] categoryList) {
         Map<String, ArrayList<String>> result = new HashMap<>();
         ArrayList<String> calendarLists = new ArrayList<>();
@@ -292,5 +294,12 @@ public class GoogleAPI {
 //        System.out.println(dateTime.get("start"));
 //        System.out.println(dateTime.get("end"));
         return dateTime;
+    }
+
+    public void mergeGoogleAccount(Map<String, String> observes) {
+        UsersEntity login = usersMapper.findByObserveToken(observes.get("loginsession")).get();
+        UsersEntity google = usersMapper.findByObserveToken(observes.get("observe")).get();
+        usersMapper.connectInnerId(login.getUserId(), google.getInnerId(), google.getRefreshToken(), google.getObserveToken());
+        usersMapper.deleteById(google.getUserId());
     }
 }

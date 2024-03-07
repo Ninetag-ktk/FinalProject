@@ -2,12 +2,63 @@ import React, {useState, useEffect} from 'react';
 import Parsley from 'parsleyjs';
 import $ from 'jquery';
 import logo from '../../temp_logo.png';
-
-
+import axios from "axios";
+import {useNavigate} from "react-router-dom";
 
 export default function SignupForm() {
-    const [username, setUsername] = useState('');
+    const redirect = useNavigate();
+    const [userid, setUserid] = useState('');
+    const [innerid, setInnerid] = useState('');
+    const [nickname, setNickname] = useState('');
     const [password, setPassword] = useState('');
+
+    useEffect(() => {
+        axios("/user/update", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json; charset=utf-8",
+                "Accept": "application/json; charset=utf-8",
+            },
+            data: window.sessionStorage.getItem("observe"),
+        }).then(response => {
+            if (response.data != null) {
+                const user = response.data;
+                console.log(user);
+                setUserid(user.userId);
+                setInnerid(user.innerId);
+                setNickname(user.nickName);
+                setPassword(user.pw);
+            }
+        });
+    }, [])
+
+    const handleDisconnectGoogle = () => {
+        var answer = prompt('정말 연동 해제하시겠습니까?\n연동 해제하시려면 \<연동 해제\> 라고 입력해주세요','');
+        if (answer === "연동 해제") {
+            axios("/user/google", {
+                method: "DELETE",
+                headers: {
+                    "Content-Type": "application/json; charset=utf-8",
+                },
+                data: window.sessionStorage.getItem("observe")
+            });
+            window.sessionStorage.removeItem("token");
+            window.location.reload();
+        }
+    }
+
+    /*사후 연동*/
+    const handleConnectGoogle = async () => {
+        const response = await fetch("/google/login", {
+            mode: "no-cors",
+            headers: {
+                "Content-Type": "application/json; charset=utf-8",
+                "Accept": "application/json; charset=utf-8",
+            },
+        });
+        const result = await response.json();
+        window.location.href = result.redirect;
+    };
 
     const handleSubmit = (e) => {
         e.preventDefault();
@@ -18,7 +69,7 @@ export default function SignupForm() {
         }
 
         // 회원가입 API 호출
-        // ...
+
 
     };
 
@@ -28,22 +79,49 @@ export default function SignupForm() {
     }, []);
 
     return (
-        <div className={"create"}>
-
-                <a href={"/main"}> <img className={"createlogo"} src={logo}/> </a>
-
-
-
+        <div id={"userInfo"} className={"info"}>
+            <a href={"/main"}> <img className={"createlogo"} src={logo}/> </a>
             <form id="signup-form" onSubmit={handleSubmit}>
                 <div className="form-group">
-                    <label htmlFor="username">닉네임</label>
+                    <label htmlFor="userid">계정</label>
                     <input
                         type="text"
-                        name="username"
-                        id="username"
-                        placeholder="사용자 이름을 입력하세요"
-                        value={username}
-                        onChange={(e) => setUsername(e.target.value)}
+                        name="userid"
+                        id="userid"
+                        readOnly={true}
+                        value={userid}
+                        onChange={(e) => setUserid(e.target.value)}
+                        data-parsley-required
+                        data-parsley-minlength="1"
+                        data-parsley-maxlength="20"
+                    />
+                </div>
+                <div className="form-group">
+                    <label htmlFor="innerid">Google</label>
+                    <input
+                        type="text"
+                        name="innerid"
+                        id="innerid"
+                        readOnly={true}
+                        value={innerid}
+                        onChange={(e) => setInnerid(e.target.value)}
+                        data-parsley-required
+                        data-parsley-minlength="1"
+                        data-parsley-maxlength="20"
+                    />
+                    {innerid == null ?
+                        <button type="button" onClick={handleConnectGoogle}>구글 연동</button> :
+                        <button type="button" onClick={handleDisconnectGoogle}>연동 해제</button> }
+
+                </div>
+                <div className="form-group">
+                    <label htmlFor="nickname">닉네임</label>
+                    <input
+                        type="text"
+                        name="nickname"
+                        id="nickname"
+                        value={nickname}
+                        onChange={(e) => setNickname(e.target.value)}
                         data-parsley-required
                         data-parsley-minlength="1"
                         data-parsley-maxlength="20"
@@ -72,16 +150,15 @@ export default function SignupForm() {
                         type="password"
                         name="password-confirm"
                         id="password-confirm"
-                        placeholder="비밀번호를 다시 입력하세요"
+                        placeholder="비밀번호를 입력하세요"
                         data-parsley-required
                         data-parsley-equalto="#password"
                         data-parsley-error-message="비밀번호가 일치하지 않습니다."
                     />
                 </div>
                 <button type="submit">회원정보저장</button>
+                <button type="button">회원 탈퇴</button>
             </form>
-            <button>회원 탈퇴</button>
-
         </div>
     );
 }

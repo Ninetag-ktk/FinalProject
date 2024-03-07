@@ -1,9 +1,11 @@
 import React, {useEffect, useState} from "react";
 import FullCalendar from '@fullcalendar/react';
 import listPlugin from '@fullcalendar/list';
+import {useNavigate} from "react-router-dom";
 
 
 export default function LeftBar({onSave}) {
+    const redirect = useNavigate();
     const [title, setTitle] = useState('');
     const [startDate, setStartDate] = useState('');
     const [endDate, setEndDate] = useState('');
@@ -44,6 +46,13 @@ export default function LeftBar({onSave}) {
         }
     }
 
+    const handlerLogout = () => {
+        window.sessionStorage.removeItem("observe");
+        window.sessionStorage.removeItem("token");
+        window.localStorage.removeItem("observe");
+        redirect("/");
+    }
+
     return (
         <div className="leftbar">
             <div className={"addevent"}>
@@ -73,13 +82,12 @@ export default function LeftBar({onSave}) {
             </div>
             <div className="today-tasks">
                 <div className="headLabel">오늘 할 일</div>
-                <FullCalendar
-                    plugins={[listPlugin]}
-                    initialView="listDay"
-                    events={events}
-                    headerToolbar={false}
-
-                />
+                {/*<FullCalendar*/}
+                {/*    plugins={[listPlugin]}*/}
+                {/*    initialView="listDay"*/}
+                {/*    events={events}*/}
+                {/*    headerToolbar={false}*/}
+                {/*/>*/}
             </div>
 
 
@@ -97,28 +105,28 @@ export default function LeftBar({onSave}) {
                 </div>
                 <div className="userMenu">
                     <a href={"/info"} className={"btnFloat"}>내 정보</a>
-                    <a className={"btnFloat"}>로그아웃</a>
+                    <a className={"btnFloat"} onClick={handlerLogout}>로그아웃</a>
                 </div>
             </div>
-            <div>
-                <dialog id="modal-dialog">
-                    <h2>일정 추가</h2>
-                    <label>
-                        제목:
-                        <input type="text" value={title} onChange={(e) => setTitle(e.target.value)}/>
-                    </label>
-                    <label>
-                        시작 일시:
-                        <input type="datetime-local" value={startDate} onChange={(e) => setStartDate(e.target.value)}/>
-                    </label>
-                    <label>
-                        종료 일시:
-                        <input type="datetime-local" value={endDate} onChange={(e) => setEndDate(e.target.value)}/>
-                    </label>
-                    <button onClick={handleSave}>저장</button>
-                    <button onClick={() => document.getElementById('modal-dialog').close()}>닫기</button>
-                </dialog>
-            </div>
+            {/*<div>*/}
+            {/*    <dialog id="modal-dialog">*/}
+            {/*        <h2>일정 추가</h2>*/}
+            {/*        <label>*/}
+            {/*            제목:*/}
+            {/*            <input type="text" value={title} onChange={(e) => setTitle(e.target.value)}/>*/}
+            {/*        </label>*/}
+            {/*        <label>*/}
+            {/*            시작 일시:*/}
+            {/*            <input type="datetime-local" value={startDate} onChange={(e) => setStartDate(e.target.value)}/>*/}
+            {/*        </label>*/}
+            {/*        <label>*/}
+            {/*            종료 일시:*/}
+            {/*            <input type="datetime-local" value={endDate} onChange={(e) => setEndDate(e.target.value)}/>*/}
+            {/*        </label>*/}
+            {/*        <button onClick={handleSave}>저장</button>*/}
+            {/*        <button onClick={() => document.getElementById('modal-dialog').close()}>닫기</button>*/}
+            {/*    </dialog>*/}
+            {/*</div>*/}
         </div>
     )
 }

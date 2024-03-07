@@ -43,7 +43,7 @@ export default function Main() {
                     .then((result) => {
                         window.sessionStorage.setItem("token", JSON.stringify({
                             access: result.access,
-                            expire: new Date().getTime() + (1000 * 60 * 50),
+                            expire: new Date().getTime() + (1000 * 60 * 10),
                         }));
                     }).then((token) => {
                     fetch("/google/updateMonthly", {
@@ -130,7 +130,7 @@ export default function Main() {
                         today={gotoday}
                         currentTitle={calendarTitle}
                     />
-                    <div className={"leftOUT"}>
+                    <div className={"container"}>
                         <LeftBar onSave={handleSaveEvent}/>
                         {isSearchVisible ? <Search/> :
                             <Center setMainCalendar={setCalendar} setTitle={setTitle} events={events}/>}

@@ -6,7 +6,7 @@ import {
 import './App.css';
 import Empty from './routes/Empty/Empty'
 import Login from "./routes/Empty/Login";
-import Create from "./routes/Empty/Create";
+import Join from "./routes/Empty/Join";
 import Main from "./routes/Frame/Main";
 import Center from "./routes/Frame/Outlet/Center";
 import Search from "./routes/Frame/Outlet/Search";
@@ -20,7 +20,7 @@ const router = createBrowserRouter([
         errorElement : <p>Not Found</p>,
         children : [
             {index : true, element: <Login />},
-            {path : '/create',element:<Create />},
+            {path : '/join',element:<Join />},
             {path : '/main',element:<Main />},
             {path : '/check', element: <LoginCheck/>}
         ]

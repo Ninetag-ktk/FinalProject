@@ -23,13 +23,8 @@ const Center = ({setMainCalendar, setTitle, events, setEvents}) => {
         setIsModalOpen(true);
     };
 
-    const handleAddEvent = (event) => {
-        setEvents([...events, event]);
-        setIsModalOpen(false);
-    };
-
     return (
-        <div>
+        <div className="center">
             <FullCalendar
                 ref={calendarRef}
                 plugins={[dayGridPlugin]}
