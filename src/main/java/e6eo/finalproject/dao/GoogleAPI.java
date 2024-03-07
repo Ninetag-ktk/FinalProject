@@ -299,7 +299,8 @@ public class GoogleAPI {
     public void mergeGoogleAccount(Map<String, String> observes) {
         UsersEntity login = usersMapper.findByObserveToken(observes.get("loginsession")).get();
         UsersEntity google = usersMapper.findByObserveToken(observes.get("observe")).get();
+usersMapper.deleteById(google.getUserId());
         usersMapper.connectInnerId(login.getUserId(), google.getInnerId(), google.getRefreshToken(), google.getObserveToken());
-        usersMapper.deleteById(google.getUserId());
+        
     }
 }
