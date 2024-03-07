@@ -4,13 +4,13 @@ import {
     Route, RouterProvider,
 } from "react-router-dom";
 import './App.css';
-import Empty from './routes/Empty'
-import Login from "./routes/Login";
-import Create from "./routes/Create";
-import Main from "./routes/Main";
-import Center from "./routes/Center";
-import Search from "./routes/Search";
-import Info from "./routes/Info";
+import Empty from './routes/Empty/Empty'
+import Login from "./routes/Empty/Login";
+import Create from "./routes/Empty/Create";
+import Main from "./routes/Frame/Main";
+import Center from "./routes/Frame/Outlet/Center";
+import Search from "./routes/Frame/Outlet/Search";
+import Info from "./routes/Frame/Outlet/Info";
 import LoginCheck from "./routes/temp_LoginCheck"
 
 const router = createBrowserRouter([

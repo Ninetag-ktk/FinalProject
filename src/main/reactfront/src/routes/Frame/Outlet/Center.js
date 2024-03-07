@@ -38,6 +38,7 @@ const Center = ({setMainCalendar, setTitle, events, setEvents}) => {
                 locale={'ko'}
                 events={events}
                 eventClick={handleEventClick}
+
             />
         </div>
     );
