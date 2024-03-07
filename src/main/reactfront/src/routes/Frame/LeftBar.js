@@ -86,7 +86,7 @@ export default function LeftBar({onSave}) {
                 <div className="headLabel">오늘 할 일</div>
                 <FullCalendar
                     plugins={[listPlugin]}
-                    initialView="listMonth"
+                    initialView="listDay"
                     events={events}
                     headerToolbar={false}
 
