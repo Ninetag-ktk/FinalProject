@@ -1,12 +1,12 @@
-// Center.js
-import React, {useEffect, useRef, useState} from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import FullCalendar from '@fullcalendar/react';
 import dayGridPlugin from '@fullcalendar/daygrid';
 
-const Center = ({setMainCalendar, setTitle, events, setEvents}) => {
+const Center = ({ setMainCalendar, setTitle, events, setEvents }) => {
     const calendarRef = useRef(null);
     const [calendar, setCalendar] = useState(null);
-    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [modalContent, setModalContent] = useState(null);
+    const [showModal, setShowModal] = useState(false);
 
     useEffect(() => {
         const initializeCalendar = () => {
@@ -20,12 +20,19 @@ const Center = ({setMainCalendar, setTitle, events, setEvents}) => {
     }, [setMainCalendar, setTitle]);
 
     const handleEventClick = (info) => {
-        setIsModalOpen(true);
+
+        setModalContent(
+            <div>
+                <p>제목: {info.event.title}</p>
+                <p>시작일: {info.event.start.toString()}</p>
+                <p>종료일: {info.event.end.toString()}</p>
+            </div>
+        );
+        setShowModal(true);
     };
 
-    const handleAddEvent = (event) => {
-        setEvents([...events, event]);
-        setIsModalOpen(false);
+    const closeModal = () => {
+        setShowModal(false);
     };
 
     return (
@@ -37,12 +44,19 @@ const Center = ({setMainCalendar, setTitle, events, setEvents}) => {
                 dayMaxEvents={true}
                 locale={'ko'}
                 events={events}
-                eventClick={handleEventClick}
-
+                eventClick={(info) => handleEventClick(info)} // 클릭 이벤트 핸들러 수정
             />
+
+            {showModal && (
+                <div className="event-click" >
+
+                        {modalContent}
+                        <button onClick={closeModal}>Close</button>
+
+                </div>
+            )}
         </div>
     );
 };
-
 
 export default Center;

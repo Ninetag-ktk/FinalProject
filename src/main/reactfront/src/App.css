@@ -344,6 +344,13 @@ fieldset {
     width: 100%;
 
 }
+.event-click{
+    position: absolute ;
+    background-color: white ;
+    top: 25vh;
+    left: 40vw ;
+    z-index: 2 ;
+}
 
 /* 검색 페이지*/
 .searchp {
