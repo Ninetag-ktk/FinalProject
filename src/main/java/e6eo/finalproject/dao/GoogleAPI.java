@@ -120,7 +120,7 @@ public class GoogleAPI {
     private void doAutoSignUp(googleUserInfo userInfo) {
         try {
             if (!(usersMapper.findById(userInfo.getEmail()).isEmpty())) {
-                usersMapper.connectInnerId(userInfo.getEmail(), userInfo.getEmail(), usersToken.getRefresh_token());
+                usersMapper.mergeWithInnerId(userInfo.getEmail(), userInfo.getEmail(), usersToken.getRefresh_token());
                 log.info("Google 계정 연동 완료");
             } else {
                 new UsersEntity();
@@ -300,7 +300,7 @@ public class GoogleAPI {
         UsersEntity login = usersMapper.findByObserveToken(observes.get("loginsession")).get();
         UsersEntity google = usersMapper.findByObserveToken(observes.get("observe")).get();
 usersMapper.deleteById(google.getUserId());
-        usersMapper.connectInnerId(login.getUserId(), google.getInnerId(), google.getRefreshToken(), google.getObserveToken());
+        usersMapper.mergeWithInnerId(login.getUserId(), google.getInnerId(), google.getRefreshToken(), google.getObserveToken());
         
     }
 }
