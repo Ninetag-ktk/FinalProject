@@ -53,9 +53,9 @@ public class GoogleController {
                 .build();
     }
 
-    @PostMapping("/updateCheck1")
+    @PostMapping("/updateCheck")
     public void checkGoogleAccount(@RequestBody Map<String, String> req) {
-        System.out.println("구글 데이터 업데이트 테스트");
+        System.out.println("구글 데이터 업데이트");
         UsersEntity user = usersMapper.findByObserveToken(req.get("observe")).get();
         String accessToken = googleAPI.getNewAccessTokenByObserve(req.get("observe"));
         if (!user.getInnerId().isEmpty()) {
@@ -67,11 +67,6 @@ public class GoogleController {
                 notesDAO.checkGoogleNotes(user, accessToken);
             }
         }
-    }
-
-    @PostMapping("/updateCheck")
-    public void test11(@RequestBody String req) {
-        System.out.println("컨트롤러 체크: " + req);
     }
 
     @ResponseBody

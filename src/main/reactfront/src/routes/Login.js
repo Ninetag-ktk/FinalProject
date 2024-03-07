@@ -12,7 +12,6 @@ export default function Login() {
     const autoLoginCheck = () => {
         // 로그인 이력이 있다면(세션에 저장된 내용이 있다면)
         // 바로 main으로 이동
-        window.sessionStorage.setItem("check", "")
         if (window.sessionStorage.getItem("observe")) {
             redirect("/main");
         }
@@ -30,7 +29,7 @@ export default function Login() {
             }).then(response => {
                 if (response.data == true) {
                     window.sessionStorage.setItem("observe", window.localStorage.getItem("observe"));
-                    redirect("/main");
+                    redirect(`/check?autologin=true&observe=${window.localStorage.getItem("observe")}`);
                 } else {
                     window.localStorage.removeItem("observe");
                 }

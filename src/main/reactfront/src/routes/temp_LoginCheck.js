@@ -11,6 +11,14 @@ export default function Temp_LoginCheck() {
             window.localStorage.setItem("observe", observe);
         }
         window.sessionStorage.setItem("observe", observe);
+        fetch("/google/updateCheck", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json; charset=utf-8",
+                "Accept": "application/json; charset=utf-8",
+            },
+            body: JSON.stringify(observe),
+        });
         redirect("/main");
     }, []);
 }
