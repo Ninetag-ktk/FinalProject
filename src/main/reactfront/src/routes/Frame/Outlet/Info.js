@@ -30,8 +30,7 @@ export default function SignupForm() {
     return (
         <div className={"create"}>
 
-                <a href={"/main"}> <img className={"createlogo"} src={logo}/> </a>
-
+            <a href={"/main"}> <img className={"createlogo"} src={logo}/> </a>
 
 
             <form id="signup-form" onSubmit={handleSubmit}>
@@ -80,6 +79,7 @@ export default function SignupForm() {
                 </div>
                 <button type="submit">회원정보저장</button>
             </form>
+            <button>구글 연동 해제</button>
             <button>회원 탈퇴</button>
 
         </div>

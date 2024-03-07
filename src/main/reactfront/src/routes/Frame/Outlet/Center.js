@@ -1,5 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import FullCalendar from '@fullcalendar/react';
+import { Calendar } from '@fullcalendar/core';
+import interactionPlugin from '@fullcalendar/interaction';
 import dayGridPlugin from '@fullcalendar/daygrid';
 
 const Center = ({ setMainCalendar, setTitle, events, setEvents }) => {
@@ -38,13 +40,15 @@ const Center = ({ setMainCalendar, setTitle, events, setEvents }) => {
     return (
         <div>
             <FullCalendar
+
                 ref={calendarRef}
-                plugins={[dayGridPlugin]}
+                plugins={[interactionPlugin, dayGridPlugin]}
                 headerToolbar={false}
                 dayMaxEvents={true}
                 locale={'ko'}
                 events={events}
                 eventClick={(info) => handleEventClick(info)} // 클릭 이벤트 핸들러 수정
+                selectable={true}
             />
 
             {showModal && (

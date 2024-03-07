@@ -229,6 +229,12 @@ fieldset {
     }
 }
 
+.category-create input,
+.category-create button {
+    opacity: 0; /* 처음에는 투명하게 설정 */
+    transition: opacity 0.3s ease; /* 입력 필드와 버튼의 나타나고 사라지는 애니메이션 설정 */
+}
+
 /* <leftbar/> + <outlet/> */
 .leftOUT {
     display: flex;
@@ -264,6 +270,8 @@ fieldset {
             justify-content: space-between;
 
             .iconButton {
+
+                transition: transform 0.3s ease-in-out;
 
                 :hover {
                     cursor: pointer;
@@ -580,6 +588,7 @@ fieldset {
     .leftbar {
         display: none;
     }
+
 
     .login-main {
         flex-direction: column;
