@@ -10,6 +10,9 @@ import java.util.List;
 @Repository
 public interface NotesMapper extends MongoRepository<NotesEntity, String> {
 
+    @Query(value = "{ 'categoryId': { '$regex': '^?0.*' } }", delete = true)
+    void deleteAllByUserId(String UserId);
+
     @Query(value = "{ 'category_id' : { '$regex': '^?0' }}")
     List<NotesEntity> findByUserId(String userId);
 

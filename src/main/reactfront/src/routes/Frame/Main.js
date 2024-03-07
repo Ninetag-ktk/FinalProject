@@ -45,20 +45,19 @@ export default function Main() {
                             access: result.access,
                             expire: new Date().getTime() + (1000 * 60 * 10),
                         }));
-                    }).then((token) => {
-                    fetch("/google/updateMonthly", {
-                        method: "POST",
-                        headers: {
-                            "Content-Type": "application/json; charset=utf-8",
-                            "Accept": "application/json; charset=utf-8",
-                        },
-                        body: JSON.stringify({
-                            observe: window.sessionStorage.getItem("observe"),
-                            token: token,
-                            date: calendarTitle,
-                        }),
-                    });
-                })
+                        fetch("/google/updateMonthly", {
+                            method: "POST",
+                            headers: {
+                                "Content-Type": "application/json; charset=utf-8",
+                                "Accept": "application/json; charset=utf-8",
+                            },
+                            body: JSON.stringify({
+                                observe: window.sessionStorage.getItem("observe"),
+                                token: result.access,
+                                date: calendarTitle,
+                            }),
+                        });
+                    })
             } else {
                 fetch("/google/updateMonthly", {
                     method: "POST",
@@ -133,7 +132,8 @@ export default function Main() {
                     <div className={"container"}>
                         <LeftBar onSave={handleSaveEvent}/>
                         {isSearchVisible ? <Search/> :
-                            <Center setMainCalendar={setCalendar} setTitle={setTitle} events={events} setEvents={setEvents} />}
+                            <Center setMainCalendar={setCalendar} setTitle={setTitle} events={events}
+                                    setEvents={setEvents}/>}
                     </div>
                 </div>
             </MyContext.Provider>

@@ -23,4 +23,5 @@ public class CategoryEntity {
     public CategoryEntity(String userId) {
         this.userId = userId;
     }
+
 }

@@ -23,8 +23,30 @@ public class UserController {
 
     @DeleteMapping("/google")
     public ResponseEntity<?> disconnectGoogle(@RequestBody String observe) {
-        usersMapper.emptyInnerId(observe.replace("\"",""));
+        usersMapper.emptyInnerId(observe.replace("\"", ""));
         return ResponseEntity.ok(true);
+    }
+
+    @PatchMapping("/info")
+    public ResponseEntity<?> changeUserInfo(@RequestBody UsersEntity user) {
+        try {
+            usersMapper.updateUserInfoById(user.getUserId(), user.getPw(), user.getNickName());
+            usersMapper.emptyObserve(user.getObserveToken());
+            return ResponseEntity.ok(true);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.ok(false);
+        }
+    }
+
+    @DeleteMapping("/info")
+    public ResponseEntity<?> expireUserInfo(@RequestBody String observe) {
+        Optional<UsersEntity> user = usersMapper.findByObserveToken(observe.replace("\"", ""));
+        if (!(user.isEmpty())) {
+            return usersDao.expire(user.get().getUserId());
+        } else {
+            return ResponseEntity.ok(false);
+        }
     }
 
     @PostMapping("/login")
@@ -42,7 +64,6 @@ public class UserController {
 
     @PostMapping("/checkToken")
     public ResponseEntity<?> checkObserve(@RequestBody String observe) {
-        System.out.println(observe);
         Optional<UsersEntity> user = usersMapper.findByObserveToken(observe.replace("\"", ""));
         return !(user.isEmpty()) ? ResponseEntity.ok(true) : ResponseEntity.ok(false);
     }

@@ -1,13 +1,11 @@
 package e6eo.finalproject.dao;
 
 import e6eo.finalproject.entity.UsersEntity;
-import e6eo.finalproject.entityGoogle.googleUserInfo;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.RequestBody;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -18,6 +16,18 @@ import java.util.Optional;
 @Transactional
 @RequiredArgsConstructor
 public class UsersDAO extends GoogleAPI {
+
+    public ResponseEntity<?> expire(String id) {
+        try {
+            notesMapper.deleteAllByUserId(id);
+            categoryMapper.deleteById(id);
+            usersMapper.deleteById(id);
+            return ResponseEntity.ok(true);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.ok(false);
+        }
+    }
 
     public ResponseEntity<?> login(String id, String pw) {
 //        System.out.println(id);

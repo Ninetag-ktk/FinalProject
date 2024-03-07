@@ -1,6 +1,5 @@
 package e6eo.finalproject.dao;
 
-import com.google.api.client.util.DateTime;
 import e6eo.finalproject.dto.CategoryMapper;
 import e6eo.finalproject.dto.NotesMapper;
 import e6eo.finalproject.dto.UsersMapper;
@@ -19,12 +18,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.reactive.function.client.WebClient;
 
-import javax.swing.text.DateFormatter;
-import java.text.DateFormat;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.YearMonth;
-import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
@@ -299,8 +293,8 @@ public class GoogleAPI {
     public void mergeGoogleAccount(Map<String, String> observes) {
         UsersEntity login = usersMapper.findByObserveToken(observes.get("loginsession")).get();
         UsersEntity google = usersMapper.findByObserveToken(observes.get("observe")).get();
-usersMapper.deleteById(google.getUserId());
+        usersMapper.deleteById(google.getUserId());
         usersMapper.mergeWithInnerId(login.getUserId(), google.getInnerId(), google.getRefreshToken(), google.getObserveToken());
-        
+
     }
 }

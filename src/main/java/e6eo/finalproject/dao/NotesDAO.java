@@ -1,17 +1,14 @@
 package e6eo.finalproject.dao;
 
+import e6eo.finalproject.entity.CategoryEntity;
 import e6eo.finalproject.entity.NotesEntity;
 import e6eo.finalproject.entity.UsersEntity;
 import e6eo.finalproject.entityGoogle.googleLists;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.reactive.function.client.WebClient;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -31,8 +28,13 @@ public class NotesDAO extends GoogleAPI {
         UsersEntity user = usersMapper.findByObserveToken(observe).get();
         List<NotesEntity> notes = notesMapper.findByUserId(user.getUserId());
         Map<Object, Object> notesEtag = notes.stream().collect(Collectors.toMap(NotesEntity::getId, NotesEntity::getEtag));
-        Map<String, ArrayList<String>> categories = decodeCategory(
-                categoryMapper.findById(user.getUserId()).get().getCategories().keySet().toArray(new String[0]));
+        Optional<CategoryEntity> category = categoryMapper.findById(user.getUserId());
+        Map<String, ArrayList<String>> categories = new HashMap<>();
+        if (!(category.isEmpty())) {
+            categories = decodeCategory(category.get().getCategories().keySet().toArray(new String[0]));
+        } else {
+            System.out.println("카테고리 비어있음");
+        }
         scanCalendarNotes(notesEtag, noteCalendar(user.getUserId(), categories.get("calendar"), accessToken, date));
         scanTasksNotes(notesEtag, noteTasks(user.getUserId(), categories.get("tasks"), accessToken, date));
     }
@@ -42,7 +44,8 @@ public class NotesDAO extends GoogleAPI {
         int i = 0;
         for (NotesEntity note : noteCalendar) {
             if (note.getStatus().toString().equals("cancelled") && notesEtag.get(note.getId()) != null) {
-//                notesMapper.delete(note);
+//                System.out.println(note);
+                notesMapper.delete(note);
                 i++;
             } else if (!note.getStatus().toString().equals("cancelled") && !note.getEtag().equals(notesEtag.get(note.getId()))) {
 //                System.out.println(note);
@@ -131,10 +134,10 @@ public class NotesDAO extends GoogleAPI {
                 .build();
         Map<String, String> dateTime = calcDateTime(date);
         String requestUrl = "/events?orderBy=updated"
-                    + "&showDeleted=true&singleEvents=true"
-                    + "&timeMin=" + dateTime.get("start")
-                    + "&timeMax=" + dateTime.get("end")
-                    + "&timeZone=GMT+9&key=" + googleKey;
+                + "&showDeleted=true&singleEvents=true"
+                + "&timeMin=" + dateTime.get("start")
+                + "&timeMax=" + dateTime.get("end")
+                + "&timeZone=GMT+9&key=" + googleKey;
         for (String calendar : list) {
             Object json = webClient.get().uri(calendar + requestUrl)
                     .retrieve().bodyToMono(googleLists.class).block().getItems();
@@ -176,7 +179,7 @@ public class NotesDAO extends GoogleAPI {
                 notes.add(post);
             }
         }
-       return notes;
+        return notes;
     }
 
     private ArrayList<NotesEntity> noteTasks(String userId, ArrayList<String> list, String accessToken, String date) {
@@ -187,10 +190,10 @@ public class NotesDAO extends GoogleAPI {
                 .build();
         Map<String, String> dateTime = calcDateTime(date);
         String requestUrl = "/tasks"
-                    + "?dueMax=" + dateTime.get("end")
-                    + "&dueMin=" + dateTime.get("start")
-                    + "&showCompleted=true&showDeleted=true&showHidden=true"
-                    + "&key" + googleKey;
+                + "?dueMax=" + dateTime.get("end")
+                + "&dueMin=" + dateTime.get("start")
+                + "&showCompleted=true&showDeleted=true&showHidden=true"
+                + "&key" + googleKey;
         for (String tasklist : list) {
             Object json = webClient.get().uri(tasklist + requestUrl)
                     .retrieve().bodyToMono(googleLists.class).block().getItems();
@@ -209,7 +212,7 @@ public class NotesDAO extends GoogleAPI {
 
     }
 
-    public void gNoteDelete(){
+    public void gNoteDelete() {
 
     }
 

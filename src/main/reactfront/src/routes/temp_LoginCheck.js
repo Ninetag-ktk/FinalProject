@@ -8,10 +8,9 @@ export default function Temp_LoginCheck() {
     const observe = params.get("observe");
     const loginsession = window.sessionStorage.getItem("observe");
     useEffect(() => {
-        alert(loginsession)
-        if (loginsession != null) {
+        if (loginsession != observe) {
             fetch("/google/patch", {
-                method:"PATCH",
+                method: "PATCH",
                 headers: {
                     "Content-Type": "application/json; charset=utf-8",
                     "Accept": "application/json; charset=utf-8",
@@ -21,6 +20,7 @@ export default function Temp_LoginCheck() {
                     observe: observe,
                 })
             })
+            window.sessionStorage.removeItem("token");
         }
         if (autoLogin === "true") {
             window.localStorage.setItem("observe", observe);
@@ -30,10 +30,16 @@ export default function Temp_LoginCheck() {
             method: "POST",
             headers: {
                 "Content-Type": "application/json; charset=utf-8",
-                "Accept": "application/json; charset=utf-8",
             },
             body: JSON.stringify(observe),
-        });
+        })
         redirect("/main");
+
     }, []);
+    return (
+        <div>
+            <div>로그인 처리중입니다</div>
+            <div>잠시만 기다려주세요</div>
+        </div>
+    )
 }

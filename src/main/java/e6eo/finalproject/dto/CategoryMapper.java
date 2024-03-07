@@ -9,7 +9,7 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface CategoryMapper extends MongoRepository<CategoryEntity, String> {
 
-    @Query("{ '_id' :  ?0}")
+    @Query(value = "{ '_id' :  ?0 }")
     @Update("{ '$set' : { 'categories.e6eo' : ?1 }}")
     void createDefaultCategory(String id, String nickname);
 

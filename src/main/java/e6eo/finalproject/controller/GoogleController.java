@@ -1,6 +1,9 @@
 package e6eo.finalproject.controller;
 
-import e6eo.finalproject.dao.*;
+import e6eo.finalproject.dao.CategoryDAO;
+import e6eo.finalproject.dao.GoogleAPI;
+import e6eo.finalproject.dao.NotesDAO;
+import e6eo.finalproject.dao.UsersDAO;
 import e6eo.finalproject.dto.CategoryMapper;
 import e6eo.finalproject.dto.NotesMapper;
 import e6eo.finalproject.dto.UsersMapper;
@@ -11,8 +14,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
-import java.time.format.DateTimeFormatter;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -59,11 +60,12 @@ public class GoogleController {
     }
 
     @PostMapping("/updateCheck")
-    public void checkGoogleAccount(@RequestBody Map<String, String> req) {
-        System.out.println("구글 데이터 업데이트");
-        UsersEntity user = usersMapper.findByObserveToken(req.get("observe")).get();
-        String accessToken = googleAPI.getNewAccessTokenByObserve(req.get("observe"));
-        if (!(user.getInnerId() == null)) {
+    public void checkGoogleAccount(@RequestBody String observe) {
+//        System.out.println("구글 데이터 업데이트");
+        String observeToken = observe.replace("\"", "");
+        UsersEntity user = usersMapper.findByObserveToken(observeToken).get();
+        String accessToken = googleAPI.getNewAccessTokenByObserve(observeToken);
+        if (user.getInnerId() != null) {
             if (categoryDAO.checkGoogleCategory(user, accessToken)) {
                 // 구글 데이터를 받아온 적이 없는 경우
                 // 데이터를 요청해서 받아옴
