@@ -59,15 +59,21 @@ body {
     --color-purple: #bd93f9;
     --color-pink: #ff79c6;
     /*커스텀 색상*/
-    --background-primary: rgb(255, 248, 237);
-    --background-primary-sub: rgb(204, 178, 137);
-    --background-accent: rgb(153, 122, 72);
-    --color-h: 208;
-    --color-s: 38%;
-    --color-l: 75%;
-    --color-primary: hsl(var(--color-h), var(--color-s), var(--color-l));
-    --color-heavy: hsl(var(--color-h), calc(var(--color-s) + 20%), calc(var(--color-l) - 20%));
+    --background-primary-base: rgb(252, 255, 254);
+    --background-primary: rgb(223, 245, 242);
+    --background-primary-sub: rgb(135, 223, 214);
+    --background-primary-border: rgb(70, 183, 185);
+    --background-accent: rgb(47, 146, 150);
+    --background-transparent: rgba(71, 184, 186, 0.2);
+    --color-default: rgb(218, 255, 251);
+    --color-primary: rgb(100, 204, 197);
+    --color-primary-border: rgb(23, 107, 135);
+    --color-primary-accent: rgb(4, 54, 74);
     --text-color-primary: black;
+    --interface-color-primary: rgb(178, 166, 255);
+    --interface-color-sub: rgb(240, 243, 255);
+    --interface-color-accent: rgb(61, 245, 196);
+    --interface-color-border: rgb(33, 25, 81);
 }
 
 body {
@@ -86,7 +92,7 @@ body {
 }
 
 #root {
-    background-color: #E8F9FF;
+    background-color: var(--background-primary-base);
     display: flex;
     justify-content: center;
     align-items: stretch;
@@ -97,15 +103,16 @@ body {
 
 /* 버튼 디자인 */
 button, .btnFloat {
-    background: hsl(var(--color-h), var(--color-s), var(--color-l));
-    border: 0.5px solid hsla(var(--color-h), var(--color-s), calc(var(--color-l) - 20%), 0.3);
+    background: var(--interface-color-primary);
+    border: 0px solid var(--color-primary-border);
     border-radius: 5px;
     transition: all 0.2s;
     margin: 0.1rem;
-    color: var(--text-color-primary);
+    box-shadow: 0 2px 2px -2px var(--color-primary-border);
+    color: var(--interface-color-border);
     font-family: basic-font, serif;
     font-size: 1rem;
-    font-weight: 500;
+    font-weight: 600;
     font-style: normal;
     text-align: center;
 }
@@ -176,7 +183,7 @@ button:hover, .btnFloat:hover {
     }
 
     button/*[type="submit"]*/:hover {
-        background-color: #0056b3;
+        background-color: var(--color-primary);
     }
 }
 
@@ -211,12 +218,13 @@ fieldset {
 .header {
     width: 100%;
     height: 8vh;
-    border-bottom: 1px solid;
     display: flex;
     align-items: center;
-    background-color: wheat;
+    background-color: var(--background-primary-sub);
     position: relative;
     padding: 4px;
+    box-shadow: 0 1px 8px 0 var(--background-primary-border);
+    z-index: 1;
 
     .calendarDate {
         display: flex;
@@ -314,13 +322,13 @@ fieldset {
         height: 100%;
 
         /* 배경색 설정 */
-        background-color: #f7f7f7;
+        background-color: var(--background-primary);
 
         /* 패딩 설정 */
         padding: 1rem 0.5rem;
 
         /* 섀도 설정 */
-        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
         display: flex;
         flex-direction: column;
         justify-content: space-between;
@@ -330,14 +338,14 @@ fieldset {
             display: flex;
             height: 1.3rem;
             justify-content: space-between;
+            border-radius: 10px;
 
             .iconButton {
-
-                transition: transform 0.3s ease-in-out;
+                transition: 0.3s ease-in-out;
 
                 :hover {
                     cursor: pointer;
-                    background-color: #61dafb;
+                    background-color: var(--color-primary);
                     border-radius: 10px;
                 }
 
@@ -389,9 +397,9 @@ fieldset {
 
                 .btnFloat {
                     display: inline-block;
-                    width: 99%;
+                    width: 98%;
                     text-decoration: none;
-                    flex: 1 1 auto;
+                    flex: 0 1 auto;
                 }
             }
         }
@@ -412,6 +420,7 @@ fieldset {
 .center {
     position: relative;
     width: 100%;
+    padding: 1rem;
 
     .fc-direction-ltr {
         height: 100%;
@@ -423,8 +432,11 @@ fieldset {
         width: 100%;
     }
 
-    /* 검색 페이지*/
+    .fc .fc-daygrid-day.fc-day-today {
+        background-color: var(--background-transparent);
+    }
 
+    /* 검색 페이지*/
     .searchp {
         position: relative;
         width: 100%;

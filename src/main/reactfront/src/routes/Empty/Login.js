@@ -55,10 +55,7 @@ export default function Login() {
         id: "",
         pw: "",
     });
-
-
     const [autoLogin, setAutoLogin] = useState(false);
-
     const handleLogin = async () => {
         const response = await fetch("/user/login", {
             method: "POST",

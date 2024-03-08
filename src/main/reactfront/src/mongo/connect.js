@@ -1,8 +1,12 @@
 // 1. mongoose 모듈 가져오기
 const mongoose = require('mongoose');
 const {connect} = require("mongoose");
+const MONGO_URI = process.env.REACT_APP_MONGO_URI;
 // 2. testDB 세팅
-mongoose.connect('mongodb://root:76435855@43.203.30.193:27017/e6eo?authSource=admin');
+console.log(process.env.REACT_APP_MONGO_URI);
+mongoose.connect(MONGO_URI, {
+}).then(()=>{console.log("MongoDB Connected...")})
+    .catch((e)=>{console.log("MongoDB fail-", e)});
 // 3. 연결된 testDB 사용
 const db = mongoose.connection;
 // 4. 연결 실패

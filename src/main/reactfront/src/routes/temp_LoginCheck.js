@@ -8,7 +8,7 @@ export default function Temp_LoginCheck() {
     const observe = params.get("observe");
     const loginsession = window.sessionStorage.getItem("observe");
     useEffect(() => {
-        if (loginsession != observe) {
+        if (loginsession !== observe) {
             fetch("/google/patch", {
                 method: "PATCH",
                 headers: {

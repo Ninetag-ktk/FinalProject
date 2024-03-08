@@ -65,7 +65,6 @@ export default function LeftBar({onSave}) {
                 <button onClick={openModal}>일정추가</button>
             </div>
 
-
             <div className="schedule">
                 <div className="headLabel">캘린더 리스트
                     <div className="iconButton" onClick={toggleCategoryCreate} style={{transform: `rotate(${rotationDegree}deg)`}}> {/* 회전 각도 적용 */}

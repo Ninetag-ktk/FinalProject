@@ -5,12 +5,12 @@ import LeftBar from "./LeftBar";
 import Search from "./Outlet/Search";
 import Center from "./Outlet/Center";
 import {useNavigate} from "react-router-dom";
+import mongoose from "mongoose";
 
 export const MyContext = React.createContext();
 
 export default function Main() {
     const redirect = useNavigate();
-
     const [isSearchVisible, setIsSearchVisible] = useState(false);
     const [calendar, setCalendar] = useState(null);
     const [calendarTitle, setCalendarTitle] = useState("");
@@ -43,6 +43,7 @@ export default function Main() {
                     .then((result) => {
                         window.sessionStorage.setItem("token", JSON.stringify({
                             access: result.access,
+                            key: result.key,
                             expire: new Date().getTime() + (1000 * 60 * 10),
                         }));
                         fetch("/google/updateMonthly", {

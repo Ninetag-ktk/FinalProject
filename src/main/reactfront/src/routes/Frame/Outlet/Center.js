@@ -87,5 +87,4 @@ const Center = ({ setMainCalendar, setTitle, events, setEvents }) => {
     );
 };
 
-
 export default Center;

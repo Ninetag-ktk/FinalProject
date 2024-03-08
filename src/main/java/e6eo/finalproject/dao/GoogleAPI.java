@@ -43,7 +43,7 @@ public class GoogleAPI {
     @Value("${google.scope}")
     protected List<String> googleScopeLs;
     @Value("${google.key}")
-    protected String googleKey;
+    public String googleKey;
 
     @Autowired
     protected UsersMapper usersMapper;
