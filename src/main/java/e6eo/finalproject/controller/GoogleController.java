@@ -90,7 +90,6 @@ public class GoogleController {
         UsersEntity user = usersMapper.findByObserveToken(req.get("observe")).get();
         if (!(user.getInnerId() == null)) {
             accessToken.put("access", googleAPI.getNewAccessTokenByObserve(req.get("observe")));
-            accessToken.put("key", googleAPI.googleKey);
         } else {
             accessToken.put("access", "0");
         }
