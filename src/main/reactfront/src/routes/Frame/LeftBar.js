@@ -92,9 +92,9 @@ export default function LeftBar({onSave}) {
                             objectStore.put({categoryId: category[0], value: true});
                             // console.log([category[0], category[1], true]);
                             resolve([category[0], category[1], true]);
+                        } else {
+                            resolve([category[0], category[1], data.value]);
                         }
-                        // console.log([category[0], category[1], data.value])
-                        resolve([category[0], category[1], data.value]);
                     };
                 });
                 // console.log("체크 안쪽", categoryList)
@@ -127,9 +127,10 @@ export default function LeftBar({onSave}) {
                 <ul id={"category-list"}>
                     {isLoading && <p>로딩 중...</p>}
                     {!isLoading && categories.map((category) => (
-                        <div className={"categoryList"} key={category[0]}>
+                        <div className={"categoryList, checkbox-wrapper"} key={category[0]}>
                             <input value={category[0]} type={"checkbox"} checked={category[2]}/>
-                            {category[1]}</div>
+                            <label><span></span>{category[1]}</label>
+                        </div>
                     ))}
                     <div className="category-create"
                          style={{height: isCategoryCreateVisible ? 'auto' : '0px', overflow: 'hidden'}}>
