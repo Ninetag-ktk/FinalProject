@@ -13,10 +13,12 @@ export default function Header({onPrevButtonClick, onNextButtonClick, currentTit
     };
 
     const handleTest = () => {
-        axios.post("/notes/", {
-            observe: sessionStorage.getItem("observe"),
-            date: currentTitle,
-        })
+        axios.post("/categories", window.sessionStorage.getItem("observe"),
+        //     {
+        //     observe: sessionStorage.getItem("observe"),
+        //     date: currentTitle,
+        // }
+        )
             .then(function (response) {
                 console.log(response.data);
             });

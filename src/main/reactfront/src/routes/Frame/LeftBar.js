@@ -1,7 +1,9 @@
 import React, {useEffect, useState} from "react";
 import FullCalendar from '@fullcalendar/react';
 import listPlugin from '@fullcalendar/list';
-import {useNavigate} from "react-router-dom";
+import {Await, useNavigate} from "react-router-dom";
+import axios from "axios";
+import ReactDOM from "react-dom/client";
 
 
 export default function LeftBar({onSave}) {
@@ -10,14 +12,19 @@ export default function LeftBar({onSave}) {
     const [startDate, setStartDate] = useState('');
     const [endDate, setEndDate] = useState('');
     const [events, setEvents] = useState([]);
+    const [categories, setCategories] = useState([]);
     const [isCategoryCreateVisible, setIsCategoryCreateVisible] = useState(false); // 1. 새로운 상태 변수 추가
     const [rotationDegree, setRotationDegree] = useState(0); // 1. 회전 각도 상태 변수 추가
+    const [isLoading, setIsLoading] = useState(true);
+
 
     useEffect(() => {
         // 예시로 이벤트를 임의로 생성합니다.
         const exampleEvents = [];
         setEvents(exampleEvents);
+        getCategories();
     }, []);
+
 
     const openModal = () => {
         const dialog = document.getElementById('modal-dialog');
@@ -59,6 +66,46 @@ export default function LeftBar({onSave}) {
         redirect("/");
     }
 
+    const getCategories = async () => {
+        setIsLoading(true);
+        const response = await axios.post("/categories", window.sessionStorage.getItem("observe"));
+        // console.log(response)
+        const categories = Object.entries(response.data);
+        const indexDB = window.indexedDB.open("e6eo");
+        indexDB.onerror = (event) => {
+            console.error("데이터베이스 열기 실패:", event.target.error);
+        };
+        indexDB.onupgradeneeded = (event) => {
+            const db = event.target.result;
+            const objectStore = db.createObjectStore("categories_checked", {keyPath: "categoryId"});
+        };
+        indexDB.onsuccess = (event) => {
+            console.log("데이터베이스 열기 성공")
+            const db = event.target.result;
+            const transaction = db.transaction("categories_checked", "readwrite");
+            const objectStore = transaction.objectStore("categories_checked");
+            const categoriesWithChecked = categories.map((category) => {
+                const categoryData = objectStore.get(category[0]);
+                categoryData.onsuccess = (event) => {
+                    const data = event.target.result;
+                    if (data === undefined) {
+                        // 기본값 설정
+                        console.log("널체크", data);
+                        objectStore.put({categoryId:category[0], value:true});
+                        return [category[0], category[1], true];
+                    }
+                    console.log(data);
+                    return [category[0], category[1], data.value];
+                };
+            })
+            setCategories(categoriesWithChecked);
+            console.log("체크",categoriesWithChecked);
+            transaction.commit();
+        };
+
+        setIsLoading(false);
+    }
+
     return (
         <div className="leftbar">
             <div className={"addevent"}>
@@ -67,7 +114,8 @@ export default function LeftBar({onSave}) {
 
             <div className="schedule">
                 <div className="headLabel">캘린더 리스트
-                    <div className="iconButton" onClick={toggleCategoryCreate} style={{transform: `rotate(${rotationDegree}deg)`}}> {/* 회전 각도 적용 */}
+                    <div className="iconButton" onClick={toggleCategoryCreate}
+                         style={{transform: `rotate(${rotationDegree}deg)`}}> {/* 회전 각도 적용 */}
                         <svg xmlns="http://www.w3.org/2000/svg" height="100%" viewBox="0 0 40 40" fill="none"
                              stroke="currentColor" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round">
                             <line x1="20" y1="4" x2="20" y2="36"/>
@@ -75,7 +123,13 @@ export default function LeftBar({onSave}) {
                         </svg>
                     </div>
                 </div>
-                <ul>
+                <ul id={"category-list"}>
+                    {isLoading && <p>로딩 중...</p>}
+                    {!isLoading && categories.map((category) => (
+                        <div className={"categoryList"} key={category[0]}>
+                            <input value={category[0]} type={"checkbox"} checked={category[2]}/>
+                            {category[1]}</div>
+                    ))}
                     <div className="category-create"
                          style={{height: isCategoryCreateVisible ? 'auto' : '0px', overflow: 'hidden'}}>
                         <input style={{opacity: isCategoryCreateVisible ? '1' : '0', transition: 'opacity 0.3s ease'}}/>
@@ -85,9 +139,6 @@ export default function LeftBar({onSave}) {
                         }}>(캘린더)카테고리 추가
                         </button>
                     </div>
-                    <li>경조사</li>
-                    <li>출장</li>
-                    <li>예비군</li>
                 </ul>
             </div>
             <div className="today-tasks">
@@ -100,8 +151,6 @@ export default function LeftBar({onSave}) {
 
                 />
             </div>
-
-
             <div className={"userbar"}>
                 <div className={"userProfile"} onClick={handlerUserMenu}>
                     <div className={"nickName"}>유저 이름</div>
