@@ -28,18 +28,22 @@ export default function LeftBar({onSave}) {
         const dialog = document.getElementById('modal-dialog');
         dialog.showModal();
     };
+    // const openModal = () => {
+    //     const dialog = document.getElementById('modal-dialog');
+    //     dialog.showModal();
+    // };
 
-    const handleSave = () => {
-        const newEvent = {
-            title: title,
-            start: startDate,
-            end: endDate
-        };
-        setEvents([...events, newEvent]);
-        onSave(newEvent);
-        document.getElementById('modal-dialog').close();
-
-    };
+    // const handleSave = () => {
+    //     const newEvent = {
+    //         title: title,
+    //         start: startDate,
+    //         end: endDate
+    //     };
+    //     setEvents([...events, newEvent]);
+    //     onSave(newEvent);
+    //     document.getElementById('modal-dialog').close();
+    //
+    // };
 
     const [userMenuVisible, setUserMenuVisible] = useState(true);
 
@@ -109,9 +113,9 @@ export default function LeftBar({onSave}) {
 
     return (
         <div className="leftbar">
-            <div className={"addevent"}>
-                <button onClick={openModal}>일정추가</button>
-            </div>
+            {/*<div className={"addevent"}>*/}
+            {/*    <button onClick={openModal}>일정추가</button>*/}
+            {/*</div>*/}
 
             <div className="schedule">
                 <div className="headLabel">캘린더 리스트
@@ -145,11 +149,11 @@ export default function LeftBar({onSave}) {
             </div>
             <div className="today-tasks">
                 <div className="headLabel">오늘 할 일</div>
-                <FullCalendar
-                    plugins={[listPlugin]}
-                    initialView="listDay"
-                    events={events}
-                    headerToolbar={false}
+                {/*<FullCalendar*/}
+                {/*    plugins={[listPlugin]}*/}
+                {/*    initialView="listDay"*/}
+                {/*    events={events}*/}
+                {/*    headerToolbar={false}*/}
 
                 />
             </div>
@@ -170,25 +174,25 @@ export default function LeftBar({onSave}) {
                     <a className={"btnFloat"} onClick={handlerLogout}>로그아웃</a>
                 </div>
             </div>
-            <div>
-                <dialog id="modal-dialog">
-                    <h2>일정 추가</h2>
-                    <label>
-                        제목:
-                        <input type="text" value={title} onChange={(e) => setTitle(e.target.value)}/>
-                    </label>
-                    <label>
-                        시작 일시:
-                        <input type="datetime-local" value={startDate} onChange={(e) => setStartDate(e.target.value)}/>
-                    </label>
-                    <label>
-                        종료 일시:
-                        <input type="datetime-local" value={endDate} onChange={(e) => setEndDate(e.target.value)}/>
-                    </label>
-                    <button onClick={handleSave}>저장</button>
-                    <button onClick={() => document.getElementById('modal-dialog').close()}>닫기</button>
-                </dialog>
-            </div>
+            {/*<div>*/}
+            {/*    <dialog id="modal-dialog">*/}
+            {/*        <h2>일정 추가</h2>*/}
+            {/*        <label>*/}
+            {/*            제목:*/}
+            {/*            <input type="text" value={title} onChange={(e) => setTitle(e.target.value)}/>*/}
+            {/*        </label>*/}
+            {/*        <label>*/}
+            {/*            시작 일시:*/}
+            {/*            <input type="datetime-local" value={startDate} onChange={(e) => setStartDate(e.target.value)}/>*/}
+            {/*        </label>*/}
+            {/*        <label>*/}
+            {/*            종료 일시:*/}
+            {/*            <input type="datetime-local" value={endDate} onChange={(e) => setEndDate(e.target.value)}/>*/}
+            {/*        </label>*/}
+            {/*        <button onClick={handleSave}>저장</button>*/}
+            {/*        <button onClick={() => document.getElementById('modal-dialog').close()}>닫기</button>*/}
+            {/*    </dialog>*/}
+            {/*</div>*/}
         </div>
     )
 }
