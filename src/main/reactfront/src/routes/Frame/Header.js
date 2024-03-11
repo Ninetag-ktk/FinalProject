@@ -12,12 +12,13 @@ export default function Header({onPrevButtonClick, onNextButtonClick, currentTit
         handleToggle();
     };
 
-    const handleGoogleTest = () => {
-        axios.post("/google/test", {
+    const handleTest = () => {
+        axios.post("/notes/", {
             observe: sessionStorage.getItem("observe"),
+            date: currentTitle,
         })
             .then(function (response) {
-                console.log(response);
+                console.log(response.data);
             });
     };
 
@@ -46,7 +47,7 @@ export default function Header({onPrevButtonClick, onNextButtonClick, currentTit
                     <span>캘린더/검색</span>
                 </label>
             </div>
-            <button type={"button"} id={"googletest"} onClick={handleGoogleTest}>구글 API 테스트 버튼</button>
+            <button type={"button"} id={"testButton"} onClick={handleTest}>테스트 버튼</button>
         </div>
     );
 }

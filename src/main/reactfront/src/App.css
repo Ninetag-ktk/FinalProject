@@ -81,7 +81,7 @@ body {
 }
 
 /*테스트용 버튼*/
-#googletest {
+#testButton {
     display: block;
     position: fixed;
     left: 0px;

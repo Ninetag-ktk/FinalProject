@@ -205,15 +205,12 @@ public class NotesDAO extends GoogleAPI {
         return notes;
     }
 
-    public void noteWrite(Map<String, String> data) {
-        String userId = usersMapper.findByObserveToken(data.get("observe")).get().getUserId();
-        NotesEntity note = new NotesEntity().noteWriter(data);
-        notesMapper.save(note);
-
+    public List<NotesEntity> notesGet(Map<String, String> request) {
+        UsersEntity user = usersMapper.findByObserveToken(request.get("observe").toString()).get();
+        System.out.println(user);
+        Map<String, String> dateRange = calcDateTime(request.get("date").toString());
+        List<NotesEntity> notesList = notesMapper.getNotes(user.getUserId(), dateRange.get("start"), dateRange.get("end"));
+        System.out.println(notesList);
+        return notesList;
     }
-
-    public void gNoteDelete() {
-
-    }
-
 }

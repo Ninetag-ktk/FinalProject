@@ -2,30 +2,38 @@ package e6eo.finalproject.controller;
 
 import e6eo.finalproject.dao.NotesDAO;
 import java.util.Map;
+
+import e6eo.finalproject.dto.NotesMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/notes")
 public class NotesController {
 
     @Autowired
-    private NotesDAO nDAO;
+    private NotesDAO notesDAO;
 
-    @PostMapping("/write")
-    public void write(@RequestBody Map<String, String> data) {
-        nDAO.noteWrite(data);
-
+    @PostMapping("/")
+    public ResponseEntity<?> getNotes(@RequestBody Map<String, String> request) {
+        return ResponseEntity.ok(notesDAO.notesGet(request));
     }
 
-    @PostMapping("/ymdata")
-    public void ymData(@RequestBody Map<String, String> data) {
-        System.out.println(data.get("month") +"/" + data.get("year") + "/" + data.get("observe"));
-
-    }
+//    @PostMapping("/note")
+//    public ResponseEntity<?> writeNotes(@RequestBody Map<String, Object> request) {
+//
+//    }
+//
+//    @PatchMapping("/note")
+//    public ResponseEntity<?> updateNotes(@RequestBody Map<String, Object> request) {
+//
+//    }
+//
+//    @DeleteMapping("/note")
+//    public ResponseEntity<?> deleteNotes(@RequestBody Map<String, Object> request) {
+//
+//    }
 
 
 }

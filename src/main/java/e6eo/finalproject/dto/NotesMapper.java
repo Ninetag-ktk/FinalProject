@@ -16,4 +16,7 @@ public interface NotesMapper extends MongoRepository<NotesEntity, String> {
     @Query(value = "{ 'category_id' : { '$regex': '^?0' }}")
     List<NotesEntity> findByUserId(String userId);
 
+    @Query(value = "{ 'category_id' :  { '$regex': '^?0' }, " +
+            "$and : [{$or: [{'start_time': { $gte: ?1, $lte: ?2}},{ 'end_time': { $gte: ?1, $lte: ?2 }}]}]}")
+    List<NotesEntity> getNotes(String userId, String startTime, String endTime);
 }
