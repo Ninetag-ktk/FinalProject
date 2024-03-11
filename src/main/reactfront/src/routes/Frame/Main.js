@@ -129,10 +129,10 @@ export default function Main() {
                         currentTitle={calendarTitle}
                     />
                     <div className={"container"}>
-                        <LeftBar onSave={handleSaveEvent}/>
+                        <LeftBar />
                         {isSearchVisible ? <Search/> :
                             <Center setMainCalendar={setCalendar} setTitle={setTitle} events={events}
-                                    setEvents={setEvents}/>}
+                                    setEvents={setEvents} onSave={handleSaveEvent}/>}
                     </div>
                 </div>
             </MyContext.Provider>

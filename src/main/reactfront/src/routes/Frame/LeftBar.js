@@ -4,11 +4,11 @@ import listPlugin from '@fullcalendar/list';
 import {useNavigate} from "react-router-dom";
 
 
-export default function LeftBar({onSave}) {
+export default function LeftBar() {
     const redirect = useNavigate();
-    const [title, setTitle] = useState('');
-    const [startDate, setStartDate] = useState('');
-    const [endDate, setEndDate] = useState('');
+    // const [title, setTitle] = useState('');
+    // const [startDate, setStartDate] = useState('');
+    // const [endDate, setEndDate] = useState('');
     const [events, setEvents] = useState([]);
     const [isCategoryCreateVisible, setIsCategoryCreateVisible] = useState(false); // 1. 새로운 상태 변수 추가
     const [rotationDegree, setRotationDegree] = useState(0); // 1. 회전 각도 상태 변수 추가
@@ -19,22 +19,22 @@ export default function LeftBar({onSave}) {
         setEvents(exampleEvents);
     }, []);
 
-    const openModal = () => {
-        const dialog = document.getElementById('modal-dialog');
-        dialog.showModal();
-    };
+    // const openModal = () => {
+    //     const dialog = document.getElementById('modal-dialog');
+    //     dialog.showModal();
+    // };
 
-    const handleSave = () => {
-        const newEvent = {
-            title: title,
-            start: startDate,
-            end: endDate
-        };
-        setEvents([...events, newEvent]);
-        onSave(newEvent);
-        document.getElementById('modal-dialog').close();
-
-    };
+    // const handleSave = () => {
+    //     const newEvent = {
+    //         title: title,
+    //         start: startDate,
+    //         end: endDate
+    //     };
+    //     setEvents([...events, newEvent]);
+    //     onSave(newEvent);
+    //     document.getElementById('modal-dialog').close();
+    //
+    // };
 
     const [userMenuVisible, setUserMenuVisible] = useState(true);
 
@@ -61,9 +61,9 @@ export default function LeftBar({onSave}) {
 
     return (
         <div className="leftbar">
-            <div className={"addevent"}>
-                <button onClick={openModal}>일정추가</button>
-            </div>
+            {/*<div className={"addevent"}>*/}
+            {/*    <button onClick={openModal}>일정추가</button>*/}
+            {/*</div>*/}
 
             <div className="schedule">
                 <div className="headLabel">캘린더 리스트
@@ -119,25 +119,25 @@ export default function LeftBar({onSave}) {
                     <a className={"btnFloat"} onClick={handlerLogout}>로그아웃</a>
                 </div>
             </div>
-            <div>
-                <dialog id="modal-dialog">
-                    <h2>일정 추가</h2>
-                    <label>
-                        제목:
-                        <input type="text" value={title} onChange={(e) => setTitle(e.target.value)}/>
-                    </label>
-                    <label>
-                        시작 일시:
-                        <input type="datetime-local" value={startDate} onChange={(e) => setStartDate(e.target.value)}/>
-                    </label>
-                    <label>
-                        종료 일시:
-                        <input type="datetime-local" value={endDate} onChange={(e) => setEndDate(e.target.value)}/>
-                    </label>
-                    <button onClick={handleSave}>저장</button>
-                    <button onClick={() => document.getElementById('modal-dialog').close()}>닫기</button>
-                </dialog>
-            </div>
+            {/*<div>*/}
+            {/*    <dialog id="modal-dialog">*/}
+            {/*        <h2>일정 추가</h2>*/}
+            {/*        <label>*/}
+            {/*            제목:*/}
+            {/*            <input type="text" value={title} onChange={(e) => setTitle(e.target.value)}/>*/}
+            {/*        </label>*/}
+            {/*        <label>*/}
+            {/*            시작 일시:*/}
+            {/*            <input type="datetime-local" value={startDate} onChange={(e) => setStartDate(e.target.value)}/>*/}
+            {/*        </label>*/}
+            {/*        <label>*/}
+            {/*            종료 일시:*/}
+            {/*            <input type="datetime-local" value={endDate} onChange={(e) => setEndDate(e.target.value)}/>*/}
+            {/*        </label>*/}
+            {/*        <button onClick={handleSave}>저장</button>*/}
+            {/*        <button onClick={() => document.getElementById('modal-dialog').close()}>닫기</button>*/}
+            {/*    </dialog>*/}
+            {/*</div>*/}
         </div>
     )
 }
