@@ -1,9 +1,9 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import FullCalendar from '@fullcalendar/react';
 import interactionPlugin from '@fullcalendar/interaction';
 import dayGridPlugin from '@fullcalendar/daygrid';
 
-const Center = ({ setMainCalendar, events, setEvents, onSave }) => {
+const Center = ({setMainCalendar, events, setEvents, onSave}) => {
     const calendarRef = useRef(null);
     const [calendar, setCalendar] = useState(null);
     const [showModal, setShowModal] = useState(false);
@@ -20,7 +20,6 @@ const Center = ({ setMainCalendar, events, setEvents, onSave }) => {
             setMainCalendar(newCalendar);
             setTitle(newCalendar.view.title);
         };
-
         initializeCalendar();
     }, [setMainCalendar, setTitle]);
 
@@ -85,15 +84,17 @@ const Center = ({ setMainCalendar, events, setEvents, onSave }) => {
                             <p>날짜: {selectedDate}</p>
                             <label>
                                 제목:
-                                <input type="text" value={title} onChange={handleInputChange} />
+                                <input type="text" value={title} onChange={handleInputChange}/>
                             </label>
                             <label>
                                 시작 일시:
-                                <input type="datetime-local" value={startDate} onChange={(e) => setStartDate(e.target.value)} />
+                                <input type="datetime-local" value={startDate}
+                                       onChange={(e) => setStartDate(e.target.value)}/>
                             </label>
                             <label>
                                 종료 일시:
-                                <input type="datetime-local" value={endDate} onChange={(e) => setEndDate(e.target.value)} />
+                                <input type="datetime-local" value={endDate}
+                                       onChange={(e) => setEndDate(e.target.value)}/>
                             </label>
                             <button onClick={handleSave}>저장</button>
                             <button onClick={closeModal}>닫기</button>

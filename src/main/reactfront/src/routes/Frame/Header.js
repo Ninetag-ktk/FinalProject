@@ -7,17 +7,16 @@ import {MyContext} from './Main';
 export default function Header({onPrevButtonClick, onNextButtonClick, currentTitle, today}) {
     const {isSearchVisible, handleToggle} = useContext(MyContext);
 
-
-    const handleCheckboxChange = (event) => {
+    const handleCheckboxChange = () => {
         handleToggle();
     };
 
     const handleTest = () => {
         axios.post("/categories", window.sessionStorage.getItem("observe"),
-        //     {
-        //     observe: sessionStorage.getItem("observe"),
-        //     date: currentTitle,
-        // }
+            //     {
+            //     observe: sessionStorage.getItem("observe"),
+            //     date: currentTitle,
+            // }
         )
             .then(function (response) {
                 console.log(response.data);

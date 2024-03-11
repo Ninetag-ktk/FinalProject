@@ -115,15 +115,15 @@ button, .btnFloat {
     font-weight: 600;
     font-style: normal;
     text-align: center;
+}
 
-    :hover {
-        border: 0.5px solid hsla(var(--color-h), var(--color-s), calc(var(--color-l) - 20%), 0.3);
-        border-radius: 5px;
-        transform: scale(1.05, 1.05);
-        -ms-transform: scale(1.05, 1.05);
-        -webkit-transform: scale(1.05, 1.05);
-        box-shadow: 0px 5px 5px -2px rgba(0, 0, 0, 0.25);
-    }
+button:hover, .btnFloat:hover {
+    border: 0.5px solid hsla(var(--color-h), var(--color-s), calc(var(--color-l) - 20%), 0.3);
+    border-radius: 5px;
+    transform: scale(1.05, 1.05);
+    -ms-transform: scale(1.05, 1.05);
+    -webkit-transform: scale(1.05, 1.05);
+    box-shadow: 0px 5px 5px -2px rgba(0, 0, 0, 0.25);
 }
 
 /*button:hover, .btnFloat:hover {*/
@@ -152,6 +152,11 @@ button, .btnFloat {
     position: relative;
     overflow: visible;
     text-wrap: nowrap;
+    text-overflow: ellipsis;
+}
+
+.checkbox-wrapper label #text {
+    max-width: 80%;
 }
 
 .checkbox-wrapper label span {
@@ -477,8 +482,43 @@ fieldset {
 
             #category-list {
                 padding-left: 0;
-            }
 
+                .categoryList {
+                    display: flex;
+                    align-items: center;
+                    justify-content: space-between;
+                    font-size: 1.1rem;
+
+                    .categoryName {
+                        width: fit-content;
+                        max-width: 100px;
+                        text-overflow: ellipsis;
+                        overflow: hidden;
+                    }
+
+                    .iconButtonContainer {
+                        display: flex;
+
+                    }
+
+                    .iconButton {
+                        display: flex;
+                        justify-content: center;
+                        align-items: center;
+                        cursor: pointer;
+                        border-radius: 10px;
+                        background-color: transparent;
+                        transition: 0.2s;
+
+                    }
+
+                    .iconButton:hover {
+                        background-color: white;
+                        border-radius: 10px;
+                        transition: 0.2s;
+                    }
+                }
+            }
         }
 
         .userbar {

@@ -11,6 +11,7 @@ export default function SignupForm() {
     const [nickname, setNickname] = useState('');
     const [password, setPassword] = useState('');
     const [passwordTwin, setPasswordTwin] = useState('');
+    
 
     useEffect(() => {
         axios("/user/update", {
