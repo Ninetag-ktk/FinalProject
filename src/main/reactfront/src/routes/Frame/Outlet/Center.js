@@ -48,9 +48,7 @@ const Center = ({ setMainCalendar, events, setEvents, onSave }) => {
         setEvents([...events, newEvent]);
         onSave(newEvent);
         setShowModal(false);
-        const selectedDateObj = calendarRef.current.getApi().getDate(); // 현재 선택된 날짜 가져오기
-        setStartDate(selectedDateObj);
-        setEndDate(selectedDateObj);
+
     };
 
     const closeModal = () => {
