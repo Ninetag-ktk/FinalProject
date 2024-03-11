@@ -92,13 +92,13 @@ export default function LeftBar() {
             </div>
             <div className="today-tasks">
                 <div className="headLabel">오늘 할 일</div>
-                <FullCalendar
-                    plugins={[listPlugin]}
-                    initialView="listDay"
-                    events={events}
-                    headerToolbar={false}
+                {/*<FullCalendar*/}
+                {/*    plugins={[listPlugin]}*/}
+                {/*    initialView="listDay"*/}
+                {/*    events={events}*/}
+                {/*    headerToolbar={false}*/}
 
-                />
+                {/*/>*/}
             </div>
 
 
