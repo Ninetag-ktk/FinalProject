@@ -1,9 +1,8 @@
 import React, {useEffect, useState} from "react";
 import FullCalendar from '@fullcalendar/react';
 import listPlugin from '@fullcalendar/list';
-import {Await, useNavigate} from "react-router-dom";
+import {useNavigate} from "react-router-dom";
 import axios from "axios";
-import ReactDOM from "react-dom/client";
 
 
 export default function LeftBar({onSave}) {
@@ -17,12 +16,11 @@ export default function LeftBar({onSave}) {
     const [rotationDegree, setRotationDegree] = useState(0); // 1. 회전 각도 상태 변수 추가
     const [isLoading, setIsLoading] = useState(true);
 
-
     useEffect(() => {
         // 예시로 이벤트를 임의로 생성합니다.
         const exampleEvents = [];
         setEvents(exampleEvents);
-        getCategories();
+        categoryListData();
     }, []);
 
 
@@ -66,11 +64,11 @@ export default function LeftBar({onSave}) {
         redirect("/");
     }
 
-    const getCategories = async () => {
-        setIsLoading(true);
+    const categoryListData = async () => {
+        setIsLoading(true)
         const response = await axios.post("/categories", window.sessionStorage.getItem("observe"));
         // console.log(response)
-        const categories = Object.entries(response.data);
+        const categoriesGet = Object.entries(response.data);
         const indexDB = window.indexedDB.open("e6eo");
         indexDB.onerror = (event) => {
             console.error("데이터베이스 열기 실패:", event.target.error);
@@ -84,26 +82,29 @@ export default function LeftBar({onSave}) {
             const db = event.target.result;
             const transaction = db.transaction("categories_checked", "readwrite");
             const objectStore = transaction.objectStore("categories_checked");
-            const categoriesWithChecked = categories.map((category) => {
-                const categoryData = objectStore.get(category[0]);
-                categoryData.onsuccess = (event) => {
-                    const data = event.target.result;
-                    if (data === undefined) {
-                        // 기본값 설정
-                        console.log("널체크", data);
-                        objectStore.put({categoryId:category[0], value:true});
-                        return [category[0], category[1], true];
-                    }
-                    console.log(data);
-                    return [category[0], category[1], data.value];
-                };
+            const categoryList = categoriesGet.map((category) => {
+                return new Promise((resolve) => {
+                    const categoryData = objectStore.get(category[0]);
+                    categoryData.onsuccess = (event) => {
+                        const data = event.target.result;
+                        if (data === undefined) {
+                            // 기본값 설정
+                            objectStore.put({categoryId: category[0], value: true});
+                            // console.log([category[0], category[1], true]);
+                            resolve([category[0], category[1], true]);
+                        }
+                        // console.log([category[0], category[1], data.value])
+                        resolve([category[0], category[1], data.value]);
+                    };
+                });
+                // console.log("체크 안쪽", categoryList)
             })
-            setCategories(categoriesWithChecked);
-            console.log("체크",categoriesWithChecked);
-            transaction.commit();
-        };
-
-        setIsLoading(false);
+            Promise.all(categoryList).then((results) => {
+                setCategories(results);
+                setIsLoading(false);
+                console.log("데이터 체크 :", results);
+            })
+        }
     }
 
     return (
