@@ -98,7 +98,7 @@ const Center = ({setMainCalendar, events, setEvents, onSave}) => {
                                        onChange={(e) => setEndDate(e.target.value)}/>
                             </label>
                             <button onClick={handleSave}>저장</button>
-                            <img className={"close-img"} onClick={closeModal}
+                            <img className={"close-img2"} onClick={closeModal}
                                  src={"https://static.xx.fbcdn.net/rsrc.php/v3/yO/r/zgulV2zGm8t.png"} alt width={"24"}
                                  height={"24"}/>
                         </div>

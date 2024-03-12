@@ -142,8 +142,11 @@ button, .btnFloat {
     background: white;
     border-radius: 8px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, .1), 0 8px 16px rgba(0, 0, 0, .1);
-
-
+    width: 600px;
+    align-items: center;
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 20vh;
 }
 .close-img{
 
@@ -151,6 +154,12 @@ button, .btnFloat {
         right: 10px;
         top: 12px;
         z-index: 2;
+}
+.close-img2{
+
+    position: absolute;
+
+    z-index: 2;
 }
 .close-img:hover {
     cursor: pointer;
