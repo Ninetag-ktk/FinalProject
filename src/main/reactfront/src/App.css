@@ -152,6 +152,11 @@ button, .btnFloat {
         top: 12px;
         z-index: 2;
 }
+.close-img:hover {
+    cursor: pointer;
+    background-color: darkgray;
+    border-radius: 10px;
+}
 
 button:hover, .btnFloat:hover {
     border: 0.5px solid hsla(var(--color-h), var(--color-s), calc(var(--color-l) - 20%), 0.3);
