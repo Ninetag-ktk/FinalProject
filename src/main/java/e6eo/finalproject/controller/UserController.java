@@ -21,6 +21,11 @@ public class UserController {
     @Autowired
     private UsersMapper usersMapper;
 
+    @PostMapping("")
+    public ResponseEntity<?> passUserNickName(@RequestBody String observe) {
+        return ResponseEntity.ok(usersMapper.findByObserveToken(observe.replace("\"", "")).get().getNickName());
+    }
+
     @DeleteMapping("/google")
     public ResponseEntity<?> disconnectGoogle(@RequestBody String observe) {
         usersMapper.emptyInnerId(observe.replace("\"", ""));

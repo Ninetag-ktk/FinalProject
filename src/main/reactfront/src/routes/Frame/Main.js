@@ -11,34 +11,44 @@ export const MyContext = React.createContext();
 
 export default function Main() {
     const redirect = useNavigate();
-    const [isSearchVisible, setIsSearchVisible] = useState(false);
     const [calendar, setCalendar] = useState(null);
     const [calendarTitle, setCalendarTitle] = useState('');
-    const [events, setEvents] = useState([]);
     const [categories, setCategories] = useState([]);
-    const [isLoading, setIsLoading] = useState(true);
-
-    useEffect(() => {
-       // 초기 렌더링 시점에 값을 설정하는 로직 추가
-        const today = new Date();
-        const options = { year: "numeric", month: "long" };
-        const formattedDate = today.toLocaleDateString("ko-KR", options);
-
-        setCalendarTitle(formattedDate);
-    }, []); // 빈 배열을 전달하여 컴포넌트가 처음 마운트될 때만 실행되도록 함
+    const [categoryLoading, setCategoryLoading] = useState(true);
+    const [events, setEvents] = useState([]);
+    const [isSearchVisible, setIsSearchVisible] = useState(false);
+    const [userName, setUserName] = useState('')
 
     useEffect(() => {
         /*만약 정상적인 로그인이 아니라면 == 세션에 데이터가 없다면*/
         if (window.sessionStorage.getItem("observe") == null) {
             /*홈 화면으로 튕겨냄*/
             redirect("/");
+        } else {
+            getUserName();
         }
+        const interval = setInterval(() => {
+            if (window.sessionStorage.getItem("token") != null) {
+                checkToken();
+            }
+        }, 10000);
+        dateSetting();
         categoryListData();
     }, []);
 
     /*날짜 데이터가 바뀌면 해당 내용을 서버로 보내 미리 데이터를 받아올 수 있게끔 실행*/
     useEffect(() => {
         console.log(calendarTitle);
+        updateMonthly(calendarTitle);
+        noteListDate(calendarTitle);
+    }, [calendarTitle]);
+
+    const getUserName = async ()=>{
+        const userName = await axios.post("/user", window.sessionStorage.getItem("observe"));
+        setUserName(userName.data);
+    }
+
+    function updateMonthly(calendarTitle) {
         if (calendarTitle !== "") {
             let token = JSON.parse(window.sessionStorage.getItem("token"));
             if (!token) {
@@ -71,13 +81,13 @@ export default function Main() {
                         });
                     })
             } else {
-                fetch("/google/updateMonthly", {
+                axios("/google/updateMonthly", {
                     method: "POST",
                     headers: {
                         "Content-Type": "application/json; charset=utf-8",
                         "Accept": "application/json; charset=utf-8",
                     },
-                    body: JSON.stringify({
+                    data: JSON.stringify({
                         observe: window.sessionStorage.getItem("observe"),
                         token: token.access,
                         date: calendarTitle,
@@ -85,15 +95,21 @@ export default function Main() {
                 });
             }
         }
-    }, [calendarTitle]);
+    }
+
+    function dateSetting() {
+        // 초기 렌더링 시점에 값을 설정하는 로직 추가
+        const today = new Date();
+        const options = {year: "numeric", month: "long"};
+        const formattedDate = today.toLocaleDateString("ko-KR", options);
+        setCalendarTitle(formattedDate);
+    }
 
     function checkToken() {
         const token = JSON.parse(window.sessionStorage.getItem("token"))
-        const now = Date.now();
-        if (token != null) {
-            if (now.getTime > token.expire) {
+        if (new Date().getTime() >= token.expire) {
+                // console.log("토큰삭제");
                 window.sessionStorage.removeItem("token");
-            }
         }
     }
 
@@ -132,7 +148,7 @@ export default function Main() {
     };
 
     const categoryListData = async () => {
-        setIsLoading(true)
+        setCategoryLoading(true)
         const response = await axios.post("/categories", window.sessionStorage.getItem("observe"));
         // console.log(response)
         const categoriesGet = Object.entries(response.data);
@@ -145,7 +161,7 @@ export default function Main() {
             const objectStore = db.createObjectStore("categories_checked", {keyPath: "categoryId"});
         };
         indexDB.onsuccess = (event) => {
-            console.log("데이터베이스 열기 성공")
+            // console.log("데이터베이스 열기 성공")
             const db = event.target.result;
             const transaction = db.transaction("categories_checked", "readwrite");
             const objectStore = transaction.objectStore("categories_checked");
@@ -168,14 +184,51 @@ export default function Main() {
             })
             Promise.all(categoryList).then((results) => {
                 setCategories(results);
-                setIsLoading(false);
-                console.log("데이터 체크 :", results);
+                setCategoryLoading(false);
+                // console.log("데이터 체크 :", results);
+            })
+        }
+    }
+
+    const noteListDate = async (calendarTitle) => {
+        if (calendarTitle !== '') {
+            await axios.post("/notes",
+                {
+                    observe: sessionStorage.getItem("observe"),
+                    date: calendarTitle,
+                }
+            ).then((response) => {
+                // console.log(response.data);
+                // console.log(data, typeof data);
+                const fullEvents = response.data.map((note)=>{
+                    if (note.type === "task" || note.type === "note") {
+                        return {
+                            id: note.id,
+                            title: note.title,
+                            start: note.startTime,
+                            end: note.endTime,
+                            allDay: true,
+                            type: note.type,
+                            data: note,
+                        }
+                    } else {
+                        return {
+                            id: note.id,
+                            title: note.title,
+                            start: note.startTime,
+                            end: note.endTime,
+                            type: note.type,
+                            data: note,
+                        }
+                    }
+                })
+                setEvents(fullEvents);
             })
         }
     }
 
     return (
-        <div className={"main"} onLoad={checkToken}>
+        <div className={"main"}>
             <MyContext.Provider value={{isSearchVisible, handleToggle}}>
                 <div className={"frame"}>
                     <Header
@@ -185,7 +238,7 @@ export default function Main() {
                         currentTitle={calendarTitle}
                     />
                     <div className={"container"}>
-                        <LeftBar categories={categories} isLoading={isLoading}/>
+                        <LeftBar categories={categories} categoryLoading={categoryLoading} userName={userName}/>
                         {isSearchVisible ? <Search/> :
                             <Center setMainCalendar={setCalendar} setTitle={setTitle} events={events}
                                     setEvents={setEvents} onSave={handleSaveEvent}/>}

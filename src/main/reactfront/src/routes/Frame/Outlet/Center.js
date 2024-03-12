@@ -63,6 +63,12 @@ const Center = ({setMainCalendar, events, setEvents, onSave}) => {
         setTitle(e.target.value);
     };
 
+    const renderEvent = (event) => {
+        const divElement = event.el;
+        divElement.dataset.note = JSON.stringify(event.event.extendedProps.data);
+        return divElement;
+    }
+
     return (
         <div className="center">
             <FullCalendar
@@ -72,6 +78,7 @@ const Center = ({setMainCalendar, events, setEvents, onSave}) => {
                 dayMaxEvents={true}
                 locale={'ko'}
                 events={events}
+                eventDidMount={renderEvent}
                 selectable={true}
                 select={handleDateSelect}
                 eventClick={handleEventClick}
