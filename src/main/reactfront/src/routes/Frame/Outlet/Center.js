@@ -80,7 +80,8 @@ const Center = ({setMainCalendar, events, setEvents, onSave}) => {
             {showModal && (
                 <div>
                     {selectedDate ? (
-                        <div className="event-click">
+                        <div className={"modal-background"}>
+                        <div className="select-click">
                             <p>날짜: {selectedDate}</p>
                             <label>
                                 제목:
@@ -97,7 +98,10 @@ const Center = ({setMainCalendar, events, setEvents, onSave}) => {
                                        onChange={(e) => setEndDate(e.target.value)}/>
                             </label>
                             <button onClick={handleSave}>저장</button>
-                            <button onClick={closeModal}>닫기</button>
+                            <img className={"close-img"} onClick={closeModal}
+                                 src={"https://static.xx.fbcdn.net/rsrc.php/v3/yO/r/zgulV2zGm8t.png"} alt width={"24"}
+                                 height={"24"}/>
+                        </div>
                         </div>
                     ) : null}
                 </div>
@@ -106,6 +110,7 @@ const Center = ({setMainCalendar, events, setEvents, onSave}) => {
             {showM && (
                 <div>
                     {selectedDate ? (
+                        <div className={"modal-background"}>
                         <div className="event-click">
                             <p>선택된 이벤트 제목: {title}</p>
                             <p>시작 시간: {new Date(startDate).toLocaleString('ko-KR', {
@@ -126,7 +131,8 @@ const Center = ({setMainCalendar, events, setEvents, onSave}) => {
                                 minute: 'numeric',
                                 hour12: true
                             })}</p>
-                            <button onClick={closeM}>Close</button>
+                            <img className={"close-img"} onClick={closeM} src={"https://static.xx.fbcdn.net/rsrc.php/v3/yO/r/zgulV2zGm8t.png"} alt width={"24"} height={"24"}/>
+                        </div>
                         </div>
                     ) : null}
                 </div>
