@@ -51,6 +51,7 @@ export default function LeftBar({categories, categoryLoading, userName}) {
     function categoryInputHandler(category) {
         const categoryEl = document.querySelector(`#${category[0]} + label .categoryName .changeName`);
         if (categoryEl.getAttribute("readonly") !== null) {
+            categoryEl.focus();
             categoryEl.removeAttribute("readonly");
             categoryEl.style.setProperty("box-shadow", "-1px -1px 3px 0px inset");
             categoryEl.style.setProperty("background-color", "rgba(255, 255, 255, 0.5)");
