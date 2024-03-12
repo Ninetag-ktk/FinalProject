@@ -6,10 +6,10 @@ import dayGridPlugin from '@fullcalendar/daygrid';
 const Center = ({setMainCalendar, events, setEvents, onSave}) => {
     const calendarRef = useRef(null);
     const [calendar, setCalendar] = useState(null);
+    const [title, setTitle] = useState('');
     const [showModal, setShowModal] = useState(false);
     const [showM, setShowM] = useState(false);
     const [selectedDate, setSelectedDate] = useState(null);
-    const [title, setTitle] = useState('');
     const [startDate, setStartDate] = useState('');
     const [endDate, setEndDate] = useState('');
 

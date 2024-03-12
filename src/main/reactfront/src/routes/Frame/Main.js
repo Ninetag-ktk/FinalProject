@@ -13,10 +13,19 @@ export default function Main() {
     const redirect = useNavigate();
     const [isSearchVisible, setIsSearchVisible] = useState(false);
     const [calendar, setCalendar] = useState(null);
-    const [calendarTitle, setCalendarTitle] = useState("");
+    const [calendarTitle, setCalendarTitle] = useState('');
     const [events, setEvents] = useState([]);
     const [categories, setCategories] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
+
+    useEffect(() => {
+       // 초기 렌더링 시점에 값을 설정하는 로직 추가
+        const today = new Date();
+        const options = { year: "numeric", month: "long" };
+        const formattedDate = today.toLocaleDateString("ko-KR", options);
+
+        setCalendarTitle(formattedDate);
+    }, []); // 빈 배열을 전달하여 컴포넌트가 처음 마운트될 때만 실행되도록 함
 
     useEffect(() => {
         /*만약 정상적인 로그인이 아니라면 == 세션에 데이터가 없다면*/
