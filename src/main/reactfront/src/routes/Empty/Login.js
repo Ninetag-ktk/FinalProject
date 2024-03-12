@@ -111,6 +111,7 @@ export default function Login() {
                             placeholder="password"
                             value={loginInfo.pw}
                             onChange={(e) => setLoginInfo({...loginInfo, pw: e.target.value})}
+                            onKeyDown={(e) => {if (e.key == 'Enter') {handleLogin()}}}
                         />
                         <input
                             type={"checkbox"} checked={autoLogin}
