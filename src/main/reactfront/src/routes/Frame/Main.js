@@ -1,5 +1,5 @@
 // Main.js
-import React, {useEffect, useState} from "react";
+import React, {useEffect, useRef, useState} from "react";
 import Header from "./Header";
 import LeftBar from "./LeftBar";
 import Search from "./Outlet/Search";
@@ -18,6 +18,19 @@ export default function Main() {
     const [events, setEvents] = useState([]);
     const [isSearchVisible, setIsSearchVisible] = useState(false);
     const [userName, setUserName] = useState('')
+    const noteRef = useRef();
+    const [noteInfo, setNoteInfo] = useState({
+        id:"",
+        categoryId:"",
+        type:"",
+        startTime:"",
+        endTime:"",
+        etag:"",
+        title:"",
+        contents:"",
+        status:"",
+        haveRepost:"",
+    })
 
     useEffect(() => {
         /*만약 정상적인 로그인이 아니라면 == 세션에 데이터가 없다면*/
@@ -43,7 +56,7 @@ export default function Main() {
         noteListDate(calendarTitle);
     }, [calendarTitle]);
 
-    const getUserName = async ()=>{
+    const getUserName = async () => {
         const userName = await axios.post("/user", window.sessionStorage.getItem("observe"));
         setUserName(userName.data);
     }
@@ -108,8 +121,8 @@ export default function Main() {
     function checkToken() {
         const token = JSON.parse(window.sessionStorage.getItem("token"))
         if (new Date().getTime() >= token.expire) {
-                // console.log("토큰삭제");
-                window.sessionStorage.removeItem("token");
+            // console.log("토큰삭제");
+            window.sessionStorage.removeItem("token");
         }
     }
 
@@ -200,7 +213,7 @@ export default function Main() {
             ).then((response) => {
                 // console.log(response.data);
                 // console.log(data, typeof data);
-                const fullEvents = response.data.map((note)=>{
+                const fullEvents = response.data.map((note) => {
                     if (note.type === "task" || note.type === "note") {
                         return {
                             id: note.id,
@@ -241,7 +254,8 @@ export default function Main() {
                         <LeftBar categories={categories} categoryLoading={categoryLoading} userName={userName}/>
                         {isSearchVisible ? <Search/> :
                             <Center setMainCalendar={setCalendar} setTitle={setTitle} events={events}
-                                    setEvents={setEvents} onSave={handleSaveEvent}/>}
+                                    setEvents={setEvents} onSave={handleSaveEvent}
+                                    noteRef={noteRef} setNoteInfo={setNoteInfo} categories={categories}/>}
                     </div>
                 </div>
             </MyContext.Provider>

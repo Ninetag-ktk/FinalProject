@@ -120,13 +120,88 @@ button, .btnFloat {
     text-align: center;
 }
 
-.modal-background{
+.modal-background {
     position: fixed;
-    top:0; left: 0; bottom: 0; right: 0;
-    background: rgba(255,255,255, 0.8);
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    width: 100vw;
+    height: 100vh;
+    overflow-y: auto;
+    background: rgba(255, 255, 255, 0.8);
     z-index: 2;
+    display: flex;
+    justify-content: center;
+
+    .svgIcon {
+        width: 20px;
+        height: 20px;
+    }
+
+    .noteContainer {
+        display: flex;
+        flex-direction: column;
+        width: 40vw;
+        align-items: center;
+
+        .typeContainer {
+            display: flex;
+            text-align: center;
+            width: fit-content;
+            height: fit-content;
+
+            .typeSelect {
+                display: flex;
+                height: 3rem;
+                margin: 0.2rem;
+
+                .typeSelect-input {
+                    display: none;
+                }
+
+                .typeSelect-label {
+                    display: flex;
+                    flex-direction: column;
+                    justify-content: center;
+                    align-items: center;
+                    background-color: #eee;
+                    width: 3rem;
+                    height: fit-content;
+                    text-align: center;
+                    border-radius: 0.6rem;
+                    padding: 0.5rem;
+                    font-size: 0.8rem;
+                    transition: background-color .1s linear, color .1s linear;
+                }
+
+                .typeSelect-label svg {
+                    fill: currentColor;
+                }
+
+                .typeSelect-label:hover {
+                    background-color: #ccc;
+                }
+
+                .typeSelect-label::before, .typeSelect-label::after {
+                    top: auto;
+                    left: 0;
+                    right: 0;
+                    bottom: 1rem;
+                    margin: auto;
+                }
+
+                .typeSelect-input:checked ~ .typeSelect-label {
+                    background: #FF6300;
+                    color: #fff;
+                }
+            }
+
+        }
+    }
 }
-.event-click{
+
+.event-click {
     display: flex;
     vertical-align: middle;
     margin: 20px;
@@ -137,7 +212,7 @@ button, .btnFloat {
 
 }
 
-.select-click{
+.select-click {
     display: flex;
     vertical-align: middle;
     margin: 20px;
@@ -148,13 +223,15 @@ button, .btnFloat {
 
 
 }
-.close-img{
 
-        position: absolute;
-        right: 10px;
-        top: 12px;
-        z-index: 2;
+.close-img {
+
+    position: absolute;
+    right: 10px;
+    top: 12px;
+    z-index: 2;
 }
+
 .close-img:hover {
     cursor: pointer;
     background-color: darkgray;
@@ -224,7 +301,7 @@ button:hover, .btnFloat:hover {
     position: absolute;
     transform: rotate(45deg);
     top: 0.36em;
-    left: 0.22em;
+    left: 0.15em;
     transition: width 50ms ease 50ms;
     transform-origin: 0% 0%;
 }
@@ -238,7 +315,7 @@ button:hover, .btnFloat:hover {
     position: absolute;
     transform: rotate(305deg);
     top: 0.62em;
-    left: 0.28em;
+    left: 0.26em;
     transition: width 50ms ease;
     transform-origin: 0% 0%;
 }
@@ -521,6 +598,7 @@ fieldset {
                         }
                     }
                 }
+
                 .iconButton:hover {
                     cursor: pointer;
                     /*background-color: var(--color-primary);*/
@@ -539,6 +617,11 @@ fieldset {
                     justify-content: space-between;
                     font-size: 1.1rem;
                     width: 100%;
+
+                    .checkIcon {
+                        display: flex;
+                        align-items: center;
+                    }
 
                     .categoryName {
                         display: flex;
@@ -562,7 +645,8 @@ fieldset {
                             text-decoration: none;
                             transition: 0.2s;
                         }
-                        .changeName::selection{
+
+                        .changeName::selection {
                             background-color: transparent;
                         }
                     }
@@ -671,6 +755,22 @@ fieldset {
 
     .fc .fc-daygrid-day.fc-day-today {
         background-color: var(--background-transparent);
+    }
+
+    .fc-direction-ltr .fc-daygrid-event.fc-event-end {
+        font-size: 0.8rem;
+        border-radius: 0.5em;
+
+        .fc-event-title {
+            text-overflow: ellipsis;
+        }
+    }
+
+    .fc-daygrid-block-event .fc-event-time, .fc-daygrid-block-event .fc-event-title {
+        padding: 0.1rem;
+        margin: 0 0.2rem;
+        /*margin-left: 0.2rem;*/
+        /*margin-right: 0.2rem;*/
     }
 
     /* 검색 페이지*/

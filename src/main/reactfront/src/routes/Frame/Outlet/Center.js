@@ -1,15 +1,15 @@
-import React, {useEffect, useRef, useState} from 'react';
+import React, {useEffect, useRef, useState, useCallback} from 'react';
 import FullCalendar from '@fullcalendar/react';
 import interactionPlugin from '@fullcalendar/interaction';
 import dayGridPlugin from '@fullcalendar/daygrid';
+import NoteDOM from './noteContainerGenerator';
 
-const Center = ({setMainCalendar, events, setEvents, onSave}) => {
+const Center = ({setMainCalendar, events, setEvents, onSave, noteRef, categories}) => {
     const calendarRef = useRef(null);
     const [calendar, setCalendar] = useState(null);
     const [title, setTitle] = useState('');
     const [showModal, setShowModal] = useState(false);
-    const [showM, setShowM] = useState(false);
-    const [selectedDate, setSelectedDate] = useState(null);
+    const [selectedDate, setSelectedDate] = useState('');
     const [startDate, setStartDate] = useState('');
     const [endDate, setEndDate] = useState('');
 
@@ -23,20 +23,20 @@ const Center = ({setMainCalendar, events, setEvents, onSave}) => {
         initializeCalendar();
     }, [setMainCalendar, setTitle]);
 
-    const handleEventClick = (info) => {
-        setSelectedDate(info.event.startStr);
-        setTitle(info.event.title);
-        setStartDate(info.event.start);
-        setEndDate(info.event.end);
-        setShowM(true);
-    };
-
-    const handleDateSelect = (selectInfo) => {
-        setSelectedDate(selectInfo.startStr);
-        setStartDate(`${selectInfo.startStr}T06:00`); // 선택한 날짜의 06:00으로 시작 시간 설정
-        setEndDate(`${selectInfo.startStr}T22:00`);
+    const handleEventClick = (e) => {
+        // setSelectEvent 해서 데이터를 저장
+        noteRef.current = e.event.extendedProps.data;
         setShowModal(true);
     };
+
+    const handleEventInsert = (e) => {
+        noteRef.current = null
+        setSelectedDate(`${e.startStr}T00:00`); // 선택한 날짜의 06:00으로 시작 시간 설정
+        setShowModal(true);
+    };
+    // 인터페이스 기능은
+    // selectEvent에 데이터가 있는지 확인해서
+    // 데이터가 있으면 정보창, 없으면 입력창
 
     const handleSave = () => {
         const newEvent = {
@@ -47,7 +47,6 @@ const Center = ({setMainCalendar, events, setEvents, onSave}) => {
         setEvents([...events, newEvent]);
         onSave(newEvent);
         setShowModal(false);
-
     };
 
     const closeModal = () => {
@@ -56,7 +55,7 @@ const Center = ({setMainCalendar, events, setEvents, onSave}) => {
     };
 
     const closeM = () => {
-        setShowM(false);
+        setShowModal(false);
     };
 
     const handleInputChange = (e) => {
@@ -80,68 +79,13 @@ const Center = ({setMainCalendar, events, setEvents, onSave}) => {
                 events={events}
                 eventDidMount={renderEvent}
                 selectable={true}
-                select={handleDateSelect}
+                select={handleEventInsert}
                 eventClick={handleEventClick}
             />
 
             {showModal && (
-                <div>
-                    {selectedDate ? (
-                        <div className={"modal-background"}>
-                        <div className="select-click">
-                            <p>날짜: {selectedDate}</p>
-                            <label>
-                                제목:
-                                <input type="text" value={title} onChange={handleInputChange}/>
-                            </label>
-                            <label>
-                                시작 일시:
-                                <input type="datetime-local" value={startDate}
-                                       onChange={(e) => setStartDate(e.target.value)}/>
-                            </label>
-                            <label>
-                                종료 일시:
-                                <input type="datetime-local" value={endDate}
-                                       onChange={(e) => setEndDate(e.target.value)}/>
-                            </label>
-                            <button onClick={handleSave}>저장</button>
-                            <img className={"close-img"} onClick={closeModal}
-                                 src={"https://static.xx.fbcdn.net/rsrc.php/v3/yO/r/zgulV2zGm8t.png"} alt width={"24"}
-                                 height={"24"}/>
-                        </div>
-                        </div>
-                    ) : null}
-                </div>
-            )}
-
-            {showM && (
-                <div>
-                    {selectedDate ? (
-                        <div className={"modal-background"}>
-                        <div className="event-click">
-                            <p>선택된 이벤트 제목: {title}</p>
-                            <p>시작 시간: {new Date(startDate).toLocaleString('ko-KR', {
-                                weekday: 'long',
-                                year: 'numeric',
-                                month: 'long',
-                                day: 'numeric',
-                                hour: 'numeric',
-                                minute: 'numeric',
-                                hour12: true
-                            })}</p>
-                            <p>종료 시간: {new Date(endDate).toLocaleString('ko-KR', {
-                                weekday: 'long',
-                                year: 'numeric',
-                                month: 'long',
-                                day: 'numeric',
-                                hour: 'numeric',
-                                minute: 'numeric',
-                                hour12: true
-                            })}</p>
-                            <img className={"close-img"} onClick={closeM} src={"https://static.xx.fbcdn.net/rsrc.php/v3/yO/r/zgulV2zGm8t.png"} alt width={"24"} height={"24"}/>
-                        </div>
-                        </div>
-                    ) : null}
+                <div className={"modal-background"}>
+                    <NoteDOM noteRef={noteRef.current} categories={categories}/>
                 </div>
             )}
         </div>

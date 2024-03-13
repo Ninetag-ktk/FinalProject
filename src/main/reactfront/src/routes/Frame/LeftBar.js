@@ -63,7 +63,7 @@ export default function LeftBar({categories, categoryLoading, userName}) {
                 categoryEl.value=category[1];
             }})
         } else {
-            console.log(category[0], categoryEl.value);
+            // console.log(category[0], categoryEl.value);
             categoryEl.setAttribute("readonly", "true");
             categoryEl.removeAttribute("style");
             categoryEl.style.setProperty("pointer-events", "none");
@@ -89,8 +89,8 @@ export default function LeftBar({categories, categoryLoading, userName}) {
                     <div className={"categoryList checkbox-wrapper"} key={category[0]}>
                         <input id={category[0]} value={category[0]} type={"checkbox"}
                                onChange={categoryHandler} defaultChecked={category[2]} />
-                        <label for={category[0]}>
-                            <div><span></span></div>
+                        <label htmlFor={category[0]}>
+                            <div className={"checkIcon"}><span></span></div>
                             <div className={"categoryName"}><input className={"changeName"} defaultValue={category[1]} readOnly={true} style={{pointerEvents: "none"}}/></div>
                         </label>
                         <span className={"iconButtonContainer"}>
