@@ -121,29 +121,106 @@ button, .btnFloat {
 }
 
 .modal-background {
+    overflow-y: scroll;
     position: fixed;
     top: 0;
     left: 0;
     bottom: 0;
     right: 0;
     width: 100vw;
-    height: 100vh;
-    overflow-y: auto;
+    min-height: 100vh;
+    padding-top: 8vh;
+    padding-bottom: 8vh;
     background: rgba(255, 255, 255, 0.8);
     z-index: 2;
     display: flex;
     justify-content: center;
+    align-items: baseline;
 
     .svgIcon {
         width: 20px;
         height: 20px;
     }
 
+    .noteContainerOuter {
+        overflow: visible;
+        height: 100%;
+        display: flex;
+        align-items: center;
+    }
+
     .noteContainer {
         display: flex;
         flex-direction: column;
-        width: 40vw;
+        width: 60vw;
+        min-height: 50vh;
+        height: fit-content;
+        padding: 1.5rem;
         align-items: center;
+        border-radius: 2vw;
+        box-shadow: 0 0 12px 0 rgba(0 0 0 / 0.4);
+        background-color: var(--background-primary);
+
+        .noteHeader {
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 1rem;
+
+            .noteTitle {
+                font-size: 1.6rem;
+                border-bottom: 2px double black;
+                max-width: 86%;
+                white-space: break-spaces;
+            }
+
+            input.noteTitle {
+                max-width: 100%;
+                width: 100%;
+                background-color: rgba(255 255 255 / 0.3);
+                outline: none;
+                border: none;
+                border-bottom: 2px double black;
+                border-top-left-radius: 10px;
+                border-top-right-radius: 10px;
+                box-shadow: 0 0 4px 0 rgba(0 0 0 / 0.1) inset;
+                padding: 0.5rem 0.1rem;
+            }
+
+            .noteIconContainer span {
+                display: block;
+                background-color: var(--background-accent);
+                width: 1.4rem;
+                height: 1.4rem;
+                border-radius: 5px;
+            }
+        }
+
+        .noteBody {
+            width: 100%;
+
+            * {
+                display: flex;
+            }
+        }
+
+        .noteIconContainer {
+            display: flex;
+            align-items: flex-start;
+            justify-content: center;
+            border-bottom: none;
+            padding-top: 0.15rem;
+        }
+
+        .noteBody-info-outer {
+            padding-bottom: 1rem;
+        }
+
+        .noteBody-info {
+            padding-left: 0.6rem;
+            border-left: 2px solid rgba(0 0 0 / 0.4);
+            width: 86%
+        }
 
         .typeContainer {
             display: flex;
@@ -197,6 +274,17 @@ button, .btnFloat {
                 }
             }
 
+        }
+
+        .noteIconContainer {
+            text-align: center;
+            align-items: center;
+            width: 2rem;
+        }
+
+        .noteContents {
+            white-space: pre-wrap;
+            display: flex;
         }
     }
 }

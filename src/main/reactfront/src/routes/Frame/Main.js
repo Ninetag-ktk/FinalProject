@@ -20,16 +20,16 @@ export default function Main() {
     const [userName, setUserName] = useState('')
     const noteRef = useRef();
     const [noteInfo, setNoteInfo] = useState({
-        id:"",
-        categoryId:"",
-        type:"",
-        startTime:"",
-        endTime:"",
-        etag:"",
-        title:"",
-        contents:"",
-        status:"",
-        haveRepost:"",
+        id: "",
+        categoryId: "",
+        type: "",
+        startTime: "",
+        endTime: "",
+        etag: "",
+        title: "",
+        contents: "",
+        status: "",
+        haveRepost: "",
     })
 
     useEffect(() => {
@@ -51,7 +51,7 @@ export default function Main() {
 
     /*날짜 데이터가 바뀌면 해당 내용을 서버로 보내 미리 데이터를 받아올 수 있게끔 실행*/
     useEffect(() => {
-        console.log(calendarTitle);
+        // console.log(calendarTitle);
         updateMonthly(calendarTitle);
         noteListDate(calendarTitle);
     }, [calendarTitle]);
@@ -61,11 +61,11 @@ export default function Main() {
         setUserName(userName.data);
     }
 
-    function updateMonthly(calendarTitle) {
+    async function updateMonthly(calendarTitle) {
         if (calendarTitle !== "") {
             let token = JSON.parse(window.sessionStorage.getItem("token"));
             if (!token) {
-                fetch("/google/reqAccessToken", {
+                await fetch("/google/reqAccessToken", {
                     method: "POST",
                     headers: {
                         "Content-Type": "application/json; charset=utf-8",
