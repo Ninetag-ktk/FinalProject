@@ -1,21 +1,68 @@
-import {useEffect, useRef, useState} from 'react';
+import {useEffect, useState} from 'react';
 
-export default function ({noteRef, categories}) {
+export default function ({noteRef, categories, closeModal}) {
     const [noteCategory, setNoteCategory] = useState('');
     const [noteType, setNoteType] = useState('memo');
-    const infoMode = useRef(true);
+    const [infoToggle, setInfoToggle] = useState(true);
+    const [dateTimeData, setDateTimeData] = useState({
+        start: new Date().toISOString(),
+        end: new Date().toISOString(),
+    })
+    const [note, setNote] = useState({
+        id: "",
+        categoryId: "",
+        type: "",
+        startTime: "",
+        endTime: "",
+        etag: "",
+        title: "",
+        contents: "",
+        status: "",
+        haveRepost: "",
+    })
+    console.log(noteRef)
+
+    useEffect(() => {
+        if (noteRef) {
+            setNoteCategory(noteRef.categoryId);
+            setNoteType(noteRef.type);
+            setDateTimeData({
+                start: noteRef.startTime,
+                end: noteRef.endTime,
+            })
+        }
+        console.log("체크", dateTimeData)
+    }, [])
+
     useEffect(() => {
         typeFilter()
     }, [noteCategory])
     useEffect(() => {
         interfaceByType();
     }, [noteType])
+    useEffect(() => {
+        if (noteRef) {
+            noteInfo();
+            console.log(infoToggle)
+        }
+    }, [infoToggle])
 
     const typeHandle = (e) => {
+        // console.log(e.target.value);
         setNoteType(e.target.value);
     };
 
+    const infoModeHandle = () => {
+        setInfoToggle(!infoToggle);
+    }
+
+    const handleResizeHeight = (e) => {
+        e.target.style.height = 'fit-contents'; //height 초기화
+        e.target.style.height = e.target.scrollHeight + 'px';
+    };
+
     function noteInfo() {
+
         function noteTypeIcon() {
             switch (noteRef.type) {
                 case "event": {
@@ -127,46 +174,135 @@ export default function ({noteRef, categories}) {
             return varCheck();
         }
 
-        function info() {
-            console.log(noteRef)
+        function infoMode() {
             return (<div className={"noteContainer"}>
                 <div className={"noteHeader"}>
-                    <span className={"noteIconContainer"}><span/></span>
-                    <span className={"noteTitle"}>{noteRef.title}</span>
+                    <span className={"noteMenuContainer"}>
+                        <span className={"iconButton"}>
+                            <svg className={"svgIcon"} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"
+                                 id="conversation">
+                                <path d="M457.387,132.5h-37.982V74.544c0-29.95-24.366-54.316-54.316-54.316H58.316C28.366,20.228,4,44.594,4,74.544V279.21
+	c0,29.95,24.366,54.316,54.316,54.316h30.127v61.122c0,5.03,3.137,9.526,7.858,11.263c1.353,0.497,2.753,0.738,4.139,0.738
+	c3.453,0,6.819-1.493,9.144-4.228l57.777-67.94v35.386c0,27.908,22.705,50.613,50.613,50.613h112.835l58.596,67.179
+	c2.325,2.665,5.645,4.113,9.046,4.113c1.411,0,2.836-0.25,4.209-0.765c4.685-1.756,7.788-6.233,7.788-11.236v-59.291h46.937
+	c27.908,0,50.613-22.705,50.613-50.613V183.113C508,155.205,485.295,132.5,457.387,132.5z M153.485,313.752l-41.042,48.262v-40.487
+	c0-6.628-5.373-12-12-12H58.316C41.6,309.526,28,295.927,28,279.21V74.544c0-16.717,13.6-30.316,30.316-30.316h306.772
+	c16.716,0,30.316,13.6,30.316,30.316V279.21c0,16.717-13.6,30.316-30.316,30.316H162.627
+	C159.107,309.526,155.766,311.071,153.485,313.752z M484,369.868c0,14.675-11.939,26.613-26.613,26.613H398.45
+	c-6.627,0-12,5.373-12,12v39.277l-41.14-47.165c-2.279-2.613-5.577-4.112-9.043-4.112H217.976
+	c-14.674,0-26.613-11.938-26.613-26.613v-36.342h173.726c29.95,0,54.316-24.366,54.316-54.316V156.5h37.982
+	c14.674,0,26.613,11.938,26.613,26.613V369.868z M230.756,176.877c0,10.523-8.531,19.054-19.053,19.054
+	c-10.523,0-19.053-8.531-19.053-19.054c0-10.522,8.53-19.053,19.053-19.053C222.225,157.824,230.756,166.354,230.756,176.877z
+	 M128.367,176.877c0,10.523-8.531,19.054-19.053,19.054c-10.523,0-19.053-8.531-19.053-19.054c0-10.522,8.53-19.053,19.053-19.053
+	C119.836,157.824,128.367,166.354,128.367,176.877z M333.144,176.877c0,10.523-8.531,19.054-19.054,19.054
+	c-10.523,0-19.053-8.531-19.053-19.054c0-10.522,8.53-19.053,19.053-19.053C324.613,157.824,333.144,166.354,333.144,176.877z"/></svg>
+                        </span>
+                        <span className={"iconButton"} onClick={infoModeHandle}>
+<svg className={"svgIcon"} xmlns="http://www.w3.org/2000/svg" viewBox="-2 -2 34 34" id="edit"><path
+    d="M26.857,31.89H3c-1.654,0-3-1.346-3-3V5.032c0-1.654,1.346-3,3-3h16.214c0.553,0,1,0.448,1,1s-0.447,1-1,1H3c-0.551,0-1,0.449-1,1V28.89c0,0.551,0.449,1,1,1h23.857c0.552,0,1-0.449,1-1V12.675c0-0.552,0.447-1,1-1s1,0.448,1,1V28.89C29.857,30.544,28.512,31.89,26.857,31.89z M24.482,23.496c-0.002,0-0.003,0-0.005,0L5.192,23.407c-0.553-0.002-0.998-0.452-0.996-1.004c0.002-0.551,0.45-0.996,1-0.996c0.001,0,0.003,0,0.004,0l19.286,0.089c0.552,0.002,0.998,0.452,0.995,1.004C25.479,23.051,25.032,23.496,24.482,23.496z M15.251,18.415c-0.471,0-0.781-0.2-0.957-0.366c-0.297-0.28-0.709-0.931-0.14-2.151l0.63-1.35c0.516-1.104,1.596-2.646,2.459-3.51L26,2.281c0.003-0.002,0.005-0.004,0.007-0.006c0.002-0.002,0.004-0.004,0.006-0.006l0.451-0.451c1.168-1.169,2.979-1.262,4.036-0.207c0,0,0,0,0,0c1.056,1.055,0.963,2.866-0.207,4.036c0,0-0.536,0.552-0.586,0.586l-8.635,8.635c-0.85,0.85-2.345,1.964-3.405,2.538l-1.218,0.657C15.969,18.322,15.572,18.415,15.251,18.415z M26.714,4.396l-8.056,8.057c-0.699,0.7-1.644,2.047-2.061,2.942L16.4,15.815l0.316-0.17c0.885-0.479,2.233-1.482,2.942-2.192l8.057-8.057L26.714,4.396z M28.163,3.016l0.932,0.932c0.2-0.356,0.177-0.737-0.009-0.923C28.881,2.82,28.499,2.83,28.163,3.016z"/></svg>
+                        </span>
+                    </span>
+                    <span className={"noteCancel iconButton"} onClick={closeModal}>
+                        <svg className={"svgIcon"} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" id="cancel"><path
+                            d="M13.41,12l4.3-4.29a1,1,0,1,0-1.42-1.42L12,10.59,7.71,6.29A1,1,0,0,0,6.29,7.71L10.59,12l-4.3,4.29a1,1,0,0,0,0,1.42,1,1,0,0,0,1.42,0L12,13.41l4.29,4.3a1,1,0,0,0,1.42,0,1,1,0,0,0,0-1.42Z"></path></svg>
+                    </span>
                 </div>
-                <div className={"noteBody"}>
-                    <div className={"noteDue noteBody-info-outer"}>
+                <div className={"noteOuter"}>
+                    <div className={"noteTitleOuter"}>
+                        <span className={"noteIconContainer"}><span/></span>
+                        <span className={"noteTitle"}>{noteRef.title}</span>
+                    </div>
+                    <div className={"noteBody"}>
+                        <div className={"noteDue noteBody-info-outer"}>
                                 <span className={"noteIconContainer"}>
                                     {noteTypeIcon()}
                                 </span>
-                        <span className={"noteBody-info"}>
+                            <span className={"noteBody-info"}>
                                     {noteDate()}
                                 </span>
-                    </div>
-                    {noteRef.contents !== null &&
-                        <div className={"noteContents noteBody-info-outer"}>
+                        </div>
+                        {noteRef.contents !== null &&
+                            <div className={"noteContents noteBody-info-outer"}>
                                     <span className={"noteIconContainer"}>
                                         <svg className={"svgIcon"} xmlns="http://www.w3.org/2000/svg"
-                                             viewBox="0 0 32 32" id="comment"><g
-                                            data-name="Layer 7"><path
+                                             viewBox="0 0 32 32" id="comment"><path
                                             d="M25,2H7A6,6,0,0,0,1,8V18a6,6,0,0,0,6,6h8.68l9.74,6.82a1,1,0,0,0,1.56-1l-.85-6A6,6,0,0,0,31,18V8A6,6,0,0,0,25,2Zm4,16a4,4,0,0,1-4,4,1,1,0,0,0-1,1.14l.67,4.72-8.11-5.68A1,1,0,0,0,16,22H7a4,4,0,0,1-4-4V8A4,4,0,0,1,7,4H25a4,4,0,0,1,4,4Z"></path><path
-                                            d="M25 7H12a1 1 0 0 0 0 2H25a1 1 0 0 0 0-2zM25 12H7a1 1 0 0 0 0 2H25a1 1 0 0 0 0-2zM25 17H7a1 1 0 0 0 0 2H25a1 1 0 0 0 0-2z"></path></g></svg>
+                                            d="M25 7H12a1 1 0 0 0 0 2H25a1 1 0 0 0 0-2zM25 12H7a1 1 0 0 0 0 2H25a1 1 0 0 0 0-2zM25 17H7a1 1 0 0 0 0 2H25a1 1 0 0 0 0-2z"/></svg>
                                     </span>
-                            <span className={"noteBody-info"}>
+                                <span className={"noteBody-info"}>
                                         {noteRef.contents}
                                     </span>
-                        </div>}
-                </div>
-                <div>
-                    <button>저장</button>
+                            </div>}
+                    </div>
+                    <div className={"noteFooter"}>
+                    </div>
                 </div>
             </div>)
         }
 
-        if (infoMode.current) {
-            return info()
+        function editMode() {
+            const options = categories.map((category) => {
+                return <option value={category[0]}
+                               selected={noteRef.categoryId.endsWith(category[0].replaceAll("_", ".")) ? true : false}>{category[1]}</option>
+            })
+
+            return (<div className={"noteContainer"}>
+                <div className={"noteHeader"}>
+                    <span className={"noteMenuContainer"}>
+                        <span className={"iconButton"}>
+                            <svg className={"svgIcon"} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"
+                                 id="conversation">
+                                <path d="M457.387,132.5h-37.982V74.544c0-29.95-24.366-54.316-54.316-54.316H58.316C28.366,20.228,4,44.594,4,74.544V279.21
+	c0,29.95,24.366,54.316,54.316,54.316h30.127v61.122c0,5.03,3.137,9.526,7.858,11.263c1.353,0.497,2.753,0.738,4.139,0.738
+	c3.453,0,6.819-1.493,9.144-4.228l57.777-67.94v35.386c0,27.908,22.705,50.613,50.613,50.613h112.835l58.596,67.179
+	c2.325,2.665,5.645,4.113,9.046,4.113c1.411,0,2.836-0.25,4.209-0.765c4.685-1.756,7.788-6.233,7.788-11.236v-59.291h46.937
+	c27.908,0,50.613-22.705,50.613-50.613V183.113C508,155.205,485.295,132.5,457.387,132.5z M153.485,313.752l-41.042,48.262v-40.487
+	c0-6.628-5.373-12-12-12H58.316C41.6,309.526,28,295.927,28,279.21V74.544c0-16.717,13.6-30.316,30.316-30.316h306.772
+	c16.716,0,30.316,13.6,30.316,30.316V279.21c0,16.717-13.6,30.316-30.316,30.316H162.627
+	C159.107,309.526,155.766,311.071,153.485,313.752z M484,369.868c0,14.675-11.939,26.613-26.613,26.613H398.45
+	c-6.627,0-12,5.373-12,12v39.277l-41.14-47.165c-2.279-2.613-5.577-4.112-9.043-4.112H217.976
+	c-14.674,0-26.613-11.938-26.613-26.613v-36.342h173.726c29.95,0,54.316-24.366,54.316-54.316V156.5h37.982
+	c14.674,0,26.613,11.938,26.613,26.613V369.868z M230.756,176.877c0,10.523-8.531,19.054-19.053,19.054
+	c-10.523,0-19.053-8.531-19.053-19.054c0-10.522,8.53-19.053,19.053-19.053C222.225,157.824,230.756,166.354,230.756,176.877z
+	 M128.367,176.877c0,10.523-8.531,19.054-19.053,19.054c-10.523,0-19.053-8.531-19.053-19.054c0-10.522,8.53-19.053,19.053-19.053
+	C119.836,157.824,128.367,166.354,128.367,176.877z M333.144,176.877c0,10.523-8.531,19.054-19.054,19.054
+	c-10.523,0-19.053-8.531-19.053-19.054c0-10.522,8.53-19.053,19.053-19.053C324.613,157.824,333.144,166.354,333.144,176.877z"/></svg>
+                        </span>
+                        <span className={"iconButton"} onClick={infoModeHandle}>
+<svg className={"svgIcon"} xmlns="http://www.w3.org/2000/svg" viewBox="-2 -2 34 34" id="edit"><path
+    d="M26.857,31.89H3c-1.654,0-3-1.346-3-3V5.032c0-1.654,1.346-3,3-3h16.214c0.553,0,1,0.448,1,1s-0.447,1-1,1H3c-0.551,0-1,0.449-1,1V28.89c0,0.551,0.449,1,1,1h23.857c0.552,0,1-0.449,1-1V12.675c0-0.552,0.447-1,1-1s1,0.448,1,1V28.89C29.857,30.544,28.512,31.89,26.857,31.89z M24.482,23.496c-0.002,0-0.003,0-0.005,0L5.192,23.407c-0.553-0.002-0.998-0.452-0.996-1.004c0.002-0.551,0.45-0.996,1-0.996c0.001,0,0.003,0,0.004,0l19.286,0.089c0.552,0.002,0.998,0.452,0.995,1.004C25.479,23.051,25.032,23.496,24.482,23.496z M15.251,18.415c-0.471,0-0.781-0.2-0.957-0.366c-0.297-0.28-0.709-0.931-0.14-2.151l0.63-1.35c0.516-1.104,1.596-2.646,2.459-3.51L26,2.281c0.003-0.002,0.005-0.004,0.007-0.006c0.002-0.002,0.004-0.004,0.006-0.006l0.451-0.451c1.168-1.169,2.979-1.262,4.036-0.207c0,0,0,0,0,0c1.056,1.055,0.963,2.866-0.207,4.036c0,0-0.536,0.552-0.586,0.586l-8.635,8.635c-0.85,0.85-2.345,1.964-3.405,2.538l-1.218,0.657C15.969,18.322,15.572,18.415,15.251,18.415z M26.714,4.396l-8.056,8.057c-0.699,0.7-1.644,2.047-2.061,2.942L16.4,15.815l0.316-0.17c0.885-0.479,2.233-1.482,2.942-2.192l8.057-8.057L26.714,4.396z M28.163,3.016l0.932,0.932c0.2-0.356,0.177-0.737-0.009-0.923C28.881,2.82,28.499,2.83,28.163,3.016z"/></svg>
+                        </span>
+                    </span>
+                    <span className={"noteCancel iconButton"} onClick={closeModal}>
+                        <svg className={"svgIcon"} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" id="cancel"><path
+                            d="M13.41,12l4.3-4.29a1,1,0,1,0-1.42-1.42L12,10.59,7.71,6.29A1,1,0,0,0,6.29,7.71L10.59,12l-4.3,4.29a1,1,0,0,0,0,1.42,1,1,0,0,0,1.42,0L12,13.41l4.29,4.3a1,1,0,0,0,1.42,0,1,1,0,0,0,0-1.42Z"></path></svg>
+                    </span>
+                </div>
+                <div className={"noteOuter"}>
+                    <div className={"noteTitleOuter"}>
+                        <select className={"categorySelect"}
+                                onChange={(e) => {
+                                    setNoteCategory(e.target.value);
+                                }}>{options}</select>
+                        <textarea className={"noteTitle"} defaultValue={noteRef ? noteRef.title : null}
+                                  onKeyDown={handleResizeHeight}
+                                  rows={1}/>
+                    </div>
+                    <div className={"typeContainer"}>
+                        {typeFilter()}
+                    </div>
+                    {interfaceByType()}
+                    <div className={"noteFooter"}>
+                        <button>저장</button>
+                    </div>
+                </div>
+            </div>)
+        }
+
+        if (infoToggle) {
+            return infoMode();
         } else {
-            return null;
+            return editMode();
         }
     }
 
@@ -177,26 +313,33 @@ export default function ({noteRef, categories}) {
 
         return (<div className={"noteContainer"}>
             <div className={"noteHeader"}>
-                <input type={"text"} className={"noteTitle"} placeholder={"제목 및 시간 추가"}/>
+                <span className={"noteCancel iconButton"} onClick={closeModal}>
+                    <svg className={"svgIcon"} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" id="cancel"><path
+                        d="M13.41,12l4.3-4.29a1,1,0,1,0-1.42-1.42L12,10.59,7.71,6.29A1,1,0,0,0,6.29,7.71L10.59,12l-4.3,4.29a1,1,0,0,0,0,1.42,1,1,0,0,0,1.42,0L12,13.41l4.29,4.3a1,1,0,0,0,1.42,0,1,1,0,0,0,0-1.42Z"></path></svg>
+                </span>
             </div>
-            <div className={"selectContainer"}>
-                <select className={"categorySelect"} onChange={(e) => {
-                    setNoteCategory(e.target.value)
-                }}>{options}</select>
-                {typeFilter()}
-            </div>
-            <div className={"eventBody"}>
+            <div className={"noteOuter"}>
+                <div className={"noteTitleOuter"}>
+                    <select className={"categorySelect"} onChange={(e) => {
+                        setNoteCategory(e.target.value);
+                    }}>{options}</select>
+                    <textarea className={"noteTitle"} placeholder={"제목 및 시간 추가"} onKeyDown={handleResizeHeight}
+                              rows={1}/>
+                </div>
+                <div className={"typeContainer"}>
+                    {typeFilter()}
+                </div>
                 {interfaceByType()}
-            </div>
-            <div>
-                <button>저장</button>
+                <div className={"noteFooter"}>
+                    <button>저장</button>
+                </div>
             </div>
         </div>)
     }
 
     function typeFilter() {
         function eventRadio(bool) {
-            return (<div className={"typeContainer"}>
+            return (
                 <div className={"typeSelect"}>
                     <input type={"radio"} name={"noteType"} value={"event"} id={"eventType"}
                            defaultChecked={bool} className={"typeSelect-input"} onChange={typeHandle}/>
@@ -213,11 +356,11 @@ export default function ({noteRef, categories}) {
                         <span>event</span>
                     </label>
                 </div>
-            </div>)
+            )
         }
 
         function taskRadio(bool) {
-            return (<div className={"typeContainer"}>
+            return (
                 <div className={"typeSelect"}>
                     <input type={"radio"} name={"noteType"} value={"task"} id={"taskType"}
                            defaultChecked={bool} className={"typeSelect-input"} onChange={typeHandle}/>
@@ -229,11 +372,11 @@ export default function ({noteRef, categories}) {
                         <span>task</span>
                     </label>
                 </div>
-            </div>)
+            )
         }
 
         function memoRadio(bool) {
-            return (<div className={"typeContainer"}>
+            return (
                 <div className={"typeSelect"}>
                     <input type={"radio"} name={"noteType"} value={"memo"} id={"memoType"}
                            defaultChecked={bool} className={"typeSelect-input"} onChange={typeHandle}/>
@@ -249,7 +392,7 @@ export default function ({noteRef, categories}) {
                         <span>memo</span>
                     </label>
                 </div>
-            </div>)
+            )
         }
 
         if (noteCategory.startsWith("google")) {
@@ -259,30 +402,27 @@ export default function ({noteRef, categories}) {
             switch (noteCategoryType[1]) {
                 case "calendar": {
                     return eventRadio(true);
-                    break;
                 }
                 case "tasks": {
                     return taskRadio(true);
-                    break;
                 }
                 default: {
                     return null;
-                    break;
                 }
             }
         } else {
-            return (<div className={"typeContainer"}>
+            return <div className={"typeContainer"}>
                 {eventRadio(false)}
                 {taskRadio(false)}
                 {memoRadio(true)}
-            </div>)
+            </div>
         }
     }
 
     function interfaceByType() {
         function eventInterface() {
-            return (<span>
-                    <div>
+            return (<div className={"noteBody"}>
+                    <div className={"noteBody-info-outer"}>
                         <span className={"noteIconContainer"}>
                         <svg className={"svgIcon"} xmlns="http://www.w3.org/2000/svg" viewBox="60 60 400 400"
                              id="calendar">
@@ -290,24 +430,34 @@ export default function ({noteRef, categories}) {
                                 d="M368.005 272h-96v96h96v-96zm-32-208v32h-160V64h-48v32h-24.01c-22.002 0-40 17.998-40 40v272c0 22.002 17.998 40 40 40h304.01c22.002 0 40-17.998 40-40V136c0-22.002-17.998-40-40-40h-24V64h-48zm72 344h-304.01V196h304.01v212z"/>
                         </svg>
                         </span>
-                        <input type={"datetime-local"}/> - <input type={"datetime-local"}/>
+                        <span className={"noteBody-info"}>
+                            <input type={"datetime-local"}
+                                   defaultValue={noteRef ? dateTimeData.start : new Date(Date.now() - (new Date().getTimezoneOffset() * 60000)).toISOString().slice(0, -5)}
+                            /> - <input
+                            type={"datetime-local"}
+                            defaultValue={noteRef ? dateTimeData.end : new Date(Date.now() - (new Date().getTimezoneOffset() * 60000)).toISOString().slice(0, -5)}
+                        />
+                        </span>
                     </div>
-                    <div>
+                    <div className={"noteBody-info-outer noteContents"}>
                         <span className={"noteIconContainer"}>
                                         <svg className={"svgIcon"} xmlns="http://www.w3.org/2000/svg"
-                                             viewBox="0 0 32 32" id="comment"><g
-                                            data-name="Layer 7"><path
+                                             viewBox="0 0 32 32" id="comment"><path
                                             d="M25,2H7A6,6,0,0,0,1,8V18a6,6,0,0,0,6,6h8.68l9.74,6.82a1,1,0,0,0,1.56-1l-.85-6A6,6,0,0,0,31,18V8A6,6,0,0,0,25,2Zm4,16a4,4,0,0,1-4,4,1,1,0,0,0-1,1.14l.67,4.72-8.11-5.68A1,1,0,0,0,16,22H7a4,4,0,0,1-4-4V8A4,4,0,0,1,7,4H25a4,4,0,0,1,4,4Z"></path><path
-                                            d="M25 7H12a1 1 0 0 0 0 2H25a1 1 0 0 0 0-2zM25 12H7a1 1 0 0 0 0 2H25a1 1 0 0 0 0-2zM25 17H7a1 1 0 0 0 0 2H25a1 1 0 0 0 0-2z"></path></g></svg>
+                                            d="M25 7H12a1 1 0 0 0 0 2H25a1 1 0 0 0 0-2zM25 12H7a1 1 0 0 0 0 2H25a1 1 0 0 0 0-2zM25 17H7a1 1 0 0 0 0 2H25a1 1 0 0 0 0-2z"/></svg>
                                     </span>
-                        <input type={"text"}/>
+                        <span className={"noteBody-info"}>
+                            <textarea onChange={handleResizeHeight} rows={1}
+                                      defaultValue={noteRef ? noteRef.contents : ''}/>
+                            </span>
                     </div>
-                </span>)
+                </div>
+            )
         }
 
         function taskInterface() {
-            return (<span>
-                    <div>
+            return (<div className={"noteBody"}>
+                <div className={"noteBody-info-outer"}>
                         <span className={"noteIconContainer"}>
                         <svg className={"svgIcon"} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"
                              id="time">
@@ -315,34 +465,42 @@ export default function ({noteRef, categories}) {
                                 d="M12.004.998C5.94.998.996 5.935.996 11.998s4.945 11.006 11.008 11.006c6.063 0 10.998-4.943 10.998-11.006 0-6.063-4.935-11-10.998-11zm0 2a8.983 8.983 0 0 1 8.998 9 8.988 8.988 0 0 1-8.998 9.006 8.997 8.997 0 0 1-9.008-9.006c0-4.982 4.026-9 9.008-9zm-.016 1.986a1 1 0 0 0-.99 1.02v5.994a1 1 0 0 0 .297.707l4 4.002a1 1 0 1 0 1.41-1.418L13 11.584v-5.58a1 1 0 0 0-1.012-1.02z"/>
                         </svg>
                         </span>
-                        <input type={"datetime-local"}/>
-                    </div>
-                    <div>
+                    <span className={"noteBody-info"}>
+                        <input type={"datetime-local"}
+                               defaultValue={noteRef ? dateTimeData.start : new Date(Date.now() - (new Date().getTimezoneOffset() * 60000)).toISOString().slice(0, -5)}/>
+                        </span>
+                </div>
+                <div className={"noteBody-info-outer noteContents"}>
                         <span className={"noteIconContainer"}>
                                         <svg className={"svgIcon"} xmlns="http://www.w3.org/2000/svg"
-                                             viewBox="0 0 32 32" id="comment"><g
-                                            data-name="Layer 7"><path
+                                             viewBox="0 0 32 32" id="comment"><path
                                             d="M25,2H7A6,6,0,0,0,1,8V18a6,6,0,0,0,6,6h8.68l9.74,6.82a1,1,0,0,0,1.56-1l-.85-6A6,6,0,0,0,31,18V8A6,6,0,0,0,25,2Zm4,16a4,4,0,0,1-4,4,1,1,0,0,0-1,1.14l.67,4.72-8.11-5.68A1,1,0,0,0,16,22H7a4,4,0,0,1-4-4V8A4,4,0,0,1,7,4H25a4,4,0,0,1,4,4Z"></path><path
-                                            d="M25 7H12a1 1 0 0 0 0 2H25a1 1 0 0 0 0-2zM25 12H7a1 1 0 0 0 0 2H25a1 1 0 0 0 0-2zM25 17H7a1 1 0 0 0 0 2H25a1 1 0 0 0 0-2z"></path></g></svg>
+                                            d="M25 7H12a1 1 0 0 0 0 2H25a1 1 0 0 0 0-2zM25 12H7a1 1 0 0 0 0 2H25a1 1 0 0 0 0-2zM25 17H7a1 1 0 0 0 0 2H25a1 1 0 0 0 0-2z"/></svg>
                                     </span>
-                        <input type={"text"}/>
-                    </div>
-                </span>)
+                    <span className={"noteBody-info"}>
+                        <textarea onChange={handleResizeHeight} rows={1}
+                                  defaultValue={noteRef ? noteRef.contents : ''}/>
+                        </span>
+                </div>
+            </div>)
         }
 
         function memoInterface() {
-            return (<span>
-                    <div>
+            return (<div className={"noteBody"}>
+                    <div className={"noteBody-info-outer noteContents"}>
                         <span className={"noteIconContainer"}>
                                         <svg className={"svgIcon"} xmlns="http://www.w3.org/2000/svg"
-                                             viewBox="0 0 32 32" id="comment"><g
-                                            data-name="Layer 7"><path
+                                             viewBox="0 0 32 32" id="comment"><path
                                             d="M25,2H7A6,6,0,0,0,1,8V18a6,6,0,0,0,6,6h8.68l9.74,6.82a1,1,0,0,0,1.56-1l-.85-6A6,6,0,0,0,31,18V8A6,6,0,0,0,25,2Zm4,16a4,4,0,0,1-4,4,1,1,0,0,0-1,1.14l.67,4.72-8.11-5.68A1,1,0,0,0,16,22H7a4,4,0,0,1-4-4V8A4,4,0,0,1,7,4H25a4,4,0,0,1,4,4Z"></path><path
-                                            d="M25 7H12a1 1 0 0 0 0 2H25a1 1 0 0 0 0-2zM25 12H7a1 1 0 0 0 0 2H25a1 1 0 0 0 0-2zM25 17H7a1 1 0 0 0 0 2H25a1 1 0 0 0 0-2z"></path></g></svg>
+                                            d="M25 7H12a1 1 0 0 0 0 2H25a1 1 0 0 0 0-2zM25 12H7a1 1 0 0 0 0 2H25a1 1 0 0 0 0-2zM25 17H7a1 1 0 0 0 0 2H25a1 1 0 0 0 0-2z"/></svg>
                                     </span>
-                        <input type={"text"}/>
+                        <span className={"noteBody-info"}>
+                            <textarea onChange={handleResizeHeight} rows={1}
+                                      defaultValue={noteRef ? noteRef.contents : ''}/>
+                        </span>
                     </div>
-                </span>)
+                </div>
+            )
         }
 
         switch (noteType) {
@@ -364,6 +522,6 @@ export default function ({noteRef, categories}) {
     }
 
     return (<span className={"noteContainerOuter"}>
-            {noteRef !== null ? noteInfo() : noteInsert()}
+            {noteRef ? noteInfo() : noteInsert()}
         </span>)
 }

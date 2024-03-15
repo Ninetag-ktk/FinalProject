@@ -19,18 +19,6 @@ export default function Main() {
     const [isSearchVisible, setIsSearchVisible] = useState(false);
     const [userName, setUserName] = useState('')
     const noteRef = useRef();
-    const [noteInfo, setNoteInfo] = useState({
-        id: "",
-        categoryId: "",
-        type: "",
-        startTime: "",
-        endTime: "",
-        etag: "",
-        title: "",
-        contents: "",
-        status: "",
-        haveRepost: "",
-    })
 
     useEffect(() => {
         /*만약 정상적인 로그인이 아니라면 == 세션에 데이터가 없다면*/
@@ -61,52 +49,43 @@ export default function Main() {
         setUserName(userName.data);
     }
 
+    async function getToken() {
+        let returnResult;
+        await fetch("/google/reqAccessToken", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json; charset=utf-8",
+                "Accept": "application/json; charset=utf-8",
+            },
+            body: JSON.stringify({
+                observe: window.sessionStorage.getItem("observe"),
+            }),
+        }).then(response => response.json())
+            .then((result) => {
+                window.sessionStorage.setItem("token", JSON.stringify({
+                    access: result.access,
+                    expire: new Date().getTime() + (1000 * 60 * 10),
+                }))
+                returnResult = result
+            })
+        return returnResult;
+    }
+
     async function updateMonthly(calendarTitle) {
         if (calendarTitle !== "") {
-            let token = JSON.parse(window.sessionStorage.getItem("token"));
-            if (!token) {
-                await fetch("/google/reqAccessToken", {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json; charset=utf-8",
-                        "Accept": "application/json; charset=utf-8",
-                    },
-                    body: JSON.stringify({
-                        observe: window.sessionStorage.getItem("observe"),
-                    }),
-                }).then(response => response.json())
-                    .then((result) => {
-                        window.sessionStorage.setItem("token", JSON.stringify({
-                            access: result.access,
-                            expire: new Date().getTime() + (1000 * 60 * 10),
-                        }));
-                        fetch("/google/updateMonthly", {
-                            method: "POST",
-                            headers: {
-                                "Content-Type": "application/json; charset=utf-8",
-                                "Accept": "application/json; charset=utf-8",
-                            },
-                            body: JSON.stringify({
-                                observe: window.sessionStorage.getItem("observe"),
-                                token: result.access,
-                                date: calendarTitle,
-                            }),
-                        });
-                    })
-            } else {
-                axios("/google/updateMonthly", {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json; charset=utf-8",
-                        "Accept": "application/json; charset=utf-8",
-                    },
-                    data: JSON.stringify({
-                        observe: window.sessionStorage.getItem("observe"),
-                        token: token.access,
-                        date: calendarTitle,
-                    }),
-                });
-            }
+            let token = await JSON.parse(window.sessionStorage.getItem("token")) ? JSON.parse(window.sessionStorage.getItem("token")) : await getToken();
+            await axios("/google/updateMonthly", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json; charset=utf-8",
+                    "Accept": "application/json; charset=utf-8",
+                },
+                data: JSON.stringify({
+                    observe: window.sessionStorage.getItem("observe"),
+                    token: token.access,
+                    date: calendarTitle,
+                }),
+            });
         }
     }
 
@@ -123,6 +102,7 @@ export default function Main() {
         if (new Date().getTime() >= token.expire) {
             // console.log("토큰삭제");
             window.sessionStorage.removeItem("token");
+            getToken();
         }
     }
 
@@ -255,7 +235,7 @@ export default function Main() {
                         {isSearchVisible ? <Search/> :
                             <Center setMainCalendar={setCalendar} setTitle={setTitle} events={events}
                                     setEvents={setEvents} onSave={handleSaveEvent}
-                                    noteRef={noteRef} setNoteInfo={setNoteInfo} categories={categories}/>}
+                                    noteRef={noteRef} categories={categories}/>}
                     </div>
                 </div>
             </MyContext.Provider>

@@ -77,6 +77,7 @@ body {
     --interface-color-sub: rgb(240, 243, 255);
     --interface-color-accent: rgb(61, 245, 196);
     --interface-color-border: rgb(33, 25, 81);
+    --color-accent: rgb(255, 99, 0);
 }
 
 body {
@@ -142,6 +143,26 @@ button, .btnFloat {
         height: 20px;
     }
 
+    .iconButton {
+        border-radius: 4px;
+        padding: 1px;
+        box-shadow: 0 0 0 0 black;
+        transition: box-shadow 0.2s;
+        width: fit-content;
+        height: fit-content;
+        transition: 0.2s;
+
+        svg:hover {
+            pointer-events: none;
+        }
+    }
+
+    .iconButton:hover {
+        cursor: pointer;
+        background-color: white;
+        box-shadow: 0 0 0 white inset;
+    }
+
     .noteContainerOuter {
         overflow: visible;
         height: 100%;
@@ -152,39 +173,112 @@ button, .btnFloat {
     .noteContainer {
         display: flex;
         flex-direction: column;
-        width: 60vw;
+        min-width: 30vw;
+        max-width: 60vw;
+        width: fit-content;
         min-height: 50vh;
         height: fit-content;
-        padding: 1.5rem;
         align-items: center;
-        border-radius: 2vw;
+        border-radius: 0.5vw;
         box-shadow: 0 0 12px 0 rgba(0 0 0 / 0.4);
         background-color: var(--background-primary);
+        overflow: hidden;
+        transition: 0.2s;
 
         .noteHeader {
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            height: 2rem;
+            width: 100%;
+            padding: 0 0.3rem;
+
+            .noteCancel {
+                display: flex;
+                align-items: center;
+                margin-left: 4px;
+            }
+
+            .noteMenuContainer {
+                display: flex;
+                flex-direction: row;
+                padding-right: 5px;
+                border-right: 1px solid black;
+
+                span {
+                    display: flex;
+                    align-items: center;
+                    margin-right: 4px;
+                }
+            }
+        }
+
+        .noteFooter {
+            display: flex;
+            justify-content: flex-end;
+
+            button {
+                width: 20%;
+                height: 100%;
+                background-color: var(--background-primary-base);
+                box-shadow: 0 0 2px 0;
+                transition: 0.2s;
+            }
+        }
+    }
+
+    .noteOuter {
+        height: 100%;
+        width: 100%;
+        padding: 1.5rem;
+        background-color: var(--background-primary-base);
+        box-shadow: 0 0 4px 0 rgba(0 0 0 / 0.3);
+        display: flex;
+        flex-grow: 1;
+        flex-direction: column;
+
+        .noteTitleOuter {
             width: 100%;
             display: flex;
             justify-content: space-between;
             margin-bottom: 1rem;
 
+            .categorySelect {
+                display: inline-block;
+                font-size: 1.1rem;
+                font-weight: 600;
+                outline: none;
+                border: none;
+                border-bottom: 2px double black;
+                max-width: 20%;
+                text-overflow: ellipsis;
+            }
+
             .noteTitle {
-                font-size: 1.6rem;
+                font-size: 1.4rem;
                 border-bottom: 2px double black;
                 max-width: 86%;
                 white-space: break-spaces;
             }
 
-            input.noteTitle {
+            textarea.noteTitle {
                 max-width: 100%;
                 width: 100%;
-                background-color: rgba(255 255 255 / 0.3);
+                height: 1.5em;
                 outline: none;
                 border: none;
                 border-bottom: 2px double black;
                 border-top-left-radius: 10px;
                 border-top-right-radius: 10px;
-                box-shadow: 0 0 4px 0 rgba(0 0 0 / 0.1) inset;
-                padding: 0.5rem 0.1rem;
+                padding: 0 0.1rem;
+                padding-bottom: 0.4em;
+                vertical-align: middle;
+                resize: none;
+            }
+
+            input.noteTitle::placeholder {
+                font-style: italic;
+                opacity: 0.6;
             }
 
             .noteIconContainer span {
@@ -198,9 +292,17 @@ button, .btnFloat {
 
         .noteBody {
             width: 100%;
+            height: 100%;
+            flex-grow: 1;
 
             * {
                 display: flex;
+            }
+
+            > span {
+                width: 100%;
+                height: 100%;
+                flex-grow: 1;
             }
         }
 
@@ -213,24 +315,73 @@ button, .btnFloat {
         }
 
         .noteBody-info-outer {
+            display: flex;
+            align-items: center;
             padding-bottom: 1rem;
         }
 
         .noteBody-info {
+            display: flex;
+            justify-content: space-between;
+            min-height: 1.5rem;
+            height: fit-content;
             padding-left: 0.6rem;
             border-left: 2px solid rgba(0 0 0 / 0.4);
-            width: 86%
+            width: 100%;
+
+            input {
+                border: none;
+                border-radius: 5px;
+            }
+        }
+
+        .noteIconContainer {
+            text-align: center;
+            align-items: center;
+            width: 2rem;
+        }
+
+        .noteContents {
+            white-space: pre-wrap;
+            display: flex;
+            height: 100%;
+        }
+
+        .noteContents .noteBody-info {
+            width: 100%;
+            height: fit-content;
+
+            textarea {
+                width: 100%;
+                overflow: auto;
+                height: 1.8em;
+                resize: none;
+                padding: 0.2em;
+                border: none;
+                border-bottom: 1px solid rgba(0 0 0 / 0.2);
+                outline: none;
+            }
+        }
+
+        .selectContainer {
+            display: flex;
+            justify-content: space-evenly;
+            margin-bottom: 1.5rem;
         }
 
         .typeContainer {
             display: flex;
             text-align: center;
-            width: fit-content;
-            height: fit-content;
+            justify-content: space-evenly;
+            align-items: center;
+            width: 100%;
 
             .typeSelect {
                 display: flex;
+                justify-content: center;
+                align-items: center;
                 height: 3rem;
+                width: 30%;
                 margin: 0.2rem;
 
                 .typeSelect-input {
@@ -243,7 +394,7 @@ button, .btnFloat {
                     justify-content: center;
                     align-items: center;
                     background-color: #eee;
-                    width: 3rem;
+                    width: 100%;
                     height: fit-content;
                     text-align: center;
                     border-radius: 0.6rem;
@@ -269,61 +420,16 @@ button, .btnFloat {
                 }
 
                 .typeSelect-input:checked ~ .typeSelect-label {
-                    background: #FF6300;
+                    background-color: var(--color-accent);
                     color: #fff;
                 }
             }
-
         }
 
-        .noteIconContainer {
-            text-align: center;
-            align-items: center;
-            width: 2rem;
-        }
-
-        .noteContents {
-            white-space: pre-wrap;
-            display: flex;
+        .typeContainer:not(:has(.typeContainer)) {
+            margin-bottom: 1rem;
         }
     }
-}
-
-.event-click {
-    display: flex;
-    vertical-align: middle;
-    margin: 20px;
-    flex-direction: column;
-    background: transparent;
-    border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, .1), 0 8px 16px rgba(0, 0, 0, .1);
-
-}
-
-.select-click {
-    display: flex;
-    vertical-align: middle;
-    margin: 20px;
-    flex-direction: column;
-    background: white;
-    border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, .1), 0 8px 16px rgba(0, 0, 0, .1);
-
-
-}
-
-.close-img {
-
-    position: absolute;
-    right: 10px;
-    top: 12px;
-    z-index: 2;
-}
-
-.close-img:hover {
-    cursor: pointer;
-    background-color: darkgray;
-    border-radius: 10px;
 }
 
 button:hover, .btnFloat:hover {
@@ -332,17 +438,8 @@ button:hover, .btnFloat:hover {
     transform: scale(1.05, 1.05);
     -ms-transform: scale(1.05, 1.05);
     -webkit-transform: scale(1.05, 1.05);
-    box-shadow: 0 5px 5px -2px rgba(0, 0, 0, 0.25);
+    box-shadow: 0px 5px 5px -2px rgba(0, 0, 0, 0.25);
 }
-
-/*button:hover, .btnFloat:hover {*/
-/*    border: 0.5px solid hsla(var(--color-h), var(--color-s), calc(var(--color-l) - 20%), 0.3);*/
-/*    border-radius: 5px;*/
-/*    transform: scale(1.05, 1.05);*/
-/*    -ms-transform: scale(1.05, 1.05);*/
-/*    -webkit-transform: scale(1.05, 1.05);*/
-/*    box-shadow: 0px 5px 5px -2px rgba(0, 0, 0, 0.25);*/
-/*}*/
 
 /*체크박스 디자인*/
 .checkbox-wrapper .checkbox {
@@ -595,8 +692,8 @@ fieldset {
     }
 
     [type="checkbox"]:checked {
-        background-color: tomato;
-        border-color: tomato;
+        background-color: var(--color-accent);
+        border-color: var(--color-accent);
     }
 
     [type="checkbox"]:checked::before {
@@ -621,7 +718,7 @@ fieldset {
 
     [type="checkbox"]:focus-visible {
         outline-offset: max(2px, 0.1em);
-        outline: max(2px, 0.1em) solid tomato;
+        outline: max(2px, 0.1em) solid var(--color-accent);
     }
 
     [type="checkbox"]:enabled:hover {

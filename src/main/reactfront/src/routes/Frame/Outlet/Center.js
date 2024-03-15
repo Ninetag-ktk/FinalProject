@@ -1,4 +1,4 @@
-import React, {useEffect, useRef, useState, useCallback} from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import FullCalendar from '@fullcalendar/react';
 import interactionPlugin from '@fullcalendar/interaction';
 import dayGridPlugin from '@fullcalendar/daygrid';
@@ -34,32 +34,9 @@ const Center = ({setMainCalendar, events, setEvents, onSave, noteRef, categories
         setSelectedDate(`${e.startStr}T00:00`); // 선택한 날짜의 06:00으로 시작 시간 설정
         setShowModal(true);
     };
-    // 인터페이스 기능은
-    // selectEvent에 데이터가 있는지 확인해서
-    // 데이터가 있으면 정보창, 없으면 입력창
-
-    const handleSave = () => {
-        const newEvent = {
-            title: title,
-            start: startDate,
-            end: endDate
-        };
-        setEvents([...events, newEvent]);
-        onSave(newEvent);
-        setShowModal(false);
-    };
 
     const closeModal = () => {
         setShowModal(false);
-
-    };
-
-    const closeM = () => {
-        setShowModal(false);
-    };
-
-    const handleInputChange = (e) => {
-        setTitle(e.target.value);
     };
 
     const renderEvent = (event) => {
@@ -85,7 +62,7 @@ const Center = ({setMainCalendar, events, setEvents, onSave, noteRef, categories
 
             {showModal && (
                 <div className={"modal-background"}>
-                    <NoteDOM noteRef={noteRef.current} categories={categories}/>
+                    <NoteDOM noteRef={noteRef.current} categories={categories} closeModal={closeModal}/>
                 </div>
             )}
         </div>
