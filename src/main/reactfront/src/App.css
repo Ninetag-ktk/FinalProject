@@ -173,7 +173,7 @@ button, .btnFloat {
     .noteContainer {
         display: flex;
         flex-direction: column;
-        min-width: 30vw;
+        min-width: 50vw;
         max-width: 60vw;
         width: fit-content;
         min-height: 50vh;
@@ -322,12 +322,17 @@ button, .btnFloat {
 
         .noteBody-info {
             display: flex;
-            justify-content: space-between;
+            flex-direction: column;
+            justify-content: flex-start;
             min-height: 1.5rem;
             height: fit-content;
             padding-left: 0.6rem;
             border-left: 2px solid rgba(0 0 0 / 0.4);
             width: 100%;
+
+            .allDayEventToggle {
+                font-size: 0.8em;
+            }
 
             input {
                 border: none;
@@ -942,20 +947,39 @@ fieldset {
         background-color: var(--background-transparent);
     }
 
-    .fc-direction-ltr .fc-daygrid-event.fc-event-end {
+    .fc-daygrid-event-harness {
+        display: flex;
+        justify-content: center;
+        padding: 0 0.05rem;
+    }
+
+    .fc-direction-ltr .fc-daygrid-event {
         font-size: 0.8rem;
         border-radius: 0.5em;
+        white-space: nowrap;
+        width: 100%;
+        margin: 0.08rem 0.15rem;
 
         .fc-event-title {
             text-overflow: ellipsis;
         }
     }
 
+    .fc-h-event .fc-event-main-frame {
+        padding: 0 0.1rem;
+    }
+
     .fc-daygrid-block-event .fc-event-time, .fc-daygrid-block-event .fc-event-title {
-        padding: 0.1rem;
+        padding: 0 0.1rem;
         margin: 0 0.2rem;
         /*margin-left: 0.2rem;*/
         /*margin-right: 0.2rem;*/
+    }
+
+    .fc-daygrid-block-event .fc-event-time {
+        font-size: 0.7rem;
+        display: flex;
+        align-items: center;
     }
 
     /* 검색 페이지*/

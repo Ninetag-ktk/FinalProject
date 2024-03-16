@@ -10,8 +10,11 @@ import java.util.List;
 @Repository
 public interface NotesMapper extends MongoRepository<NotesEntity, String> {
 
-    @Query(value = "{ 'categoryId': { '$regex': '^?0.*' } }", delete = true)
+    @Query(value = "{ 'category_id': { '$regex': '^?0.*' } }", delete = true)
     void deleteAllByUserId(String UserId);
+
+    @Query(value = "{ _id : ?0, category_id: {'$regex': '^?1.*'}}", delete = true)
+    void deleteByIdWithUserId(String id, String UserId);
 
     @Query(value = "{ 'category_id' : { '$regex': '^?0' }}")
     List<NotesEntity> findByUserId(String userId);
@@ -19,4 +22,5 @@ public interface NotesMapper extends MongoRepository<NotesEntity, String> {
     @Query(value = "{ 'category_id' :  { '$regex': '^?0' }, " +
             "$and : [{$or: [{'start_time': { $gte: ?1, $lte: ?2}},{ 'end_time': { $gte: ?1, $lte: ?2 }}]}]}")
     List<NotesEntity> getNotes(String userId, String startTime, String endTime);
+
 }

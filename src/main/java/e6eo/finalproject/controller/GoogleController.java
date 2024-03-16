@@ -76,7 +76,7 @@ public class GoogleController {
         }
     }
 
-    @PostMapping("/updateMonthly")
+    @PostMapping("/monthly")
     public void updateMonthly(@RequestBody Map<String, String> req) {
         UsersEntity user = usersMapper.findByObserveToken(req.get("observe")).get();
         if (!(user.getInnerId() == null)) {

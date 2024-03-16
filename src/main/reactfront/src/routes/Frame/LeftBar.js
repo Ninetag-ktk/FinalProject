@@ -56,12 +56,16 @@ export default function LeftBar({categories, categoryLoading, userName}) {
             categoryEl.style.setProperty("box-shadow", "-1px -1px 3px 0px inset");
             categoryEl.style.setProperty("background-color", "rgba(255, 255, 255, 0.5)");
             categoryEl.style.setProperty("pointer-events", "auto");
-            categoryEl.addEventListener("keydown", (e) => {if (e.key === "Enter") {categoryInputHandler(category)} else if (e.key === "Escape") {
-                categoryEl.setAttribute("readonly", "true");
-                categoryEl.removeAttribute("style");
-                categoryEl.style.setProperty("pointer-events", "none");
-                categoryEl.value=category[1];
-            }})
+            categoryEl.addEventListener("keydown", (e) => {
+                if (e.key === "Enter") {
+                    categoryInputHandler(category)
+                } else if (e.key === "Escape") {
+                    categoryEl.setAttribute("readonly", "true");
+                    categoryEl.removeAttribute("style");
+                    categoryEl.style.setProperty("pointer-events", "none");
+                    categoryEl.value = category[1];
+                }
+            })
         } else {
             // console.log(category[0], categoryEl.value);
             categoryEl.setAttribute("readonly", "true");
@@ -74,7 +78,7 @@ export default function LeftBar({categories, categoryLoading, userName}) {
     return (<div className="leftbar">
         <div className="schedule">
             <div className="headLabel">캘린더 리스트
-                <div className="iconButton" onClick={toggleCategoryCreate} >
+                <div className="iconButton" onClick={toggleCategoryCreate}>
                     <svg xmlns="http://www.w3.org/2000/svg" height="100%" viewBox="0 0 40 40" fill="none"
                          stroke="currentColor" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round"
                          style={{transform: `rotate(${rotationDegree}deg)`}}>{/* 회전 각도 적용 */}
@@ -88,25 +92,27 @@ export default function LeftBar({categories, categoryLoading, userName}) {
                 {!categoryLoading && categories.map((category) => (
                     <div className={"categoryList checkbox-wrapper"} key={category[0]}>
                         <input id={category[0]} value={category[0]} type={"checkbox"}
-                               onChange={categoryHandler} defaultChecked={category[2]} />
+                               onChange={categoryHandler} defaultChecked={category[2]}/>
                         <label htmlFor={category[0]}>
                             <div className={"checkIcon"}><span></span></div>
-                            <div className={"categoryName"}><input className={"changeName"} defaultValue={category[1]} readOnly={true} style={{pointerEvents: "none"}}/></div>
+                            <div className={"categoryName"}><input className={"changeName"} defaultValue={category[1]}
+                                                                   readOnly={true} style={{pointerEvents: "none"}}/>
+                            </div>
                         </label>
                         <span className={"iconButtonContainer"}>
                             {/*categoryId가 google로 시작하면 edit 버튼을 숨김*/}
-                            { !category[0].toString().startsWith("google") ?
-                            <span className={"iconButton edit"} onClick={() => categoryInputHandler(category)}>
-                                <svg focusable="false" width="20" height="20" viewBox="0 0 24 24" className=" NMm5M">
+                            {!category[0].toString().startsWith("google") ?
+                                <span className={"iconButton edit"} onClick={() => categoryInputHandler(category)}>
+                                <svg focusable="false" width="20" height="20" viewBox="0 0 24 24">
                                     <path
                                         d="M20.41 4.94l-1.35-1.35c-.78-.78-2.05-.78-2.83 0L3 16.82V21h4.18L20.41 7.77c.79-.78.79-2.05 0-2.83zm-14 14.12L5 19v-1.36l9.82-9.82 1.41 1.41-9.82 9.83z"></path>
                                 </svg>
                             </span> : null}
                             <span className={"iconButton delete"}>
-                                <svg focusable="false" width="20" height="20" viewBox="0 0 24 24" className=" NMm5M">
+                                <svg focusable="false" width="20" height="20" viewBox="0 0 24 24">
                                     <path
-                                        d="M15 4V3H9v1H4v2h1v13c0 1.1.9 2 2 2h10c1.1 0 2-.9 2-2V6h1V4h-5zm2 15H7V6h10v13z"></path>
-                                    <path d="M9 8h2v9H9zm4 0h2v9h-2z"></path>
+                                        d="M15 4V3H9v1H4v2h1v13c0 1.1.9 2 2 2h10c1.1 0 2-.9 2-2V6h1V4h-5zm2 15H7V6h10v13z"/>
+                                    <path d="M9 8h2v9H9zm4 0h2v9h-2z"/>
                                 </svg>
                             </span>
                         </span>
@@ -122,10 +128,9 @@ export default function LeftBar({categories, categoryLoading, userName}) {
                 </div>
             </ul>
         </div>
-        <div className="today-tasks">
-            <div className="headLabel">오늘 할 일</div>
-
-        </div>
+        {/*<div className="today-tasks">*/}
+        {/*    <div className="headLabel">오늘 할 일</div>*/}
+        {/*</div>*/}
         <div className={"userbar"}>
             <div className={"userProfile"} onClick={handlerUserMenu}>
                 <div className={"nickName"}>{userName}</div>

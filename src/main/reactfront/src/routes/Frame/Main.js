@@ -49,9 +49,9 @@ export default function Main() {
         setUserName(userName.data);
     }
 
-    async function getToken() {
+    function getToken() {
         let returnResult;
-        await fetch("/google/reqAccessToken", {
+        fetch("/google/reqAccessToken", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json; charset=utf-8",
@@ -73,8 +73,8 @@ export default function Main() {
 
     async function updateMonthly(calendarTitle) {
         if (calendarTitle !== "") {
-            let token = await JSON.parse(window.sessionStorage.getItem("token")) ? JSON.parse(window.sessionStorage.getItem("token")) : await getToken();
-            await axios("/google/updateMonthly", {
+            let token = JSON.parse(window.sessionStorage.getItem("token")) ? JSON.parse(window.sessionStorage.getItem("token")) : await getToken();
+            axios("/google/monthly", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json; charset=utf-8",
@@ -85,7 +85,7 @@ export default function Main() {
                     token: token.access,
                     date: calendarTitle,
                 }),
-            });
+            }).catch(e => console.log("에러 : ", e));
         }
     }
 
@@ -101,7 +101,7 @@ export default function Main() {
         const token = JSON.parse(window.sessionStorage.getItem("token"))
         if (new Date().getTime() >= token.expire) {
             // console.log("토큰삭제");
-            window.sessionStorage.removeItem("token");
+            // window.sessionStorage.removeItem("token");
             getToken();
         }
     }
@@ -194,7 +194,7 @@ export default function Main() {
                 // console.log(response.data);
                 // console.log(data, typeof data);
                 const fullEvents = response.data.map((note) => {
-                    if (note.type === "task" || note.type === "note") {
+                    if (note.type === "task" || note.type === "memo") {
                         return {
                             id: note.id,
                             title: note.title,
@@ -235,7 +235,8 @@ export default function Main() {
                         {isSearchVisible ? <Search/> :
                             <Center setMainCalendar={setCalendar} setTitle={setTitle} events={events}
                                     setEvents={setEvents} onSave={handleSaveEvent}
-                                    noteRef={noteRef} categories={categories}/>}
+                                    noteRef={noteRef} categories={categories}
+                                    noteListDate={noteListDate} calendarTitle={calendarTitle}/>}
                     </div>
                 </div>
             </MyContext.Provider>

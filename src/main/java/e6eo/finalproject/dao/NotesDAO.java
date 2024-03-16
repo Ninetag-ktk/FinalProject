@@ -1,6 +1,7 @@
 package e6eo.finalproject.dao;
 
 import e6eo.finalproject.entity.CategoryEntity;
+import e6eo.finalproject.entity.NoteData;
 import e6eo.finalproject.entity.NotesEntity;
 import e6eo.finalproject.entity.UsersEntity;
 import e6eo.finalproject.entityGoogle.googleLists;
@@ -38,7 +39,6 @@ public class NotesDAO extends GoogleAPI {
         scanCalendarNotes(notesEtag, noteCalendar(user.getUserId(), categories.get("calendar"), accessToken, date));
         scanTasksNotes(notesEtag, noteTasks(user.getUserId(), categories.get("tasks"), accessToken, date));
     }
-
 
     private void scanCalendarNotes(Map<Object, Object> notesEtag, ArrayList<NotesEntity> noteCalendar) {
         int i = 0;
@@ -82,7 +82,7 @@ public class NotesDAO extends GoogleAPI {
         Map<String, ArrayList<String>> categoryMap = decodeCategory(categories);
         noteCalendar(user.get().getUserId(), categoryMap.get("calendar"), accessToken, false);
         noteTasks(user.get().getUserId(), categoryMap.get("tasks"), accessToken, false);
-        System.out.println("GetPostFromGoogle_Complete");
+        System.out.println("GetNotesFromGoogle_Complete");
     }
 
     public void getGoogleNotes(UsersEntity user, String accessToken) {
@@ -90,7 +90,7 @@ public class NotesDAO extends GoogleAPI {
         Map<String, ArrayList<String>> categoryMap = decodeCategory(categories);
         notesMapper.saveAll(noteCalendar(user.getUserId(), categoryMap.get("calendar"), accessToken, false));
         notesMapper.saveAll(noteTasks(user.getUserId(), categoryMap.get("tasks"), accessToken, false));
-        System.out.println("GetPostFromGoogle_Complete");
+        System.out.println("GetNotesFromGoogle_Complete");
     }
 
     private ArrayList<NotesEntity> noteCalendar(String userId, ArrayList<String> list, String accessToken, boolean update) {
@@ -119,8 +119,8 @@ public class NotesDAO extends GoogleAPI {
             Object json = webClient.get().uri(calendar + requestUrl)
                     .retrieve().bodyToMono(googleLists.class).block().getItems();
             for (Map<String, Object> event : (ArrayList<Map>) json) {
-                NotesEntity post = new NotesEntity().eventParser(event, userId, calendar);
-                notes.add(post);
+                NotesEntity note = new NotesEntity().eventParser(event, userId, calendar);
+                notes.add(note);
             }
         }
         return notes;
@@ -142,8 +142,8 @@ public class NotesDAO extends GoogleAPI {
             Object json = webClient.get().uri(calendar + requestUrl)
                     .retrieve().bodyToMono(googleLists.class).block().getItems();
             for (Map<String, Object> event : (ArrayList<Map>) json) {
-                NotesEntity post = new NotesEntity().eventParser(event, userId, calendar);
-                notes.add(post);
+                NotesEntity note = new NotesEntity().eventParser(event, userId, calendar);
+                notes.add(note);
             }
         }
         return notes;
@@ -175,8 +175,8 @@ public class NotesDAO extends GoogleAPI {
             Object json = webClient.get().uri(tasklist + requestUrl)
                     .retrieve().bodyToMono(googleLists.class).block().getItems();
             for (Map<String, Object> task : (ArrayList<Map>) json) {
-                NotesEntity post = new NotesEntity().taskParser(task, userId, tasklist);
-                notes.add(post);
+                NotesEntity note = new NotesEntity().taskParser(task, userId, tasklist);
+                notes.add(note);
             }
         }
         return notes;
@@ -198,8 +198,8 @@ public class NotesDAO extends GoogleAPI {
             Object json = webClient.get().uri(tasklist + requestUrl)
                     .retrieve().bodyToMono(googleLists.class).block().getItems();
             for (Map<String, Object> task : (ArrayList<Map>) json) {
-                NotesEntity post = new NotesEntity().taskParser(task, userId, tasklist);
-                notes.add(post);
+                NotesEntity note = new NotesEntity().taskParser(task, userId, tasklist);
+                notes.add(note);
             }
         }
         return notes;
@@ -207,10 +207,34 @@ public class NotesDAO extends GoogleAPI {
 
     public List<NotesEntity> notesGet(Map<String, String> request) {
         UsersEntity user = usersMapper.findByObserveToken(request.get("observe").toString()).get();
-        System.out.println(user);
+//        System.out.println(user);
         Map<String, String> dateRange = calcDateTime(request.get("date").toString());
         List<NotesEntity> notesList = notesMapper.getNotes(user.getUserId(), dateRange.get("start"), dateRange.get("end"));
-        System.out.println(notesList);
+//        System.out.println(notesList);
         return notesList;
+    }
+
+    public void insertNote(NoteData noteData) {
+        UsersEntity user = usersMapper.findByObserveToken(noteData.getObserve()).get();
+        NotesEntity note = null;
+        if (noteData.getCategoryId() != null) {
+            switch (noteData.getNote().get("kind").toString().split("#")[1]) {
+                case "event":
+                    note = new NotesEntity().eventParser(noteData.getNote(), user.getUserId(), noteData.getCategoryId());
+                    break;
+                case "task":
+                    note = new NotesEntity().taskParser(noteData.getNote(), user.getUserId(), noteData.getCategoryId());
+                    break;
+            }
+        } else {
+            note = new NotesEntity().dataParser(noteData.getNote(), user.getUserId());
+        }
+        notesMapper.save(note);
+        System.out.println("체크 : " + note);
+    }
+
+    public void deleteNote(NoteData noteData) {
+        UsersEntity user = usersMapper.findByObserveToken(noteData.getObserve()).get();
+        notesMapper.deleteByIdWithUserId(noteData.getNote().get("id").toString(), user.getUserId());
     }
 }

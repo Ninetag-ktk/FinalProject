@@ -1,13 +1,12 @@
-import {useEffect, useState} from 'react';
+import React, {useEffect, useState} from 'react';
+import axios from "axios";
+import {deleteNote, insertNote} from "./googleCRUD";
 
 export default function ({noteRef, categories, closeModal}) {
     const [noteCategory, setNoteCategory] = useState('');
     const [noteType, setNoteType] = useState('memo');
     const [infoToggle, setInfoToggle] = useState(true);
-    const [dateTimeData, setDateTimeData] = useState({
-        start: new Date().toISOString(),
-        end: new Date().toISOString(),
-    })
+    const [allDay, setAllDay] = useState(false);
     const [note, setNote] = useState({
         id: "",
         categoryId: "",
@@ -20,30 +19,154 @@ export default function ({noteRef, categories, closeModal}) {
         status: "",
         haveRepost: "",
     })
-    console.log(noteRef)
+
+    // console.log(noteRef)
+    function settingNote(noteRef) {
+        if (!noteRef.startTime.includes("T")) {
+            setAllDay(true);
+        }
+        setNote({
+            id: noteRef.id,
+            categoryId: noteRef.categoryId.split("#")[1] ? noteRef.categoryId.split("#")[1].replaceAll("_", ".") : noteRef.categoryId,
+            type: noteRef.type,
+            startTime: datetimeCheck(noteRef.startTime),
+            endTime: datetimeCheck(noteRef.endTime),
+            etag: noteRef.etag,
+            title: noteRef.title,
+            contents: noteRef.contents,
+            status: noteRef.status,
+            haveRepost: noteRef.haveRepost,
+        })
+    }
+
+    function settingDefaultNote() {
+        setNote({
+            ...note,
+            id: null,
+            categoryId: "e6eo",
+            type: "memo",
+            startTime: new Date(Date.now() - (new Date().getTimezoneOffset() * 60000)).toISOString().slice(0, -8) + ":00.000Z",
+            endTime: new Date(Date.now() - (new Date().getTimezoneOffset() * 60000)).toISOString().slice(0, -8) + ":00.000Z",
+            status: "confirm",
+            haveRepost: null,
+        })
+    }
+
+    function datetimeCheck(date, allDayState) {
+        if (allDayState) {
+            return date.slice(0, 10);
+        } else {
+            if (date.endsWith(":00.000Z")) {
+                return date;
+            } else if (date.endsWith("+09:00")) {
+                return date.replace("+09:00", ".000Z");
+            } else if (date.includes("T")) {
+                return date + ":00.000Z";
+            } else {
+                return date + "T00:00:00.000Z";
+            }
+        }
+    }
+
+    const onChangeNote = (e) => {
+        const {value, name} = e.target;
+        setNote({
+            ...note,
+            [name]: value,
+        })
+    }
+
+    const onChangeNoteCategotyAndType = (e) => {
+        const {value, name} = e.target;
+        if (e.target.value.startsWith("google")) {
+            const noteCategoryType = e.target.value.split("^");
+            switch (noteCategoryType[1]) {
+                case "calendar":
+                    setNoteType("event");
+                    setNote({
+                        ...note,
+                        [name]: value,
+                        type: "event",
+                    });
+                    break;
+                case "tasks":
+                    setNoteType("task");
+                    setNote({
+                        ...note,
+                        [name]: value,
+                        type: "task",
+                    });
+                    break;
+                default:
+                    setNoteType("memo")
+                    setNote({
+                        ...note,
+                        [name]: value,
+                        type: "memo",
+                    });
+            }
+        } else {
+            setNoteType("memo");
+            setNote({
+                ...note,
+                [name]: value,
+                type: "memo",
+            });
+        }
+    }
+
+    const onChangeNoteDateTime = (e) => {
+        const {value, name} = e.target;
+        const time = note[name];
+        // console.log(name, value)
+        if (allDay) {
+            setNote({
+                ...note,
+                [name]: value,
+            })
+        } else {
+            setNote({
+                ...note,
+                [name]: value + time.slice(value.length, time.length),
+            })
+        }
+    }
+    const allDayChange = (e) => {
+        setAllDay(e.target.checked)
+        setNote({
+            ...note,
+            startTime: datetimeCheck(note.startTime, e.target.checked),
+            endTime: datetimeCheck(note.endTime, e.target.checked),
+        })
+    }
+
 
     useEffect(() => {
         if (noteRef) {
-            setNoteCategory(noteRef.categoryId);
-            setNoteType(noteRef.type);
-            setDateTimeData({
-                start: noteRef.startTime,
-                end: noteRef.endTime,
-            })
+            settingNote(noteRef);
+        } else {
+            settingDefaultNote();
         }
-        console.log("체크", dateTimeData)
     }, [])
 
     useEffect(() => {
-        typeFilter()
+        setNoteCategory(note.categoryId);
+        setNoteType(note.type);
+        // console.log("수정 체크 : ", note);
+    }, [note])
+
+    useEffect(() => {
+        typeFilter();
     }, [noteCategory])
+
     useEffect(() => {
         interfaceByType();
-    }, [noteType])
+    }, [noteType, allDay])
+
     useEffect(() => {
         if (noteRef) {
-            noteInfo();
-            console.log(infoToggle)
+            notePromise();
+            // console.log(infoToggle)
         }
     }, [infoToggle])
 
@@ -61,10 +184,10 @@ export default function ({noteRef, categories, closeModal}) {
         e.target.style.height = e.target.scrollHeight + 'px';
     };
 
-    function noteInfo() {
+    function notePromise() {
 
         function noteTypeIcon() {
-            switch (noteRef.type) {
+            switch (note.type) {
                 case "event": {
                     return (
                         <svg className={"svgIcon"} xmlns="http://www.w3.org/2000/svg" viewBox="60 60 400 400"
@@ -100,12 +223,10 @@ export default function ({noteRef, categories, closeModal}) {
         }
 
         function noteDate() {
-            const startTime = noteRef.startTime;
-            const endTime = noteRef.endTime;
             const today = new Date();
 
             function parseStart() {
-                const [date, time] = startTime.split('T');
+                const [date, time] = note.startTime.split('T');
                 const dateObject = new Date(date);
                 const [year, month, day] = date.split('-');
                 const weekday = dateObject.toLocaleDateString('ko-KR', {
@@ -130,7 +251,7 @@ export default function ({noteRef, categories, closeModal}) {
             }
 
             function parseEnd() {
-                const [date, time] = endTime.split('T');
+                const [date, time] = note.endTime.split('T');
                 const dateObject = new Date(date);
                 const [year, month, day] = date.split('-');
                 const weekday = dateObject.toLocaleDateString('ko-KR', {
@@ -175,42 +296,11 @@ export default function ({noteRef, categories, closeModal}) {
         }
 
         function infoMode() {
-            return (<div className={"noteContainer"}>
-                <div className={"noteHeader"}>
-                    <span className={"noteMenuContainer"}>
-                        <span className={"iconButton"}>
-                            <svg className={"svgIcon"} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"
-                                 id="conversation">
-                                <path d="M457.387,132.5h-37.982V74.544c0-29.95-24.366-54.316-54.316-54.316H58.316C28.366,20.228,4,44.594,4,74.544V279.21
-	c0,29.95,24.366,54.316,54.316,54.316h30.127v61.122c0,5.03,3.137,9.526,7.858,11.263c1.353,0.497,2.753,0.738,4.139,0.738
-	c3.453,0,6.819-1.493,9.144-4.228l57.777-67.94v35.386c0,27.908,22.705,50.613,50.613,50.613h112.835l58.596,67.179
-	c2.325,2.665,5.645,4.113,9.046,4.113c1.411,0,2.836-0.25,4.209-0.765c4.685-1.756,7.788-6.233,7.788-11.236v-59.291h46.937
-	c27.908,0,50.613-22.705,50.613-50.613V183.113C508,155.205,485.295,132.5,457.387,132.5z M153.485,313.752l-41.042,48.262v-40.487
-	c0-6.628-5.373-12-12-12H58.316C41.6,309.526,28,295.927,28,279.21V74.544c0-16.717,13.6-30.316,30.316-30.316h306.772
-	c16.716,0,30.316,13.6,30.316,30.316V279.21c0,16.717-13.6,30.316-30.316,30.316H162.627
-	C159.107,309.526,155.766,311.071,153.485,313.752z M484,369.868c0,14.675-11.939,26.613-26.613,26.613H398.45
-	c-6.627,0-12,5.373-12,12v39.277l-41.14-47.165c-2.279-2.613-5.577-4.112-9.043-4.112H217.976
-	c-14.674,0-26.613-11.938-26.613-26.613v-36.342h173.726c29.95,0,54.316-24.366,54.316-54.316V156.5h37.982
-	c14.674,0,26.613,11.938,26.613,26.613V369.868z M230.756,176.877c0,10.523-8.531,19.054-19.053,19.054
-	c-10.523,0-19.053-8.531-19.053-19.054c0-10.522,8.53-19.053,19.053-19.053C222.225,157.824,230.756,166.354,230.756,176.877z
-	 M128.367,176.877c0,10.523-8.531,19.054-19.053,19.054c-10.523,0-19.053-8.531-19.053-19.054c0-10.522,8.53-19.053,19.053-19.053
-	C119.836,157.824,128.367,166.354,128.367,176.877z M333.144,176.877c0,10.523-8.531,19.054-19.054,19.054
-	c-10.523,0-19.053-8.531-19.053-19.054c0-10.522,8.53-19.053,19.053-19.053C324.613,157.824,333.144,166.354,333.144,176.877z"/></svg>
-                        </span>
-                        <span className={"iconButton"} onClick={infoModeHandle}>
-<svg className={"svgIcon"} xmlns="http://www.w3.org/2000/svg" viewBox="-2 -2 34 34" id="edit"><path
-    d="M26.857,31.89H3c-1.654,0-3-1.346-3-3V5.032c0-1.654,1.346-3,3-3h16.214c0.553,0,1,0.448,1,1s-0.447,1-1,1H3c-0.551,0-1,0.449-1,1V28.89c0,0.551,0.449,1,1,1h23.857c0.552,0,1-0.449,1-1V12.675c0-0.552,0.447-1,1-1s1,0.448,1,1V28.89C29.857,30.544,28.512,31.89,26.857,31.89z M24.482,23.496c-0.002,0-0.003,0-0.005,0L5.192,23.407c-0.553-0.002-0.998-0.452-0.996-1.004c0.002-0.551,0.45-0.996,1-0.996c0.001,0,0.003,0,0.004,0l19.286,0.089c0.552,0.002,0.998,0.452,0.995,1.004C25.479,23.051,25.032,23.496,24.482,23.496z M15.251,18.415c-0.471,0-0.781-0.2-0.957-0.366c-0.297-0.28-0.709-0.931-0.14-2.151l0.63-1.35c0.516-1.104,1.596-2.646,2.459-3.51L26,2.281c0.003-0.002,0.005-0.004,0.007-0.006c0.002-0.002,0.004-0.004,0.006-0.006l0.451-0.451c1.168-1.169,2.979-1.262,4.036-0.207c0,0,0,0,0,0c1.056,1.055,0.963,2.866-0.207,4.036c0,0-0.536,0.552-0.586,0.586l-8.635,8.635c-0.85,0.85-2.345,1.964-3.405,2.538l-1.218,0.657C15.969,18.322,15.572,18.415,15.251,18.415z M26.714,4.396l-8.056,8.057c-0.699,0.7-1.644,2.047-2.061,2.942L16.4,15.815l0.316-0.17c0.885-0.479,2.233-1.482,2.942-2.192l8.057-8.057L26.714,4.396z M28.163,3.016l0.932,0.932c0.2-0.356,0.177-0.737-0.009-0.923C28.881,2.82,28.499,2.83,28.163,3.016z"/></svg>
-                        </span>
-                    </span>
-                    <span className={"noteCancel iconButton"} onClick={closeModal}>
-                        <svg className={"svgIcon"} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" id="cancel"><path
-                            d="M13.41,12l4.3-4.29a1,1,0,1,0-1.42-1.42L12,10.59,7.71,6.29A1,1,0,0,0,6.29,7.71L10.59,12l-4.3,4.29a1,1,0,0,0,0,1.42,1,1,0,0,0,1.42,0L12,13.41l4.29,4.3a1,1,0,0,0,1.42,0,1,1,0,0,0,0-1.42Z"></path></svg>
-                    </span>
-                </div>
+            return (
                 <div className={"noteOuter"}>
                     <div className={"noteTitleOuter"}>
                         <span className={"noteIconContainer"}><span/></span>
-                        <span className={"noteTitle"}>{noteRef.title}</span>
+                        <span className={"noteTitle"}>{note.title}</span>
                     </div>
                     <div className={"noteBody"}>
                         <div className={"noteDue noteBody-info-outer"}>
@@ -221,7 +311,7 @@ export default function ({noteRef, categories, closeModal}) {
                                     {noteDate()}
                                 </span>
                         </div>
-                        {noteRef.contents !== null &&
+                        {note.contents !== null &&
                             <div className={"noteContents noteBody-info-outer"}>
                                     <span className={"noteIconContainer"}>
                                         <svg className={"svgIcon"} xmlns="http://www.w3.org/2000/svg"
@@ -230,27 +320,66 @@ export default function ({noteRef, categories, closeModal}) {
                                             d="M25 7H12a1 1 0 0 0 0 2H25a1 1 0 0 0 0-2zM25 12H7a1 1 0 0 0 0 2H25a1 1 0 0 0 0-2zM25 17H7a1 1 0 0 0 0 2H25a1 1 0 0 0 0-2z"/></svg>
                                     </span>
                                 <span className={"noteBody-info"}>
-                                        {noteRef.contents}
+                                        {note.contents}
                                     </span>
                             </div>}
                     </div>
                     <div className={"noteFooter"}>
                     </div>
                 </div>
-            </div>)
+            )
         }
 
         function editMode() {
             const options = categories.map((category) => {
-                return <option value={category[0]}
-                               selected={noteRef.categoryId.endsWith(category[0].replaceAll("_", ".")) ? true : false}>{category[1]}</option>
+                if (note.categoryId.includes("google") && note.categoryId.includes("calendar")) {
+                    if (category[0].includes("calendar")) {
+                        return <option value={category[0]}
+                                       selected={note.categoryId.endsWith(category[0].replaceAll("_", ".")) ? true : false}>{category[1]}</option>
+                    }
+                } else if (note.categoryId.includes("google") && note.categoryId.includes("tasks")) {
+                    if (category[0].includes("tasks")) {
+                        return <option value={category[0]}
+                                       selected={note.categoryId.endsWith(category[0].replaceAll("_", ".")) ? true : false}>{category[1]}</option>
+                    }
+                } else {
+                    if (!category[0].includes("google")) {
+                        return <option value={category[0]}
+                                       selected={note.categoryId.endsWith(category[0].replaceAll("_", ".")) ? true : false}>{category[1]}</option>
+                    }
+                }
             })
 
-            return (<div className={"noteContainer"}>
+            return (
+                <div className={"noteOuter"}>
+                    <div className={"noteTitleOuter"}>
+                        <select className={"categorySelect"} name={"categoryId"}
+                                onChange={(e) => {
+                                    setNoteCategory(e.target.value);
+                                    onChangeNoteCategotyAndType(e);
+                                }}>{options}</select>
+                        <textarea className={"noteTitle"} name={"title"} value={noteRef ? note.title : null}
+                                  onChange={(e) => {
+                                      handleResizeHeight(e);
+                                      onChangeNote(e);
+                                  }}
+                                  rows={1}/>
+                    </div>
+                    {typeFilter()}
+                    {interfaceByType()}
+                    <div className={"noteFooter"}>
+                        <button onClick={patchNoteHandler}>저장</button>
+                    </div>
+                </div>
+            )
+        }
+
+        return (
+            <div className={"noteContainer"}>
                 <div className={"noteHeader"}>
                     <span className={"noteMenuContainer"}>
                         <span className={"iconButton"}>
-                            <svg className={"svgIcon"} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"
+                            <svg className={"svgIcon"} xmlns="http://www.w3.org/2000/svg" viewBox="0 -40 512 512"
                                  id="conversation">
                                 <path d="M457.387,132.5h-37.982V74.544c0-29.95-24.366-54.316-54.316-54.316H58.316C28.366,20.228,4,44.594,4,74.544V279.21
 	c0,29.95,24.366,54.316,54.316,54.316h30.127v61.122c0,5.03,3.137,9.526,7.858,11.263c1.353,0.497,2.753,0.738,4.139,0.738
@@ -269,8 +398,16 @@ export default function ({noteRef, categories, closeModal}) {
 	c-10.523,0-19.053-8.531-19.053-19.054c0-10.522,8.53-19.053,19.053-19.053C324.613,157.824,333.144,166.354,333.144,176.877z"/></svg>
                         </span>
                         <span className={"iconButton"} onClick={infoModeHandle}>
-<svg className={"svgIcon"} xmlns="http://www.w3.org/2000/svg" viewBox="-2 -2 34 34" id="edit"><path
+<svg className={"svgIcon"} xmlns="http://www.w3.org/2000/svg" viewBox="-4 -2 36 36" id="edit"><path
     d="M26.857,31.89H3c-1.654,0-3-1.346-3-3V5.032c0-1.654,1.346-3,3-3h16.214c0.553,0,1,0.448,1,1s-0.447,1-1,1H3c-0.551,0-1,0.449-1,1V28.89c0,0.551,0.449,1,1,1h23.857c0.552,0,1-0.449,1-1V12.675c0-0.552,0.447-1,1-1s1,0.448,1,1V28.89C29.857,30.544,28.512,31.89,26.857,31.89z M24.482,23.496c-0.002,0-0.003,0-0.005,0L5.192,23.407c-0.553-0.002-0.998-0.452-0.996-1.004c0.002-0.551,0.45-0.996,1-0.996c0.001,0,0.003,0,0.004,0l19.286,0.089c0.552,0.002,0.998,0.452,0.995,1.004C25.479,23.051,25.032,23.496,24.482,23.496z M15.251,18.415c-0.471,0-0.781-0.2-0.957-0.366c-0.297-0.28-0.709-0.931-0.14-2.151l0.63-1.35c0.516-1.104,1.596-2.646,2.459-3.51L26,2.281c0.003-0.002,0.005-0.004,0.007-0.006c0.002-0.002,0.004-0.004,0.006-0.006l0.451-0.451c1.168-1.169,2.979-1.262,4.036-0.207c0,0,0,0,0,0c1.056,1.055,0.963,2.866-0.207,4.036c0,0-0.536,0.552-0.586,0.586l-8.635,8.635c-0.85,0.85-2.345,1.964-3.405,2.538l-1.218,0.657C15.969,18.322,15.572,18.415,15.251,18.415z M26.714,4.396l-8.056,8.057c-0.699,0.7-1.644,2.047-2.061,2.942L16.4,15.815l0.316-0.17c0.885-0.479,2.233-1.482,2.942-2.192l8.057-8.057L26.714,4.396z M28.163,3.016l0.932,0.932c0.2-0.356,0.177-0.737-0.009-0.923C28.881,2.82,28.499,2.83,28.163,3.016z"/></svg>
+                        </span>
+                        <span class={"iconButton"} onClick={deleteNoteHandler}>
+                                <svg className={"svgIcon"} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32"
+                                     id="trash">
+                                    <path
+                                        d="M3 9h2v15.46C5 27.58 8.52 30 11.54 30h8.92c3 0 6.54-2.42 6.54-5.54V9h2a1 1 0 0 0 0-2h-5.07c-.34-2.47-2.11-5-7.93-5S8.41 4.53 8.07 7H3a1 1 0 0 0 0 2Zm13-5c4.38 0 5.6 1.51 5.91 3H10.09c.31-1.49 1.53-3 5.91-3Zm9 5v15.46c0 1.87-2.54 3.54-4.54 3.54h-8.92C9.54 28 7 26.33 7 24.46V9Z"/>
+                                    <path
+                                        d="M16 26a1 1 0 0 0 1-1V12a1 1 0 0 0-2 0v13a1 1 0 0 0 1 1zm-5 0a1 1 0 0 0 1-1V12a1 1 0 0 0-2 0v13a1 1 0 0 0 1 1zm10 0a1 1 0 0 0 1-1V12a1 1 0 0 0-2 0v13a1 1 0 0 0 1 1z"/></svg>
                         </span>
                     </span>
                     <span className={"noteCancel iconButton"} onClick={closeModal}>
@@ -278,35 +415,12 @@ export default function ({noteRef, categories, closeModal}) {
                             d="M13.41,12l4.3-4.29a1,1,0,1,0-1.42-1.42L12,10.59,7.71,6.29A1,1,0,0,0,6.29,7.71L10.59,12l-4.3,4.29a1,1,0,0,0,0,1.42,1,1,0,0,0,1.42,0L12,13.41l4.29,4.3a1,1,0,0,0,1.42,0,1,1,0,0,0,0-1.42Z"></path></svg>
                     </span>
                 </div>
-                <div className={"noteOuter"}>
-                    <div className={"noteTitleOuter"}>
-                        <select className={"categorySelect"}
-                                onChange={(e) => {
-                                    setNoteCategory(e.target.value);
-                                }}>{options}</select>
-                        <textarea className={"noteTitle"} defaultValue={noteRef ? noteRef.title : null}
-                                  onKeyDown={handleResizeHeight}
-                                  rows={1}/>
-                    </div>
-                    <div className={"typeContainer"}>
-                        {typeFilter()}
-                    </div>
-                    {interfaceByType()}
-                    <div className={"noteFooter"}>
-                        <button>저장</button>
-                    </div>
-                </div>
-            </div>)
-        }
-
-        if (infoToggle) {
-            return infoMode();
-        } else {
-            return editMode();
-        }
+                {infoToggle ? infoMode() : editMode()}
+            </div>
+        )
     }
 
-    function noteInsert() {
+    function noteEmpty() {
         const options = categories.map((category) => {
             return <option value={category[0]}>{category[1]}</option>
         })
@@ -320,29 +434,37 @@ export default function ({noteRef, categories, closeModal}) {
             </div>
             <div className={"noteOuter"}>
                 <div className={"noteTitleOuter"}>
-                    <select className={"categorySelect"} onChange={(e) => {
-                        setNoteCategory(e.target.value);
-                    }}>{options}</select>
-                    <textarea className={"noteTitle"} placeholder={"제목 및 시간 추가"} onKeyDown={handleResizeHeight}
+                    <select className={"categorySelect"} name={"categoryId"}
+                            onChange={(e) => {
+                                // console.log("확인", e.target.name, e.target.value);
+                                setNoteCategory(e.target.value);
+                                onChangeNoteCategotyAndType(e);
+                            }}>{options}</select>
+                    <textarea className={"noteTitle"} name={"title"} placeholder={"제목 및 시간 추가"}
+                              onChange={(e) => {
+                                  handleResizeHeight(e);
+                                  onChangeNote(e);
+                              }}
                               rows={1}/>
                 </div>
-                <div className={"typeContainer"}>
-                    {typeFilter()}
-                </div>
+                {typeFilter()}
                 {interfaceByType()}
                 <div className={"noteFooter"}>
-                    <button>저장</button>
+                    <button onClick={insertNoteHandler}>저장</button>
                 </div>
             </div>
         </div>)
     }
 
     function typeFilter() {
-        function eventRadio(bool) {
+        function eventRadio() {
             return (
                 <div className={"typeSelect"}>
-                    <input type={"radio"} name={"noteType"} value={"event"} id={"eventType"}
-                           defaultChecked={bool} className={"typeSelect-input"} onChange={typeHandle}/>
+                    <input type={"radio"} name={"type"} value={"event"} id={"eventType"}
+                           checked={noteType === "event"} className={"typeSelect-input"} onChange={(e) => {
+                        onChangeNote(e);
+                        typeHandle(e);
+                    }}/>
                     <label htmlFor={"eventType"} className={"typeSelect-label"}>
                         <svg className={"svgIcon"} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16"
                              id="event">
@@ -359,11 +481,14 @@ export default function ({noteRef, categories, closeModal}) {
             )
         }
 
-        function taskRadio(bool) {
+        function taskRadio() {
             return (
                 <div className={"typeSelect"}>
-                    <input type={"radio"} name={"noteType"} value={"task"} id={"taskType"}
-                           defaultChecked={bool} className={"typeSelect-input"} onChange={typeHandle}/>
+                    <input type={"radio"} name={"type"} value={"task"} id={"taskType"}
+                           checked={noteType === "task"} className={"typeSelect-input"} onChange={(e) => {
+                        onChangeNote(e);
+                        typeHandle(e);
+                    }}/>
                     <label htmlFor={"taskType"} className={"typeSelect-label"}>
                         <svg className={"svgIcon"} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" id="task">
                             <path
@@ -375,11 +500,14 @@ export default function ({noteRef, categories, closeModal}) {
             )
         }
 
-        function memoRadio(bool) {
+        function memoRadio() {
             return (
                 <div className={"typeSelect"}>
-                    <input type={"radio"} name={"noteType"} value={"memo"} id={"memoType"}
-                           defaultChecked={bool} className={"typeSelect-input"} onChange={typeHandle}/>
+                    <input type={"radio"} name={"type"} value={"memo"} id={"memoType"}
+                           checked={noteType === "memo"} className={"typeSelect-input"} onChange={(e) => {
+                        onChangeNote(e);
+                        typeHandle(e);
+                    }}/>
                     <label htmlFor={"memoType"} className={"typeSelect-label"}>
                         <svg className={"svgIcon"} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" id="memo">
                             <g data-name="2">
@@ -396,15 +524,15 @@ export default function ({noteRef, categories, closeModal}) {
         }
 
         if (noteCategory.startsWith("google")) {
-            // console.log(noteCategory)
-            const noteCategoryType = noteCategory.split("^");
-            // console.log(noteCategoryType[1])
+            console.log(noteCategory)
+            const noteCategoryType = noteCategory.split("\^");
+            console.log(noteCategoryType[1])
             switch (noteCategoryType[1]) {
                 case "calendar": {
-                    return eventRadio(true);
+                    return <div className={"typeContainer"}> {eventRadio()} </div>
                 }
                 case "tasks": {
-                    return taskRadio(true);
+                    return <div className={"typeContainer"}> {taskRadio()} </div>
                 }
                 default: {
                     return null;
@@ -412,15 +540,35 @@ export default function ({noteRef, categories, closeModal}) {
             }
         } else {
             return <div className={"typeContainer"}>
-                {eventRadio(false)}
-                {taskRadio(false)}
-                {memoRadio(true)}
+                {eventRadio()}
+                {taskRadio()}
+                {memoRadio()}
             </div>
         }
     }
 
     function interfaceByType() {
         function eventInterface() {
+            function allDayEvent() {
+                return (<span>
+                    <input type={"date"} name={"startTime"} onChange={onChangeNoteDateTime}
+                           value={noteRef ? datetimeCheck(note.startTime).slice(0, 10) : datetimeCheck(note.startTime).slice(0, 10)}
+                    /> &nbsp;&nbsp;-&nbsp;&nbsp;<input
+                    type={"date"} name={"endTime"} onChange={onChangeNoteDateTime}
+                    value={noteRef ? datetimeCheck(note.endTime).slice(0, 10) : datetimeCheck(note.endTime).slice(0, 10)}
+                /></span>)
+            }
+
+            function notAllDayEvent() {
+                return (<span>
+                    <input type={"datetime-local"} name={"startTime"} onChange={onChangeNoteDateTime}
+                           value={noteRef ? datetimeCheck(note.startTime).slice(0, -8) : datetimeCheck(note.startTime).slice(0, -8)}
+                    /> &nbsp;&nbsp;-&nbsp;&nbsp;<input
+                    type={"datetime-local"} name={"endTime"} onChange={onChangeNoteDateTime}
+                    value={noteRef ? datetimeCheck(note.endTime).slice(0, -8) : datetimeCheck(note.endTime).slice(0, -8)}
+                /></span>)
+            }
+
             return (<div className={"noteBody"}>
                     <div className={"noteBody-info-outer"}>
                         <span className={"noteIconContainer"}>
@@ -431,13 +579,12 @@ export default function ({noteRef, categories, closeModal}) {
                         </svg>
                         </span>
                         <span className={"noteBody-info"}>
-                            <input type={"datetime-local"}
-                                   defaultValue={noteRef ? dateTimeData.start : new Date(Date.now() - (new Date().getTimezoneOffset() * 60000)).toISOString().slice(0, -5)}
-                            /> - <input
-                            type={"datetime-local"}
-                            defaultValue={noteRef ? dateTimeData.end : new Date(Date.now() - (new Date().getTimezoneOffset() * 60000)).toISOString().slice(0, -5)}
-                        />
-                        </span>
+                            {allDay ? allDayEvent() : notAllDayEvent()}
+                            <span className={"allDayEventToggle"}><input type={"checkbox"} checked={allDay}
+                                                                         onChange={(e) => {
+                                                                             allDayChange(e);
+                                                                         }}/>종일 일정</span>
+                         </span>
                     </div>
                     <div className={"noteBody-info-outer noteContents"}>
                         <span className={"noteIconContainer"}>
@@ -447,8 +594,11 @@ export default function ({noteRef, categories, closeModal}) {
                                             d="M25 7H12a1 1 0 0 0 0 2H25a1 1 0 0 0 0-2zM25 12H7a1 1 0 0 0 0 2H25a1 1 0 0 0 0-2zM25 17H7a1 1 0 0 0 0 2H25a1 1 0 0 0 0-2z"/></svg>
                                     </span>
                         <span className={"noteBody-info"}>
-                            <textarea onChange={handleResizeHeight} rows={1}
-                                      defaultValue={noteRef ? noteRef.contents : ''}/>
+                            <textarea onChange={(e) => {
+                                onChangeNote(e);
+                                handleResizeHeight(e);
+                            }} rows={1} name={"contents"}
+                                      value={note.contents !== '' ? note.contents : ''}/>
                             </span>
                     </div>
                 </div>
@@ -466,8 +616,8 @@ export default function ({noteRef, categories, closeModal}) {
                         </svg>
                         </span>
                     <span className={"noteBody-info"}>
-                        <input type={"datetime-local"}
-                               defaultValue={noteRef ? dateTimeData.start : new Date(Date.now() - (new Date().getTimezoneOffset() * 60000)).toISOString().slice(0, -5)}/>
+                        <input type={"date"} name={"startTime"} onChange={onChangeNoteDateTime}
+                               value={noteRef ? note.startTime.slice(0, -14) : datetimeCheck(note.startTime).slice(0, -14)}/>
                         </span>
                 </div>
                 <div className={"noteBody-info-outer noteContents"}>
@@ -478,8 +628,11 @@ export default function ({noteRef, categories, closeModal}) {
                                             d="M25 7H12a1 1 0 0 0 0 2H25a1 1 0 0 0 0-2zM25 12H7a1 1 0 0 0 0 2H25a1 1 0 0 0 0-2zM25 17H7a1 1 0 0 0 0 2H25a1 1 0 0 0 0-2z"/></svg>
                                     </span>
                     <span className={"noteBody-info"}>
-                        <textarea onChange={handleResizeHeight} rows={1}
-                                  defaultValue={noteRef ? noteRef.contents : ''}/>
+                        <textarea onChange={(e) => {
+                            onChangeNote(e);
+                            handleResizeHeight(e);
+                        }} rows={1} name={"contents"}
+                                  value={note.contents !== '' ? note.contents : ''}/>
                         </span>
                 </div>
             </div>)
@@ -495,8 +648,11 @@ export default function ({noteRef, categories, closeModal}) {
                                             d="M25 7H12a1 1 0 0 0 0 2H25a1 1 0 0 0 0-2zM25 12H7a1 1 0 0 0 0 2H25a1 1 0 0 0 0-2zM25 17H7a1 1 0 0 0 0 2H25a1 1 0 0 0 0-2z"/></svg>
                                     </span>
                         <span className={"noteBody-info"}>
-                            <textarea onChange={handleResizeHeight} rows={1}
-                                      defaultValue={noteRef ? noteRef.contents : ''}/>
+                            <textarea onChange={(e) => {
+                                onChangeNote(e);
+                                handleResizeHeight(e);
+                            }} rows={1} name={"contents"}
+                                      value={note.contents !== '' ? note.contents : ''}/>
                         </span>
                     </div>
                 </div>
@@ -506,22 +662,143 @@ export default function ({noteRef, categories, closeModal}) {
         switch (noteType) {
             case "event": {
                 return eventInterface();
-                break;
             }
             case "task": {
                 return taskInterface();
-                break;
             }
             case "memo": {
                 return memoInterface();
-                break;
             }
             default:
                 return null;
         }
     }
 
+    function insertNoteHandler() {
+        if (note.categoryId.startsWith("google")) {
+            axios(insertNote(note, allDay))
+                .then(response => {
+                    // console.log(response.data);
+                    axios.post("/notes/note", {
+                        "observe": window.sessionStorage.getItem("observe"),
+                        "categoryId": note.categoryId,
+                        "note": response.data,
+                    })
+                        .then(answer => {
+                            if (answer.data == true) {
+                                alert("노트 등록 완료!");
+                                closeModal();
+                            } else alert("노트 등록 실패 : DB 문제")
+                        })
+                        .catch((e) => {
+                            alert("노트 등록 실패 : ", e)
+                        })
+                })
+        } else {
+            axios.post("/notes/note", {
+                "observe": window.sessionStorage.getItem("observe"),
+                "note": note,
+            })
+                .then(answer => {
+                    if (answer.data == true) {
+                        alert("노트 등록 완료!");
+                        closeModal();
+                    } else {
+                        alert("노트 등록 실패 : DB 문제")
+                    }
+                })
+                .catch((e) => {
+                    alert("노트 등록 실패 : ", e)
+                })
+        }
+    }
+
+    function patchNoteHandler() {
+        if (note.categoryId.startsWith("google")) {
+            axios(insertNote(note, allDay))
+                .then(response => {
+                    // console.log(response.data);
+                    axios.patch("/notes/note", {
+                        "observe": window.sessionStorage.getItem("observe"),
+                        "categoryId": note.categoryId,
+                        "note": response.data,
+                    })
+                        .then(answer => {
+                            if (answer.data == true) {
+                                alert("노트 수정 완료!");
+                                closeModal();
+                            } else alert("노트 수정 실패 : DB 문제")
+                        })
+                        .catch((e) => {
+                            alert("노트 수정 실패 : ", e)
+                        })
+                })
+        } else {
+            axios.patch("/notes/note", {
+                "observe": window.sessionStorage.getItem("observe"),
+                "note": note,
+            })
+                .then(answer => {
+                    if (answer.data == true) {
+                        alert("노트 수정 완료!");
+                        closeModal();
+                    } else {
+                        alert("노트 수정 실패 : DB 문제")
+                    }
+                })
+                .catch((e) => {
+                    alert("노트 수정 실패 : ", e)
+                })
+        }
+    }
+
+    function deleteNoteHandler() {
+        if (window.confirm("정말 삭제하시겠습니까?")) {
+            if (note.categoryId.startsWith("google")) {
+                axios(deleteNote(note)).then(response => {
+                    if (response.status === 204) {
+                        axios.delete("notes/note", {
+                            data: {
+                                "observe": window.sessionStorage.getItem("observe"),
+                                "note": note,
+                            },
+                        }).then(answer => {
+                            if (answer.data == true) {
+                                alert("노트 삭제 완료!");
+                                closeModal();
+                            } else {
+                                alert("노트 삭제 실패 : DB 문제")
+                            }
+                        }).catch((e) => {
+                            alert("삭제 실패")
+                        });
+                    } else {
+                        console.log("삭제 실패 : 구글");
+                    }
+                })
+            } else {
+                axios.delete("notes/note", {
+                    data: {
+                        "observe": window.sessionStorage.getItem("observe"),
+                        "note": note,
+                    },
+                }).then(answer => {
+                    if (answer.data == true) {
+                        alert("노트 삭제 완료!");
+                        closeModal();
+                    } else {
+                        alert("노트 삭제 실패 : DB 문제")
+                    }
+                }).catch((e) => {
+                    alert("삭제 실패")
+                });
+            }
+        } else {
+            return;
+        }
+    }
+
     return (<span className={"noteContainerOuter"}>
-            {noteRef ? noteInfo() : noteInsert()}
+            {noteRef ? notePromise() : noteEmpty()}
         </span>)
 }

@@ -4,7 +4,7 @@ import interactionPlugin from '@fullcalendar/interaction';
 import dayGridPlugin from '@fullcalendar/daygrid';
 import NoteDOM from './noteContainerGenerator';
 
-const Center = ({setMainCalendar, events, setEvents, onSave, noteRef, categories}) => {
+const Center = ({setMainCalendar, events, setEvents, onSave, noteRef, categories, noteListDate, calendarTitle}) => {
     const calendarRef = useRef(null);
     const [calendar, setCalendar] = useState(null);
     const [title, setTitle] = useState('');
@@ -37,6 +37,7 @@ const Center = ({setMainCalendar, events, setEvents, onSave, noteRef, categories
 
     const closeModal = () => {
         setShowModal(false);
+        noteListDate(calendarTitle);
     };
 
     const renderEvent = (event) => {
@@ -58,6 +59,7 @@ const Center = ({setMainCalendar, events, setEvents, onSave, noteRef, categories
                 selectable={true}
                 select={handleEventInsert}
                 eventClick={handleEventClick}
+                timeZone={"UTC"}
             />
 
             {showModal && (

@@ -1,13 +1,12 @@
 package e6eo.finalproject.controller;
 
 import e6eo.finalproject.dao.NotesDAO;
-import java.util.Map;
-
-import e6eo.finalproject.dto.NotesMapper;
-import e6eo.finalproject.entity.NotesEntity;
+import e6eo.finalproject.entity.NoteData;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.Map;
 
 @RestController
 @RequestMapping("/notes")
@@ -22,17 +21,32 @@ public class NotesController {
     }
 
     @PostMapping("/note")
-    public ResponseEntity<?> writeNotes(@RequestBody NotesEntity request) {
-        return ResponseEntity.ok(true);
+    public ResponseEntity<?> noteInsert(@RequestBody NoteData noteData) {
+        try {
+            notesDAO.insertNote(noteData);
+            return ResponseEntity.ok(true);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(e);
+        }
     }
 
     @PatchMapping("/note")
-    public ResponseEntity<?> updateNotes(@RequestBody NotesEntity request) {
-        return ResponseEntity.ok(true);
+    public ResponseEntity<?> notePatch(@RequestBody NoteData noteData) {
+        try {
+            notesDAO.insertNote(noteData);
+            return ResponseEntity.ok(true);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(e);
+        }
     }
 
     @DeleteMapping("/note")
-    public ResponseEntity<?> deleteNotes(@RequestBody NotesEntity request) {
-        return ResponseEntity.ok(true);
+    public ResponseEntity<?> noteDelete(@RequestBody NoteData noteData) {
+        try {
+            notesDAO.deleteNote(noteData);
+            return ResponseEntity.ok(true);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(e);
+        }
     }
 }

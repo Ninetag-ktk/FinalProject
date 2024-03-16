@@ -48,7 +48,7 @@ export default function Header({onPrevButtonClick, onNextButtonClick, currentTit
                     <span>캘린더/검색</span>
                 </label>
             </div>
-            <button type={"button"} id={"testButton"} onClick={handleTest}>테스트 버튼</button>
+            {/*<button type={"button"} id={"testButton"} onClick={handleTest}>테스트 버튼</button>*/}
         </div>
     );
 }
