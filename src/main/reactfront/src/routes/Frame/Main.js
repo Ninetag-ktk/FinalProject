@@ -72,8 +72,20 @@ export default function Main() {
     }
 
     async function updateMonthly(calendarTitle) {
+        let token = null;
+        try {
+            if (JSON.parse(window.sessionStorage.getItem("token"))) {
+                token = JSON.parse(window.sessionStorage.getItem("token")).access;
+            } else {
+
+                token = await getToken().access;
+            }
+        } catch (err) {
+            // console.log("토큰 오류:", err.message);
+            return;
+        }
+        // console.log("토큰:", JSON.parse(window.sessionStorage.getItem("token")));
         if (calendarTitle !== "") {
-            let token = JSON.parse(window.sessionStorage.getItem("token")) ? JSON.parse(window.sessionStorage.getItem("token")) : await getToken();
             axios("/google/monthly", {
                 method: "POST",
                 headers: {
@@ -82,7 +94,7 @@ export default function Main() {
                 },
                 data: JSON.stringify({
                     observe: window.sessionStorage.getItem("observe"),
-                    token: token.access,
+                    token: token,
                     date: calendarTitle,
                 }),
             }).catch(e => console.log("에러 : ", e));

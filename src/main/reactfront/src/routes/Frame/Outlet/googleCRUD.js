@@ -8,8 +8,8 @@ export const insertNote = (note, allDay) => {
         case "calendar": {
             if (allDay) {
                 return {
-                    method: "PATCH",
-                    url: `https://www.googleapis.com/calendar/v3/calendars/${categoryId}/events/${note.id}`,
+                    method: "POST",
+                    url: `https://www.googleapis.com/calendar/v3/calendars/${categoryId}/events`,
                     params: {key: googleKey},
                     headers: {
                         'Authorization': `Bearer ${token.access}`,
@@ -29,8 +29,8 @@ export const insertNote = (note, allDay) => {
                 }
             } else {
                 return {
-                    method: "PATCH",
-                    url: `https://www.googleapis.com/calendar/v3/calendars/${categoryId}/events/${note.id}`,
+                    method: "POST",
+                    url: `https://www.googleapis.com/calendar/v3/calendars/${categoryId}/events`,
                     params: {key: googleKey},
                     headers: {
                         'Authorization': `Bearer ${token.access}`,
@@ -52,8 +52,8 @@ export const insertNote = (note, allDay) => {
         }
         case "tasks": {
             return {
-                method: "PATCH",
-                url: `https://tasks.googleapis.com/tasks/v1/lists/${categoryId}/tasks/${note.id}`,
+                method: "POST",
+                url: `https://tasks.googleapis.com/tasks/v1/lists/${categoryId}/tasks`,
                 params: {key: googleKey},
                 headers: {
                     'Authorization': `Bearer ${token.access}`,
@@ -78,8 +78,8 @@ export const patchNote = (note, allDay) => {
         case "calendar": {
             if (allDay) {
                 return {
-                    method: "POST",
-                    url: `https://www.googleapis.com/calendar/v3/calendars/${categoryId}/events`,
+                    method: "PATCH",
+                    url: `https://www.googleapis.com/calendar/v3/calendars/${categoryId}/events/${note.id}`,
                     params: {key: googleKey},
                     headers: {
                         'Authorization': `Bearer ${token.access}`,
@@ -103,8 +103,8 @@ export const patchNote = (note, allDay) => {
                 }
             } else {
                 return {
-                    method: "POST",
-                    url: `https://www.googleapis.com/calendar/v3/calendars/${categoryId}/events`,
+                    method: "PATCH",
+                    url: `https://www.googleapis.com/calendar/v3/calendars/${categoryId}/events/${note.id}`,
                     params: {key: googleKey},
                     headers: {
                         'Authorization': `Bearer ${token.access}`,
@@ -130,8 +130,8 @@ export const patchNote = (note, allDay) => {
         }
         case "tasks": {
             return {
-                method: "POST",
-                url: `https://tasks.googleapis.com/tasks/v1/lists/${categoryId}/tasks`,
+                method: "PATCH",
+                url: `https://tasks.googleapis.com/tasks/v1/lists/${categoryId}/tasks/${note.id}`,
                 params: {key: googleKey},
                 headers: {
                     'Authorization': `Bearer ${token.access}`,

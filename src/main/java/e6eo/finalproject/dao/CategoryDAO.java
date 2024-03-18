@@ -77,7 +77,7 @@ public class CategoryDAO extends GoogleAPI {
         Map<String, String> category = new HashMap<>();
 //        System.out.println(json);
         for (Map item : (ArrayList<Map>) json) {
-            if (item.get("id").equals("ko.south_korea#holiday@group.v.calendar.google.com")) continue;
+            if (item.get("id").equals("ko.south_korea#holiday@group.v.calendar.google.com") || item.get("id").equals("addressbook#contacts@group.v.calendar.google.com")) continue;
             else if (item.get("id").equals(item.get("summary"))) {
                 category.put("google^calendar^" + item.get("id").toString().replace(".", "_"), "내 구글 캘린더");
             } else {
@@ -119,7 +119,7 @@ public class CategoryDAO extends GoogleAPI {
 //        System.out.println(request);
         UsersEntity user = usersMapper.findByObserveToken(request).get();
         Map<String, String> categories = categoryMapper.findById(user.getUserId()).get().getCategories();
-//        System.out.println(categories);
+        System.out.println(categories);
         return categories;
     }
 }
