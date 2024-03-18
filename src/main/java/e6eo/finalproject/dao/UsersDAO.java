@@ -54,7 +54,10 @@ public class UsersDAO extends GoogleAPI {
     public ResponseEntity<?> userJoin(UsersEntity users) {
         Optional<UsersEntity> user = usersMapper.findById(users.getUserId());
         if (user.isEmpty()) {
+            System.out.println(users);
             usersMapper.save(users);
+            categoryMapper.createDefaultCategory(users.getUserId(), users.getNickName());
+            System.out.println("체크");
             return ResponseEntity.ok(true);
         } else {
             return ResponseEntity.ok(false);

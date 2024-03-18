@@ -59,7 +59,7 @@ const Center = ({setMainCalendar, events, setEvents, onSave, noteRef, categories
                 selectable={true}
                 select={handleEventInsert}
                 eventClick={handleEventClick}
-                timeZone={"UTC"}
+                timeZone={"Asia/Korea"}
             />
 
             {showModal && (

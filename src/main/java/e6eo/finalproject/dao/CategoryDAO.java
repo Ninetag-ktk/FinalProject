@@ -119,7 +119,7 @@ public class CategoryDAO extends GoogleAPI {
 //        System.out.println(request);
         UsersEntity user = usersMapper.findByObserveToken(request).get();
         Map<String, String> categories = categoryMapper.findById(user.getUserId()).get().getCategories();
-//        System.out.println(categories);
+        System.out.println(categories);
         return categories;
     }
 }

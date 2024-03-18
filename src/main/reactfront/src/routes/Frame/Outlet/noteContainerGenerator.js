@@ -152,7 +152,7 @@ export default function ({noteRef, categories, closeModal}) {
     useEffect(() => {
         setNoteCategory(note.categoryId);
         setNoteType(note.type);
-        // console.log("수정 체크 : ", note);
+        console.log("수정 체크 : ", note);
     }, [note])
 
     useEffect(() => {

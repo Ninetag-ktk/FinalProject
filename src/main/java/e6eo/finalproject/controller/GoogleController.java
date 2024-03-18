@@ -64,6 +64,7 @@ public class GoogleController {
 //        System.out.println("구글 데이터 업데이트");
         String observeToken = observe.replace("\"", "");
         UsersEntity user = usersMapper.findByObserveToken(observeToken).get();
+        System.out.println(user);
         String accessToken = null;
         if (user.getInnerId() != null) {
             accessToken = googleAPI.getNewAccessTokenByObserve(observeToken);
