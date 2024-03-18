@@ -77,14 +77,14 @@ export default function Main() {
             if (JSON.parse(window.sessionStorage.getItem("token"))) {
                 token = JSON.parse(window.sessionStorage.getItem("token")).access;
             } else {
-                console.log("cpzc")
+
                 token = await getToken().access;
             }
         } catch (err) {
-            console.log("토큰 오류:", err.message);
+            // console.log("토큰 오류:", err.message);
             return;
         }
-        console.log("토큰:", JSON.parse(window.sessionStorage.getItem("token")));
+        // console.log("토큰:", JSON.parse(window.sessionStorage.getItem("token")));
         if (calendarTitle !== "") {
             axios("/google/monthly", {
                 method: "POST",
