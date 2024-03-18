@@ -64,8 +64,9 @@ public class GoogleController {
 //        System.out.println("구글 데이터 업데이트");
         String observeToken = observe.replace("\"", "");
         UsersEntity user = usersMapper.findByObserveToken(observeToken).get();
-        String accessToken = googleAPI.getNewAccessTokenByObserve(observeToken);
+        String accessToken = null;
         if (user.getInnerId() != null) {
+            accessToken = googleAPI.getNewAccessTokenByObserve(observeToken);
             if (categoryDAO.checkGoogleCategory(user, accessToken)) {
                 // 구글 데이터를 받아온 적이 없는 경우
                 // 데이터를 요청해서 받아옴
