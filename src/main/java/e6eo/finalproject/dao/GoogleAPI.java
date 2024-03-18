@@ -27,6 +27,8 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 public class GoogleAPI {
+    @Value("${google.key}")
+    public String googleKey;
     protected GoogleToken usersToken = null;
     //  출처: https://ecolumbus.tistory.com/169 [슬기로운 개발자 생활:티스토리]
     @Value("${google.auth}")
@@ -42,9 +44,6 @@ public class GoogleAPI {
     protected String googleClientSecret;
     @Value("${google.scope}")
     protected List<String> googleScopeLs;
-    @Value("${google.key}")
-    public String googleKey;
-
     @Autowired
     protected UsersMapper usersMapper;
     @Autowired
@@ -121,7 +120,7 @@ public class GoogleAPI {
                 UsersEntity user = UsersEntity.builder().userId(userInfo.getEmail()).pw(usersToken.getAccess_token().substring(0, 19)).nickName(userInfo.getName()).innerId(userInfo.getEmail()).refreshToken(usersToken.getRefresh_token()).build();
                 System.out.println(user.toString());
                 usersMapper.save(user);
-                categoryMapper.createDefaultCategory(user.getUserId(), user.getNickName());
+                categoryMapper.insertDefault(user.getUserId(), user.getNickName());
                 log.info("Google 계정 자동 가입 완료");
             }
         } catch (Exception e) {

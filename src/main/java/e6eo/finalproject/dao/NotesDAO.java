@@ -120,7 +120,9 @@ public class NotesDAO extends GoogleAPI {
                     .retrieve().bodyToMono(googleLists.class).block().getItems();
             for (Map<String, Object> event : (ArrayList<Map>) json) {
                 NotesEntity note = new NotesEntity().eventParser(event, userId, calendar);
-                notes.add(note);
+                if (!note.getStatus().equals("cancelled")) {
+                    notes.add(note);
+                }
             }
         }
         return notes;
@@ -143,7 +145,9 @@ public class NotesDAO extends GoogleAPI {
                     .retrieve().bodyToMono(googleLists.class).block().getItems();
             for (Map<String, Object> event : (ArrayList<Map>) json) {
                 NotesEntity note = new NotesEntity().eventParser(event, userId, calendar);
-                notes.add(note);
+                if (!note.getStatus().equals("cancelled")) {
+                    notes.add(note);
+                }
             }
         }
         return notes;
@@ -175,8 +179,10 @@ public class NotesDAO extends GoogleAPI {
             Object json = webClient.get().uri(tasklist + requestUrl)
                     .retrieve().bodyToMono(googleLists.class).block().getItems();
             for (Map<String, Object> task : (ArrayList<Map>) json) {
-                NotesEntity note = new NotesEntity().taskParser(task, userId, tasklist);
-                notes.add(note);
+                if (task.get("deleted").toString().equals("false")) {
+                    NotesEntity note = new NotesEntity().taskParser(task, userId, tasklist);
+                    notes.add(note);
+                }
             }
         }
         return notes;
@@ -198,8 +204,10 @@ public class NotesDAO extends GoogleAPI {
             Object json = webClient.get().uri(tasklist + requestUrl)
                     .retrieve().bodyToMono(googleLists.class).block().getItems();
             for (Map<String, Object> task : (ArrayList<Map>) json) {
-                NotesEntity note = new NotesEntity().taskParser(task, userId, tasklist);
-                notes.add(note);
+                if ((boolean) task.get("deleted") == false) {
+                    NotesEntity note = new NotesEntity().taskParser(task, userId, tasklist);
+                    notes.add(note);
+                }
             }
         }
         return notes;

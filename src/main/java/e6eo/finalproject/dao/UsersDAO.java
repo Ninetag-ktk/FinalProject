@@ -1,5 +1,6 @@
 package e6eo.finalproject.dao;
 
+import e6eo.finalproject.entity.CategoryEntity;
 import e6eo.finalproject.entity.UsersEntity;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -54,10 +55,10 @@ public class UsersDAO extends GoogleAPI {
     public ResponseEntity<?> userJoin(UsersEntity users) {
         Optional<UsersEntity> user = usersMapper.findById(users.getUserId());
         if (user.isEmpty()) {
-            System.out.println(users);
             usersMapper.save(users);
-            categoryMapper.createDefaultCategory(users.getUserId(), users.getNickName());
-            System.out.println("체크");
+            CategoryEntity category = new CategoryEntity(users.getUserId());
+            categoryMapper.save(category);
+            categoryMapper.insertDefault(users.getUserId(), users.getNickName());
             return ResponseEntity.ok(true);
         } else {
             return ResponseEntity.ok(false);
